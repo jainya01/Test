@@ -1,9 +1,9 @@
-import Sidebar from "./admin/Sidebar";
+import Sidebar from "./layout/Sidebar";
 import { Outlet } from "react-router-dom";
 
 function User() {
   return (
-    <div className="">
+    <div>
       <Sidebar />
       <Outlet />
     </div>

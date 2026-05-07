@@ -7,9 +7,10 @@ import {
   faXmark,
   faRightFromBracket,
   faUsers,
-  faUser,
   faChartColumn,
   faPhone,
+  faHeadset,
+  faCog,
 } from "@fortawesome/free-solid-svg-icons";
 
 const NAV_LINKS = [
@@ -20,14 +21,13 @@ const NAV_LINKS = [
     icon: faTableColumns,
   },
   { path: "/admin/customers", label: "Customers", icon: faUsers },
-  { path: "/admin/users", label: "Users", icon: faUser },
+  { path: "/admin/users", label: "Calling Executive", icon: faHeadset },
   { path: "/admin/reports", label: "Reports", icon: faChartColumn },
   { path: "/admin/leads", label: "My Leads", icon: faPhone },
+  { path: "/admin/settings", label: "Settings", icon: faCog },
 ];
 
 export default function Sidebar() {
-  const API_URL = import.meta.env.VITE_API_URL;
-
   const [isOpen, setIsOpen] = useState(false);
   const toggleSidebar = () => setIsOpen((s) => !s);
   const closeSidebar = () => setIsOpen(false);
@@ -62,8 +62,8 @@ export default function Sidebar() {
                 <FontAwesomeIcon icon={faPhone} />
               </div>
               <div className="d-flex flex-column ms-2 font-alfasseh">
-                <span className="text-dark fw-bold">CallTrack</span>
-                <span className="laundry-app">CRM Suite</span>
+                <span className="text-dark fw-bold">CallTrack CRM</span>
+                <span className="laundry-app">Laraib Travels</span>
               </div>
             </div>
           </Link>
@@ -82,13 +82,13 @@ export default function Sidebar() {
               className="text-decoration-none"
               onClick={closeSidebar}
             >
-              <div className="d-flex mt-3">
+              <div className="d-flex mt-2 mb-2">
                 <div className="custom-box mt-0">
                   <FontAwesomeIcon icon={faPhone} />
                 </div>
                 <div className="d-flex flex-column ms-2 font-alfasseh">
-                  <span className="text-dark fw-bold">CallTrack</span>
-                  <span className="laundry-app">CRM Suite</span>
+                  <span className="text-dark fw-bold">CallTrack CRM</span>
+                  <span className="laundry-app">Laraib Travels</span>
                 </div>
               </div>
             </Link>
@@ -99,13 +99,13 @@ export default function Sidebar() {
               onClick={closeSidebar}
               aria-label="Close sidebar"
             >
-              <FontAwesomeIcon icon={faXmark} className="text-light" />
+              <FontAwesomeIcon icon={faXmark} className="text-dark" />
             </button>
           </div>
 
           <hr className="text-dark mt-0 mb-2" />
 
-          <div className="list-group list-group-flush ms-2 me-2">
+          <div className="list-group list-group-flush me-3">
             {navLinks.map((link) => (
               <NavLink
                 key={link.path}
@@ -154,15 +154,15 @@ export default function Sidebar() {
                 <FontAwesomeIcon icon={faPhone} />
               </div>
               <div className="d-flex flex-column ms-2 font-alfasseh">
-                <span className="text-dark fw-bold">CallTrack</span>
-                <span className="laundry-app">CRM Suite</span>
+                <span className="text-dark fw-bold">CallTrack CRM</span>
+                <span className="laundry-app">Laraib Travels</span>
               </div>
             </div>
           </Link>
 
           <hr className="text-dark mt-3 mb-2" />
 
-          <div className="mt-2 mb-2 custom-font">Admin</div>
+          <div className="mt-2 mb-2 custom-font-crm">Admin</div>
 
           <div className="list-group rounded-0 me-3">
             {navLinks.map((link) => (
