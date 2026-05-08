@@ -11,92 +11,13 @@ import {
   faList,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { authHeader } from "../utils/authHeader";
 
 function Customers() {
-  const data = [
-    {
-      id: 1,
-      name: "Mohammad Ali",
-      phone: 9111111110,
-      service: "Hajj",
-      status: "Follow-up",
-      caller: "Bilal Ahmed",
-    },
-    {
-      id: 2,
-      name: "Fatima Sheikh",
-      phone: 9111111112,
-      service: "Umrah",
-      status: "Follow-up",
-      caller: "Sana Yosuf",
-    },
-    {
-      id: 3,
-      name: "Ahmed Raza",
-      phone: 9111111113,
-      service: "Umrah",
-      status: "New",
-      caller: "Bilal Ahmed",
-    },
-    {
-      id: 4,
-      name: "Nadia Hassan",
-      phone: 9111111114,
-      service: "Misc",
-      status: "Interested",
-      caller: "Omar Farooq",
-    },
-    {
-      id: 5,
-      name: "Nadia Hassan",
-      phone: 9111111115,
-      service: "Hajj",
-      status: "Follow-up",
-      caller: "Bilal Ahmed",
-    },
-    {
-      id: 6,
-      name: "Yousuf Malik",
-      phone: 9111111116,
-      service: "Hajj",
-      status: "Not Interested",
-      caller: "Bilal Ahmed",
-    },
-    {
-      id: 7,
-      name: "Hina Aslam",
-      phone: 9111111118,
-      service: "Umrah",
-      status: "Converted",
-      caller: "Sana Yosuf",
-    },
-
-    {
-      id: 7,
-      name: "Imran Qureshi",
-      phone: 9800000042,
-      service: "Packages",
-      status: "Follow-up",
-      caller: "Omar Farooq",
-    },
-    {
-      id: 8,
-      name: "Sadia Noor",
-      phone: 9800000099,
-      service: "Misc",
-      status: "New",
-      caller: "Zara Iqbal",
-    },
-    {
-      id: 9,
-      name: "Hina Aslam",
-      phone: 9111111118,
-      service: "Umrah",
-      status: "Converted",
-      caller: "Sana Yosuf",
-    },
-  ];
+  const API_URL = import.meta.env.VITE_API_URL;
+  const token = localStorage.getItem("adminToken");
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -105,6 +26,31 @@ function Customers() {
     const phoneStr = phone.toString();
     return `${phoneStr.slice(0, 2)}xxxxxx${phoneStr.slice(-2)}`;
   };
+
+  const [customers, setCustomers] = useState([]);
+
+  useEffect(() => {
+    const allData = async () => {
+      try {
+        const response = await axios.get(`${API_URL}/allcustomers`, {
+          headers: authHeader(),
+        });
+
+        setCustomers(response.data.result);
+      } catch (error) {
+        console.error("error", error);
+      }
+    };
+    allData();
+  }, []);
+
+  const itemsPerPage = 11;
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedData = customers.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(customers.length / itemsPerPage);
 
   return (
     <div className="content-wrapper">
@@ -142,7 +88,9 @@ function Customers() {
         <div className="d-flex flex-wrap flex-row justify-content-between align-items-md-center mb-4">
           <div>
             <h5 className="fw-bold overview-dashboard">Customers</h5>
-            <p className="text-muted mb-md-0 overview-lead">30 of 30 leads</p>
+            <p className="text-muted mb-md-0 overview-lead">
+              {customers.length} of {customers.length} leads
+            </p>
           </div>
 
           <div>
@@ -171,6 +119,7 @@ function Customers() {
                         <option value="Misc">Misc</option>
                       </select>
                     </div>
+
                     <div>
                       <select className="form-select sector-wise">
                         <option value="">All Statuses</option>
@@ -212,10 +161,11 @@ function Customers() {
                         </tr>
                       </thead>
                       <tbody className="body-table">
-                        {Array.isArray(data) && data.length > 0 ? (
-                          data.map((item, index) => (
+                        {Array.isArray(paginatedData) &&
+                        paginatedData.length > 0 ? (
+                          paginatedData.map((item, index) => (
                             <tr key={index}>
-                              <td>{item.id}</td>
+                              <td>{index + 1}</td>
 
                               <td>
                                 <span className="d-flex flex-row align-items-center fw-bold">
@@ -227,7 +177,7 @@ function Customers() {
                                       .toUpperCase()}
                                   </div>
 
-                                  {item.name}
+                                  {item.name || "--"}
                                 </span>
                               </td>
 
@@ -237,7 +187,7 @@ function Customers() {
                                   : maskPhoneNumber(item.phone)}
                               </td>
 
-                              <td>{item.service}</td>
+                              <td>{item.service || "--"}</td>
 
                               <td>
                                 <span
@@ -252,11 +202,11 @@ function Customers() {
                                     }[item.status] || ""
                                   }
                                 >
-                                  {item.status}
+                                  {item.status || "--"}
                                 </span>
                               </td>
 
-                              <td>{item.caller}</td>
+                              <td>{item.caller || "--"}</td>
 
                               <td className="view-right">
                                 <span className="d-flex flex-row align-items-center">
@@ -278,6 +228,42 @@ function Customers() {
                         )}
                       </tbody>
                     </table>
+
+                    <div className="d-flex justify-content-center align-items-center flex-wrap mt-3 mb-3 gap-2">
+                      <button
+                        className={`btn rounded-pill px-3 py-1 shadow-sm ${
+                          currentPage <= 1
+                            ? "btn-light border text-muted"
+                            : "btn-success border-0"
+                        }`}
+                        disabled={currentPage <= 1}
+                        onClick={() =>
+                          setCurrentPage((prev) => Math.max(prev - 1, 1))
+                        }
+                      >
+                        ← Prev
+                      </button>
+
+                      <span className="fw-semibold px-2">
+                        Page {currentPage} of {totalPages}
+                      </span>
+
+                      <button
+                        className={`btn rounded-pill px-3 py-1 shadow-sm ${
+                          currentPage >= totalPages
+                            ? "btn-light border text-muted"
+                            : "btn-success border-0"
+                        }`}
+                        disabled={currentPage >= totalPages}
+                        onClick={() =>
+                          setCurrentPage((prev) =>
+                            Math.min(prev + 1, totalPages),
+                          )
+                        }
+                      >
+                        Next →
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

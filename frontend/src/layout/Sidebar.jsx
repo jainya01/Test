@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, NavLink } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import "../App.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -11,6 +11,7 @@ import {
   faPhone,
   faHeadset,
   faCog,
+  faUpload,
 } from "@fortawesome/free-solid-svg-icons";
 
 const NAV_LINKS = [
@@ -24,10 +25,13 @@ const NAV_LINKS = [
   { path: "/admin/users", label: "Calling Executive", icon: faHeadset },
   { path: "/admin/reports", label: "Reports", icon: faChartColumn },
   { path: "/admin/leads", label: "My Leads", icon: faPhone },
+  { path: "/admin/bulk-upload", label: "Bulk Upload", icon: faUpload },
   { path: "/admin/settings", label: "Settings", icon: faCog },
 ];
 
 export default function Sidebar() {
+  const navigate = useNavigate();
+
   const [isOpen, setIsOpen] = useState(false);
   const toggleSidebar = () => setIsOpen((s) => !s);
   const closeSidebar = () => setIsOpen(false);
@@ -46,7 +50,7 @@ export default function Sidebar() {
       <nav className="navbar navbar-light bg-light d-md-none mobile-navbar-toggle">
         <div className="container-fluid">
           <button
-            className="btn btn-outline-success update-update1"
+            className="btn btn-outline-success hamburger-btn"
             onClick={toggleSidebar}
             aria-label="Open sidebar"
           >
@@ -160,9 +164,7 @@ export default function Sidebar() {
             </div>
           </Link>
 
-          <hr className="text-dark mt-3 mb-2" />
-
-          <div className="mt-2 mb-2 custom-font-crm">Admin</div>
+          <div className="mt-3 mb-2 custom-font-crm">Admin</div>
 
           <div className="list-group rounded-0 me-3">
             {navLinks.map((link) => (

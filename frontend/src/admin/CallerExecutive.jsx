@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import "../App.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -45,6 +46,14 @@ function CallerExecutive() {
       status: "Inactive",
     },
   ];
+
+  const [openMenuId, setOpenMenuId] = useState(null);
+
+  useEffect(() => {
+    const handleClick = () => setOpenMenuId(null);
+    window.addEventListener("click", handleClick);
+    return () => window.removeEventListener("click", handleClick);
+  }, []);
 
   return (
     <div className="content-wrapper">
@@ -125,7 +134,9 @@ function CallerExecutive() {
                                       .toUpperCase()}
                                   </div>
 
-                                  {data.name}
+                                  <span className="short-name">
+                                    {data.name}
+                                  </span>
                                 </span>
                               </td>
 
@@ -163,8 +174,43 @@ function CallerExecutive() {
                                 </div>
                               </td>
 
-                              <td className="convert-rate">
-                                <FontAwesomeIcon icon={faEllipsis} />
+                              <td className="text-start lh-lg">
+                                <button
+                                  className="btn btn-sm border-0 p-0"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setOpenMenuId(
+                                      openMenuId === data.id ? null : data.id,
+                                    );
+                                  }}
+                                >
+                                  <FontAwesomeIcon icon={faEllipsis} />
+                                </button>
+
+                                {openMenuId === data.id && (
+                                  <div
+                                    className="position-absolute bg-white border rounded shadow-sm px-3"
+                                    style={{
+                                      right: 0,
+                                      top: "25px",
+                                      zIndex: 1000,
+                                      width: "120px",
+                                    }}
+                                    onClick={(e) => e.stopPropagation()}
+                                  >
+                                    <button className="dropdown-item text-success">
+                                      Active
+                                    </button>
+
+                                    <button className="dropdown-item text-warning">
+                                      Inactive
+                                    </button>
+
+                                    <button className="dropdown-item text-danger">
+                                      Delete
+                                    </button>
+                                  </div>
+                                )}
                               </td>
                             </tr>
                           ))

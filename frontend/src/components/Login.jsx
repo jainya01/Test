@@ -1,13 +1,60 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEye,
   faEyeSlash,
   faHeadphones,
 } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Login = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
+
+  const [admin, setAdmin] = useState({
+    email: "",
+    password: "",
+  });
+
+  const { email, password } = admin;
+
+  const handleAdminLogin = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await axios.post(`${API_URL}/adminlogin`, admin);
+
+      const { token, role } = response.data;
+
+      if (!token) {
+        alert("Invalid response from server");
+        return;
+      }
+
+      if (!role) {
+        alert("Role missing from server response");
+        return;
+      }
+
+      localStorage.setItem("adminToken", token);
+      localStorage.setItem("role", role);
+
+      navigate("/admin/dashboard", { replace: true });
+    } catch (error) {
+      console.error("error", error);
+      alert(error.response?.data?.message || "Login failed");
+    }
+  };
+
+  const handleChange = (e) => {
+    setAdmin({
+      ...admin,
+      [e.target.name]: e.target.value,
+    });
+  };
 
   return (
     <div className="container-fluid">
@@ -66,7 +113,7 @@ const Login = () => {
               Enter your credentials to continue.
             </p>
 
-            <form>
+            <form onSubmit={handleAdminLogin}>
               <div className="mb-3">
                 <label className="form-label">Email</label>
                 <div className="input-group">
@@ -74,6 +121,9 @@ const Login = () => {
                     type="email"
                     className="form-control"
                     placeholder="you@company.com"
+                    name="email"
+                    value={email}
+                    onChange={handleChange}
                     style={{ height: "42px" }}
                     required
                   />
@@ -86,6 +136,9 @@ const Login = () => {
                   type={showPassword ? "text" : "password"}
                   className="form-control pe-5"
                   placeholder="********"
+                  name="password"
+                  value={password}
+                  onChange={handleChange}
                   style={{ height: "42px" }}
                   required
                 />

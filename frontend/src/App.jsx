@@ -2,13 +2,14 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-toastify/dist/ReactToastify.css";
 import Login from "./components/Login";
-import ProtectedRoute from "./components/ProtectedRoute";
+import AdminProtected from "./components/AdminProtected";
 import User from "./User";
 import HomePage from "./admin/HomePage";
 import Reports from "./admin/Reports";
 import CallerExecutive from "./admin/CallerExecutive";
 import Customers from "./admin/Customers";
 import Leads from "./admin/Leads";
+import BulkUpload from "./admin/BulkUpload";
 import Settings from "./admin/Settings";
 
 function App() {
@@ -17,13 +18,14 @@ function App() {
       <Routes>
         <Route path="/" element={<Login />} />
 
-        <Route>
+        <Route element={<AdminProtected />}>
           <Route path="/admin" element={<User />}>
             <Route path="dashboard" element={<HomePage />} />
             <Route path="reports" element={<Reports />} />
             <Route path="users" element={<CallerExecutive />} />
             <Route path="customers" element={<Customers />} />
             <Route path="leads" element={<Leads />} />
+            <Route path="bulk-upload" element={<BulkUpload />} />
             <Route path="settings" element={<Settings />} />
           </Route>
         </Route>

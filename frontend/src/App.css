@@ -85,6 +85,13 @@ aside.admin-sidebar {
   }
 }
 
+.hamburger-btn,
+.hamburger-btn:hover,
+.hamburger-btn:active {
+  background-color: #2f6bff !important;
+  color: #fff;
+}
+
 .list-group .list-group-item {
   border: none;
   border-top: 1px solid rgba(255, 255, 255, 0.3);
@@ -150,8 +157,16 @@ aside.admin-sidebar {
   font-size: 13px;
 }
 
+.short-name {
+  font-size: 14px;
+}
+
 @media (max-width: 576px) {
   .font-alfasseh {
+    font-size: 12px;
+  }
+
+  .short-name {
     font-size: 12px;
   }
 }
@@ -291,7 +306,7 @@ aside.admin-sidebar {
 }
 
 .sector-wise {
-  border-radius: 10px;
+  border-radius: 6px;
   font-size: 14px;
 }
 
@@ -299,7 +314,7 @@ aside.admin-sidebar {
   border: 2.7px solid #4163b1;
   border-color: #4163b1;
   box-shadow: none;
-  border-radius: 10px;
+  border-radius: 8px;
 }
 
 .avatar {
@@ -772,11 +787,11 @@ aside.admin-sidebar {
 }
 
 .custom-input {
-  height: 42px;
-  border-radius: 10px;
+  height: 40px;
+  border-radius: 8px;
   border: 1px solid #e5e5e5;
   box-shadow: none !important;
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .custom-input:focus {
@@ -808,4 +823,54 @@ aside.admin-sidebar {
   .update-title {
     font-size: 20px;
   }
+}
+
+.custom-text {
+  height: 38px;
+  font-size: 15px;
+}
+
+.custom-text:focus {
+  border: 2.7px solid #4163b1;
+  border-color: #4163b1;
+  box-shadow: none;
+}
+
+.error-font {
+  font-size: 14px;
+  margin-top: 7.1px;
+}
+
+.accounts-email {
+  font-size: 15px;
+}
+
+.delete-trash:hover {
+  color: #dc3545;
+  cursor: pointer;
+}
+
+.dotted-class {
+  border: 1px dotted black;
+  border-radius: 10px;
+}
+
+.custom-typo {
+  width: 50px;
+  height: 50px;
+  border-radius: 30%;
+}
+
+.select-file-btn {
+  padding: 6px 10px;
+  border-radius: 10px;
+  width: 130px;
+  font-size: 14px;
+}
+
+.submit-file-btn {
+  width: 85px;
+  font-size: 15px;
+  border-radius: 10px;
+  padding: 8px;
 }
