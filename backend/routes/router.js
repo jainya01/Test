@@ -62,7 +62,7 @@ router.post("/adminlogin", async (req, res) => {
     const token = jwt.sign(
       { id: admin.id, email: admin.email, role: admin.role },
       process.env.JWT_SECRET,
-      { expiresIn: "8h" },
+      { expiresIn: "6h" },
     );
 
     res.status(200).json({
@@ -279,6 +279,157 @@ router.get("/allcustomers", authenticate, async (req, res) => {
     return res.status(200).json({ message: "data come successfully", result });
   } catch (error) {
     return res.status(500).json({ message: "data failed to loaded" });
+  }
+});
+
+router.post("/callerlogin", async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res
+        .status(400)
+        .json({ message: "Email and password are required." });
+    }
+
+    const [rows] = await pool.execute(
+      "SELECT id, email, password, role FROM caller WHERE email = ?",
+      [email],
+    );
+
+    if (rows.length === 0) {
+      return res.status(401).json({ message: "Invalid email or password." });
+    }
+
+    const caller = rows[0];
+
+    const isMatch = await bcrypt.compare(password, caller.password);
+
+    if (!isMatch) {
+      return res.status(401).json({ message: "Invalid email or password." });
+    }
+
+    if (!["caller"].includes(caller.role)) {
+      return res.status(403).json({
+        message: "You do not have permission to login as caller.",
+      });
+    }
+
+    const token = jwt.sign(
+      { id: caller.id, email: caller.email, role: caller.role },
+      process.env.JWT_SECRET,
+      { expiresIn: "6h" },
+    );
+
+    res.status(200).json({
+      message: "Login successful",
+      token,
+      role: caller.role,
+      id: caller.id,
+      email: caller.email,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.post("/callerspost", authenticate, async (req, res) => {
+  try {
+    const { fullname, email, password, status, notes } = req.body;
+    if (!fullname || !email || !password || !status) {
+      return res.status(400).json({ message: "All fields required" });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await pool.execute(
+      "INSERT INTO caller (fullname, email, password, status, notes) VALUES (?, ?, ?, ?, ?)",
+      [fullname, email, hashedPassword, status, notes],
+    );
+
+    res.status(201).json({ message: "Caller created" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.put("/callerupdate/:id", authenticate, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { fullname, email, status, password, notes } = req.body;
+
+    if (!fullname || !email || !status) {
+      return res.status(400).json({
+        message: "All fields are required",
+      });
+    }
+
+    let query =
+      "UPDATE caller SET fullname = ?, email = ?, status = ?, notes=?";
+    let values = [fullname, email, status, notes];
+
+    if (password && password.trim() !== "") {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      query += ", password = ?";
+      values.push(hashedPassword);
+    }
+
+    query += " WHERE id = ?";
+    values.push(id);
+
+    await pool.execute(query, values);
+
+    res.status(200).json({
+      message: "Caller updated successfully",
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.delete("/callerdelete/:id", authenticate, async (req, res) => {
+  try {
+    const { id } = req.params;
+    await pool.execute("DELETE FROM caller WHERE id = ?", [id]);
+    res.status(200).json({
+      message: "Caller deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.get("/allcallers", authenticate, async (req, res) => {
+  try {
+    const SQL =
+      "SELECT id, fullname, email, role, status, notes FROM caller ORDER BY id DESC LIMIT 20";
+    const [result] = await pool.execute(SQL);
+    return res.status(200).json({
+      message: "Data fetched successfully",
+      data: result,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to load data",
+    });
+  }
+});
+
+router.get("/somecallers/:id", authenticate, async (req, res) => {
+  const { id } = req.params;
+  try {
+    const SQL =
+      "SELECT id, fullname, email, role, status, notes FROM caller WHERE id = ?";
+    const [result] = await pool.execute(SQL, [id]);
+    return res.status(200).json({
+      message: "Data fetched successfully",
+      data: result,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to load data",
+    });
   }
 });
 

@@ -12,7 +12,7 @@ import {
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
 
-function Leads() {
+function CallerLeads() {
   const data = [
     {
       id: 1,
@@ -325,4 +325,4 @@ function Leads() {
   );
 }
 
-export default Leads;
+export default CallerLeads;

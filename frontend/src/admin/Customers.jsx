@@ -1,4 +1,8 @@
+import { useEffect, useState } from "react";
+import { authHeader } from "../utils/authHeader";
 import "../App.css";
+import { Link } from "react-router-dom";
+import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faArrowRight,
@@ -10,16 +14,13 @@ import {
   faFile,
   faList,
 } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
-import { useEffect, useState } from "react";
-import axios from "axios";
-import { authHeader } from "../utils/authHeader";
 
 function Customers() {
   const API_URL = import.meta.env.VITE_API_URL;
   const token = localStorage.getItem("adminToken");
 
   const [showPassword, setShowPassword] = useState(false);
+  const [search, setSearch] = useState("");
 
   const maskPhoneNumber = (phone) => {
     if (!phone) return "";
@@ -44,13 +45,27 @@ function Customers() {
     allData();
   }, []);
 
-  const itemsPerPage = 11;
   const [currentPage, setCurrentPage] = useState(1);
 
+  const filteredCustomers = customers.filter((item) => {
+    const keyword = search.toLowerCase();
+    return (
+      item.name?.toLowerCase().includes(keyword) ||
+      item.phone?.toLowerCase().includes(keyword)
+    );
+  });
+
+  const itemsPerPage = 11;
+  const totalPages = Math.ceil(filteredCustomers.length / itemsPerPage) || 1;
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const paginatedData = customers.slice(startIndex, endIndex);
-  const totalPages = Math.ceil(customers.length / itemsPerPage);
+  const paginatedData = filteredCustomers.slice(startIndex, endIndex);
+
+  useEffect(() => {
+    if (currentPage > totalPages) {
+      setCurrentPage(1);
+    }
+  }, [filteredCustomers]);
 
   return (
     <div className="content-wrapper">
@@ -70,6 +85,8 @@ function Customers() {
                   className="form-control sector-wise"
                   placeholder="Search customers, calls, agents..."
                   style={{ height: "40px" }}
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
                 />
               </div>
             </div>
@@ -89,7 +106,7 @@ function Customers() {
           <div>
             <h5 className="fw-bold overview-dashboard">Customers</h5>
             <p className="text-muted mb-md-0 overview-lead">
-              {customers.length} of {customers.length} leads
+              {paginatedData.length} of {paginatedData.length} leads
             </p>
           </div>
 
@@ -221,8 +238,11 @@ function Customers() {
                           ))
                         ) : (
                           <tr>
-                            <td colSpan="7" className="text-center py-3">
-                              No Data Found
+                            <td
+                              colSpan="7"
+                              className="text-center py-3 fw-bold text-muted"
+                            >
+                              No data available
                             </td>
                           </tr>
                         )}

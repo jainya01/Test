@@ -1,7 +1,7 @@
 import { Navigate, Outlet } from "react-router-dom";
 
-const AdminProtected = ({ allow = [] }) => {
-  const token = localStorage.getItem("adminToken");
+const UserProtected = ({ allow = [] }) => {
+  const token = localStorage.getItem("callerToken");
 
   if (!token) {
     return <Navigate to="/" replace />;
@@ -14,4 +14,4 @@ const AdminProtected = ({ allow = [] }) => {
   return <Outlet />;
 };
 
-export default AdminProtected;
+export default UserProtected;

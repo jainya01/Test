@@ -1,65 +1,26 @@
 import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faEye,
-  faEyeSlash,
+  faCircleNotch,
   faHeadphones,
+  faPhone,
 } from "@fortawesome/free-solid-svg-icons";
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
-  const API_URL = import.meta.env.VITE_API_URL;
-
-  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
-  const [admin, setAdmin] = useState({
-    email: "",
-    password: "",
-  });
-
-  const { email, password } = admin;
-
-  const handleAdminLogin = async (e) => {
-    e.preventDefault();
-
-    try {
-      const response = await axios.post(`${API_URL}/adminlogin`, admin);
-
-      const { token, role } = response.data;
-
-      if (!token) {
-        alert("Invalid response from server");
-        return;
-      }
-
-      if (!role) {
-        alert("Role missing from server response");
-        return;
-      }
-
-      localStorage.setItem("adminToken", token);
-      localStorage.setItem("role", role);
-
+  useEffect(() => {
+    const token = localStorage.getItem("adminToken");
+    if (token) {
       navigate("/admin/dashboard", { replace: true });
-    } catch (error) {
-      console.error("error", error);
-      alert(error.response?.data?.message || "Login failed");
     }
-  };
-
-  const handleChange = (e) => {
-    setAdmin({
-      ...admin,
-      [e.target.name]: e.target.value,
-    });
-  };
+  }, []);
 
   return (
     <div className="container-fluid">
       <div className="row min-vh-100 text-start">
-        <div className="col-lg-6 col-sm-12 d-lg-flex flex-column justify-content-center bg-primary text-white px-2 px-lg-4 pt-5 pt-lg-0">
+        <div className="col-lg-6 col-sm-12 d-lg-flex flex-column justify-content-center convert-metric text-white px-2 px-lg-4 pt-5 pt-lg-0">
           <div className="position-absolute top-0 start-0 p-2 ps-lg-4 d-flex align-items-center">
             <div className="headphones-font me-2">
               <FontAwesomeIcon icon={faHeadphones} />
@@ -108,53 +69,50 @@ const Login = () => {
 
         <div className="col-lg-6 col-sm-12 d-flex align-items-center justify-content-center bg-light mt-lg-4 mt-0">
           <div className="w-100 px-0" style={{ maxWidth: "450px" }}>
-            <h3 className="fw-bold mb-2">Sign in to your account</h3>
-            <p className="text-muted mb-4">
-              Enter your credentials to continue.
-            </p>
+            <h3 className="fw-bold mb-2">Sign in</h3>
+            <p className="text-muted mb-4">Choose a demo role to explore</p>
 
-            <form onSubmit={handleAdminLogin}>
-              <div className="mb-3">
-                <label className="form-label">Email</label>
-                <div className="input-group">
-                  <input
-                    type="email"
-                    className="form-control"
-                    placeholder="you@company.com"
-                    name="email"
-                    value={email}
-                    onChange={handleChange}
-                    style={{ height: "42px" }}
-                    required
-                  />
-                </div>
-              </div>
-
-              <div className="position-relative mb-4">
-                <label className="form-label">Password</label>
-                <input
-                  type={showPassword ? "text" : "password"}
-                  className="form-control pe-5"
-                  placeholder="********"
-                  name="password"
-                  value={password}
-                  onChange={handleChange}
-                  style={{ height: "42px" }}
-                  required
-                />
-
-                <span
-                  className="eye-login"
-                  onClick={() => setShowPassword(!showPassword)}
+            <div className="role-wrapper">
+              <div className="control-condition">
+                <Link
+                  className="text-dark text-decoration-none"
+                  to="/admin/login"
                 >
-                  <FontAwesomeIcon icon={showPassword ? faEyeSlash : faEye} />
-                </span>
+                  <div className="d-flex align-items-center">
+                    <div className="phone-awesome me-2">
+                      <FontAwesomeIcon icon={faCircleNotch} />
+                    </div>
+
+                    <div>
+                      <h6 className="fw-bold mb-0">Admin</h6>
+                      <span className="text-muted full-control">
+                        Full control & analytics
+                      </span>
+                    </div>
+                  </div>
+                </Link>
               </div>
 
-              <button type="submit" className="btn btn-primary w-100 py-2">
-                Sign In
-              </button>
-            </form>
+              <div className="control-condition">
+                <Link
+                  className="text-dark text-decoration-none"
+                  to="/caller/login"
+                >
+                  <div className="d-flex align-items-center">
+                    <div className="phone-awesome me-2">
+                      <FontAwesomeIcon icon={faPhone} />
+                    </div>
+
+                    <div>
+                      <h6 className="fw-bold mb-0">Calling Staff</h6>
+                      <span className="text-muted full-control">
+                        Convert assigned leads
+                      </span>
+                    </div>
+                  </div>
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </div>

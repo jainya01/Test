@@ -1,3 +1,4 @@
+import { authHeader } from "../utils/authHeader";
 import "../App.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -344,7 +345,7 @@ function Reports() {
                         ) : (
                           <tr>
                             <td colSpan="6" className="text-center py-3">
-                              No Data Found
+                              no data available
                             </td>
                           </tr>
                         )}
