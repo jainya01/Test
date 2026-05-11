@@ -15,8 +15,8 @@ import { toast, ToastContainer } from "react-toastify";
 function CallersEdit() {
   const API_URL = import.meta.env.VITE_API_URL;
 
-  const navigate = useNavigate();
   const { id } = useParams();
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [passwordError, setPasswordError] = useState("");
 
@@ -278,7 +278,6 @@ function CallersEdit() {
           </div>
         </div>
       </div>
-
       <ToastContainer position="bottom-right" autoClose="1500" />
     </div>
   );
