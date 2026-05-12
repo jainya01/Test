@@ -9,7 +9,7 @@ import {
   faEyeSlash,
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
-import { toast, ToastContainer } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
 
 function Settings() {
   const API_URL = import.meta.env.VITE_API_URL;
@@ -177,6 +177,23 @@ function Settings() {
     });
   };
 
+  const handleCancelled = (e) => {
+    e.preventDefault();
+    setFormData({
+      name: "",
+      email: "",
+      password: "",
+    });
+  };
+
+  const handleCancelled1 = (e) => {
+    e.preventDefault();
+    setUpdateForm({
+      email: "",
+      password: "",
+    });
+  };
+
   return (
     <div className="content-wrapper">
       <div className="container-fluid border-bottom bg-light py-2">
@@ -284,7 +301,11 @@ function Settings() {
                 </div>
 
                 <div className="d-flex gap-2 justify-content-end">
-                  <button type="button" className="btn btn-sm border text-dark">
+                  <button
+                    type="button"
+                    className="btn btn-sm border text-dark"
+                    onClick={handleCancelled}
+                  >
                     Cancel
                   </button>
 
@@ -370,7 +391,11 @@ function Settings() {
                     Update
                   </button>
 
-                  <button type="button" className="btn btn-sm border text-dark">
+                  <button
+                    type="button"
+                    className="btn btn-sm border text-dark"
+                    onClick={handleCancelled1}
+                  >
                     Cancel
                   </button>
                 </div>
@@ -392,6 +417,9 @@ function Settings() {
                 <div className="card-body py-3 px-3 d-flex justify-content-between align-items-center">
                   <div className="text-truncate me-3">
                     <span className="fw-medium accounts-email">
+                      <span className="custom-name-change me-2">
+                        {index === 0 ? "Admin" : "Sub-admin"}
+                      </span>
                       {data.email}
                     </span>
                   </div>
@@ -401,7 +429,7 @@ function Settings() {
                     title="Admin Delete"
                     onClick={() => deleteData(data.id)}
                   >
-                    <FontAwesomeIcon icon={faTrash} />
+                    <FontAwesomeIcon icon={faTrash} className="icons-color1" />
                   </span>
                 </div>
               </div>

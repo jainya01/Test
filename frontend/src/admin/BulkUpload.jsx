@@ -22,7 +22,7 @@ function BulkUpload() {
     e.preventDefault();
 
     if (!file) {
-      toast.error("Please select a file first");
+      toast.error("Please select a .xlsx or csv file first");
       return;
     }
 

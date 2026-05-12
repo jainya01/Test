@@ -19,7 +19,7 @@ body {
   width: 70%;
   max-width: 400px;
   height: 100%;
-  background-color: #fff;
+  background-color: #111827;
   z-index: 1050;
   overflow-y: auto;
   transition: left 0.3s linear;
@@ -57,13 +57,38 @@ body {
   z-index: 1040;
 }
 
+.list-list-sidebar {
+  position: absolute;
+  top: 50%;
+  left: 13%;
+  width: 30px;
+  height: 30px;
+  background-color: #0b5a4a;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  cursor: pointer;
+}
+
+.admin-sidebar .list-group .list-group-item.active,
+.admin-sidebar .list-group .list-group-item:focus,
+.mobile-sidebar .list-group .list-group-item.active {
+  background-color: #4c66e8 !important;
+  color: #fff !important;
+  border-radius: 8px !important;
+  margin: 1px 0;
+  font-weight: 500;
+}
+
 aside.admin-sidebar {
   width: 240px;
   height: 100vh;
   position: fixed;
   top: 0;
   left: 0;
-  background-color: #fff;
+  background-color: #111827;
   border-right: 1px solid rgba(0, 0, 0, 0.08);
   overflow-y: auto;
 }
@@ -88,7 +113,7 @@ aside.admin-sidebar {
 .hamburger-btn,
 .hamburger-btn:hover,
 .hamburger-btn:active {
-  background-color: #2f6bff !important;
+  background-color: #4169ff !important;
   color: #fff;
 }
 
@@ -98,15 +123,15 @@ aside.admin-sidebar {
   border-bottom: 1px solid rgba(255, 255, 255, 0.3);
   border-radius: 0;
   background: transparent;
-  color: #4a5568;
+  color: #fff;
   padding: 8px 7px;
   margin: 1px 0px;
 }
 
 .list-group .list-group-item:hover {
-  background-color: #e8eef9;
-  color: #4a5568;
-  border-radius: 8px;
+  background-color: #4c66e8;
+  color: #fff;
+  border-radius: 10px;
   border: none;
 }
 
@@ -117,15 +142,6 @@ aside.admin-sidebar {
   border-radius: 0;
   box-shadow: none;
   outline: none;
-}
-
-.admin-sidebar .list-group .list-group-item.active,
-.mobile-sidebar .list-group .list-group-item.active {
-  background-color: #e8eef9;
-  color: #4a5568;
-  border-radius: 6px;
-  margin: 1px 0;
-  font-weight: 800;
 }
 
 .btn-closed {
@@ -150,7 +166,7 @@ aside.admin-sidebar {
 }
 
 .laundry-app {
-  color: #6e8a94;
+  color: #fff;
 }
 
 .font-alfasseh {
@@ -175,7 +191,7 @@ aside.admin-sidebar {
   font-size: 14px !important;
   margin-left: 13px;
   font-size: 17px;
-  color: #6e8a94;
+  color: #fff;
 }
 
 .form-control {
@@ -202,7 +218,7 @@ aside.admin-sidebar {
 
 .notification-corner {
   position: absolute;
-  top: auto;
+  top: 0px;
   right: -0px;
   border-radius: 50%;
   width: 100%;
@@ -320,14 +336,14 @@ aside.admin-sidebar {
 .avatar {
   width: 35px;
   height: 33px;
-  background-color: #eef2f7;
+  background-color: #4169ff;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-weight: 600;
-  color: #6b778c;
-  font-size: 12px;
+  color: #fff;
+  font-size: 11px;
 }
 
 .badge {
@@ -544,7 +560,7 @@ aside.admin-sidebar {
 }
 
 .caller-box {
-  background-color: #7a7a7a;
+  background-color: #4c66e8;
   padding: 4.5px 10px;
   color: #fff;
   border-radius: 10px;
@@ -973,4 +989,27 @@ aside.admin-sidebar {
   top: 38px;
   cursor: pointer;
   color: #6c757d;
+}
+
+.icons-color {
+  color: #6c757d;
+  cursor: pointer;
+}
+
+.icons-color:hover {
+  color: #0d6efd;
+}
+
+.icons-color1 {
+  color: #6c757d;
+  cursor: pointer;
+}
+
+.icons-color1:hover {
+  color: #dc3545;
+}
+
+.custom-name-change {
+  font-size: 15px;
+  font-weight: 600;
 }

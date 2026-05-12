@@ -9,16 +9,19 @@ import {
   faBell,
   faCalendar,
   faDownload,
+  faEdit,
   faEye,
   faEyeSlash,
   faFile,
   faList,
+  faTrash,
 } from "@fortawesome/free-solid-svg-icons";
+import { ToastContainer, toast } from "react-toastify";
 
 function Customers() {
   const API_URL = import.meta.env.VITE_API_URL;
-  const token = localStorage.getItem("adminToken");
 
+  const token = localStorage.getItem("adminToken");
   const [showPassword, setShowPassword] = useState(false);
   const [search, setSearch] = useState("");
 
@@ -29,19 +32,32 @@ function Customers() {
   };
 
   const [customers, setCustomers] = useState([]);
+  const [service, setService] = useState([]);
 
   useEffect(() => {
     const allData = async () => {
       try {
-        const response = await axios.get(`${API_URL}/allcustomers`, {
-          headers: authHeader(),
-        });
+        const [serviceRes, customersRes] = await Promise.allSettled([
+          axios.get(`${API_URL}/allservices`, {
+            headers: authHeader(),
+          }),
+          axios.get(`${API_URL}/allcustomers`, {
+            headers: authHeader(),
+          }),
+        ]);
 
-        setCustomers(response.data.result);
+        if (serviceRes.status === "fulfilled") {
+          setService(serviceRes.value.data.result);
+        }
+
+        if (customersRes.status === "fulfilled") {
+          setCustomers(customersRes.value.data.result);
+        }
       } catch (error) {
-        console.error("error", error);
+        console.error(error);
       }
     };
+
     allData();
   }, []);
 
@@ -55,7 +71,7 @@ function Customers() {
     );
   });
 
-  const itemsPerPage = 11;
+  const itemsPerPage = 14;
   const totalPages = Math.ceil(filteredCustomers.length / itemsPerPage) || 1;
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
@@ -66,6 +82,27 @@ function Customers() {
       setCurrentPage(1);
     }
   }, [filteredCustomers]);
+
+  const deleteData = async (id) => {
+    const confirmDelete = window.confirm(
+      "Are you sure you want to delete this customer?",
+    );
+
+    if (!confirmDelete) return;
+
+    try {
+      await axios.delete(`${API_URL}/customersdelete/${id}`, {
+        headers: authHeader(),
+      });
+
+      setCustomers((prev) => prev.filter((item) => item.id !== id));
+
+      toast.success("Customer deleted successfully");
+    } catch (error) {
+      console.error(error);
+      toast.error("Failed to delete customer");
+    }
+  };
 
   return (
     <div className="content-wrapper">
@@ -83,7 +120,7 @@ function Customers() {
                 <input
                   type="text"
                   className="form-control sector-wise"
-                  placeholder="Search customers, calls, agents..."
+                  placeholder="Search Customers name, phone..."
                   style={{ height: "40px" }}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
@@ -111,7 +148,9 @@ function Customers() {
           </div>
 
           <div>
-            <Link className="btn user-added-btn">+ Add Customer</Link>
+            <Link className="btn user-added-btn" to="/admin/customers/create">
+              + Add Customer
+            </Link>
           </div>
         </div>
 
@@ -129,7 +168,7 @@ function Customers() {
                   <div className="d-flex justify-content-end me-2 gap-1">
                     <div>
                       <select className="form-select sector-wise">
-                        <option value="">All Services</option>
+                        <option value="">All Service</option>
                         <option value="Hajj">Hajj</option>
                         <option value="Umrah">Umrah</option>
                         <option value="Packages">Packages</option>
@@ -139,12 +178,18 @@ function Customers() {
 
                     <div>
                       <select className="form-select sector-wise">
-                        <option value="">All Statuses</option>
-                        <option value="Converted">Converted</option>
-                        <option value="Follow-up">Follow-up</option>
-                        <option value="Interested">Interested</option>
-                        <option value="Not Interested">Not Interested</option>
-                        <option value="New">New</option>
+                        <option>All Status</option>
+                        {Array.isArray(service) ? (
+                          service
+                            .filter((item) => item.status === "Active")
+                            .map((item) => (
+                              <option key={item.id} value={item.service_name}>
+                                {item.service_name}
+                              </option>
+                            ))
+                        ) : (
+                          <option disabled>No services found</option>
+                        )}
                       </select>
                     </div>
 
@@ -174,6 +219,7 @@ function Customers() {
                           <th>SERVICE</th>
                           <th>STATUS</th>
                           <th>CALLER</th>
+                          <th>ACT</th>
                           <th></th>
                         </tr>
                       </thead>
@@ -185,17 +231,21 @@ function Customers() {
                               <td>{index + 1}</td>
 
                               <td>
-                                <span className="d-flex flex-row align-items-center fw-bold">
-                                  <div className="avatar me-2 border">
-                                    {item.name
-                                      .split(" ")
-                                      .map((word) => word[0])
-                                      .join("")
-                                      .toUpperCase()}
-                                  </div>
-
-                                  {item.name || "--"}
-                                </span>
+                                <Link
+                                  className="text-decoration-none text-dark"
+                                  to={`/admin/customers/edit/${item.id}`}
+                                >
+                                  <span className="d-flex flex-row align-items-center fw-bold">
+                                    <div className="avatar me-2 border">
+                                      {item.name
+                                        .split(" ")
+                                        .map((word) => word[0])
+                                        .join("")
+                                        .toUpperCase()}
+                                    </div>
+                                    {item.name || "--"}
+                                  </span>
+                                </Link>
                               </td>
 
                               <td>
@@ -224,6 +274,28 @@ function Customers() {
                               </td>
 
                               <td>{item.caller || "--"}</td>
+
+                              <td className="text-start">
+                                <span className="d-flex flex-row flex-nowrap">
+                                  <Link
+                                    to={`/admin/customers/edit/${item.id}`}
+                                    title="Edit"
+                                  >
+                                    <FontAwesomeIcon
+                                      icon={faEdit}
+                                      className="icons-color"
+                                    />
+                                  </Link>
+
+                                  <span title="Delete">
+                                    <FontAwesomeIcon
+                                      icon={faTrash}
+                                      className="icons-color1 ps-2"
+                                      onClick={() => deleteData(item.id)}
+                                    />
+                                  </span>
+                                </span>
+                              </td>
 
                               <td className="view-right">
                                 <span className="d-flex flex-row align-items-center">
@@ -291,6 +363,8 @@ function Customers() {
           </div>
         </div>
       </div>
+
+      <ToastContainer position="bottom-right" autoClose="1500" />
     </div>
   );
 }

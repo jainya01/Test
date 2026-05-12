@@ -169,108 +169,6 @@ router.put("/adminupdate/:id", authenticate, async (req, res) => {
   }
 });
 
-router.post(
-  "/upload-stock",
-  authenticate,
-  upload.single("file"),
-  async (req, res) => {
-    try {
-      if (!req.file) {
-        return res.status(400).json({
-          error: "No file uploaded",
-        });
-      }
-
-      const uploadsDir = path.resolve("uploads");
-      fs.readdirSync(uploadsDir).forEach((file) => {
-        const fileExt = path.extname(file).toLowerCase();
-        if (file !== req.file.filename && [".xlsx", ".csv"].includes(fileExt)) {
-          fs.unlinkSync(path.join(uploadsDir, file));
-        }
-      });
-
-      const filePath = path.join(uploadsDir, req.file.filename);
-      const ext = path.extname(req.file.originalname).toLowerCase();
-      let values = [];
-
-      if (ext === ".xlsx") {
-        const workbook = new ExcelJS.Workbook();
-        await workbook.xlsx.readFile(filePath);
-        workbook.worksheets[0].eachRow(
-          { includeEmpty: false },
-          (row, rowNumber) => {
-            if (rowNumber === 1) return;
-            const name = row.getCell(2).value;
-            const phone = row.getCell(3).value;
-            if (!name || !phone) return;
-            values.push([
-              String(name).trim(),
-              String(phone).replace(/\D/g, "").trim(),
-              row.getCell(4).value ? String(row.getCell(4).value).trim() : null,
-              row.getCell(5).value ? String(row.getCell(5).value).trim() : null,
-            ]);
-          },
-        );
-      } else if (ext === ".csv") {
-        const rows = await new Promise((resolve, reject) => {
-          const data = [];
-
-          fs.createReadStream(filePath)
-            .pipe(csvParser())
-            .on("data", (row) => data.push(row))
-            .on("end", () => resolve(data))
-            .on("error", reject);
-        });
-
-        rows.forEach((row) => {
-          const name = row.Name || row.name;
-          const phone = row.Phone || row.phone;
-          const city = row.City || row.city;
-          const service = row.Source || row.service;
-
-          if (!name || !phone) return;
-
-          values.push([
-            String(name).trim(),
-            String(phone).replace(/\D/g, "").trim(),
-            city ? String(city).trim() : null,
-            service ? String(service).trim() : null,
-          ]);
-        });
-      } else {
-        return res.status(400).json({
-          error: "Only .xlsx and .csv files are allowed",
-        });
-      }
-
-      if (!values.length) {
-        return res.status(400).json({
-          error: "No valid rows found",
-        });
-      }
-
-      await pool.query(
-        `INSERT INTO customers (name, phone, city, service) VALUES ?`,
-        [values],
-      );
-
-      return res.json({
-        success: true,
-        message: "Bulk upload successfully",
-        rowsInserted: values.length,
-        file: req.file.filename,
-      });
-    } catch (err) {
-      console.error("UPLOAD ERROR:", err);
-
-      return res.status(500).json({
-        error: "Upload failed",
-        details: err.message,
-      });
-    }
-  },
-);
-
 router.get("/allcustomers", authenticate, async (req, res) => {
   try {
     const SQL =
@@ -318,7 +216,7 @@ router.post("/callerlogin", async (req, res) => {
     const token = jwt.sign(
       { id: caller.id, email: caller.email, role: caller.role },
       process.env.JWT_SECRET,
-      { expiresIn: "6h" },
+      { expiresIn: "12h" },
     );
 
     res.status(200).json({
@@ -425,6 +323,321 @@ router.get("/somecallers/:id", authenticate, async (req, res) => {
     return res.status(200).json({
       message: "Data fetched successfully",
       data: result,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to load data",
+    });
+  }
+});
+
+// services
+
+router.post("/servicespost", authenticate, async (req, res) => {
+  try {
+    const { service_name, service_code, price, status, notes } = req.body;
+    if (!service_name || !service_code || !price || !status) {
+      return res.status(400).json({ message: "All fields required" });
+    }
+
+    await pool.execute(
+      "INSERT INTO services (service_name, service_code, price, status, notes) VALUES (?, ?, ?, ?, ?)",
+      [service_name, service_code, price, status, notes],
+    );
+
+    res.status(201).json({ message: "Services created" });
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.put("/serviceupdate/:id", authenticate, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { service_name, service_code, price, status, notes } = req.body;
+
+    const query = `
+      UPDATE services 
+      SET service_name=?, service_code=?, price=?, status=?, notes=?
+      WHERE id=?
+    `;
+
+    await pool.execute(query, [
+      service_name,
+      service_code,
+      price,
+      status,
+      notes,
+      id,
+    ]);
+
+    res.json({ message: "Service updated successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.delete("/servicesdelete/:id", authenticate, async (req, res) => {
+  try {
+    const { id } = req.params;
+    await pool.execute("DELETE FROM services WHERE id = ?", [id]);
+    res.status(200).json({
+      message: "Service deleted successfully",
+    });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
+router.get("/allservices", authenticate, async (req, res) => {
+  try {
+    const SQL =
+      "SELECT id, service_name, service_code, price, status, notes FROM services ORDER BY id DESC LIMIT 20";
+    const [result] = await pool.execute(SQL);
+    return res.status(200).json({
+      message: "Data fetched successfully",
+      result,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to load data",
+    });
+  }
+});
+
+router.get("/someservices/:id", authenticate, async (req, res) => {
+  const { id } = req.params;
+  try {
+    const SQL =
+      "SELECT id, service_name, service_code, price, status, notes FROM services WHERE id = ?";
+    const [result] = await pool.execute(SQL, [id]);
+    return res.status(200).json({
+      message: "Data fetched successfully",
+      result,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      message: "Failed to load data",
+    });
+  }
+});
+
+// customers
+
+router.post(
+  "/upload-stock",
+  authenticate,
+  upload.single("file"),
+  async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({
+          error: "No file uploaded",
+        });
+      }
+
+      const uploadsDir = path.resolve("uploads");
+      fs.readdirSync(uploadsDir).forEach((file) => {
+        const fileExt = path.extname(file).toLowerCase();
+        if (file !== req.file.filename && [".xlsx", ".csv"].includes(fileExt)) {
+          fs.unlinkSync(path.join(uploadsDir, file));
+        }
+      });
+
+      const filePath = path.join(uploadsDir, req.file.filename);
+      const ext = path.extname(req.file.originalname).toLowerCase();
+      let values = [];
+
+      if (ext === ".xlsx") {
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.readFile(filePath);
+        workbook.worksheets[0].eachRow(
+          { includeEmpty: false },
+          (row, rowNumber) => {
+            if (rowNumber === 1) return;
+            const name = row.getCell(2).value;
+            const phone = row.getCell(3).value;
+            if (!name || !phone) return;
+            values.push([
+              String(name).trim(),
+              String(phone).replace(/\D/g, "").trim(),
+              row.getCell(4).value ? String(row.getCell(4).value).trim() : null,
+              row.getCell(5).value ? String(row.getCell(5).value).trim() : null,
+            ]);
+          },
+        );
+      } else if (ext === ".csv") {
+        const rows = await new Promise((resolve, reject) => {
+          const data = [];
+
+          fs.createReadStream(filePath)
+            .pipe(csvParser())
+            .on("data", (row) => data.push(row))
+            .on("end", () => resolve(data))
+            .on("error", reject);
+        });
+
+        rows.forEach((row) => {
+          const name = row.Name || row.name;
+          const phone = row.Phone || row.phone;
+          const city = row.City || row.city;
+          const service = row.Source || row.service;
+
+          if (!name || !phone) return;
+
+          values.push([
+            String(name).trim(),
+            String(phone).replace(/\D/g, "").trim(),
+            city ? String(city).trim() : null,
+            service ? String(service).trim() : null,
+          ]);
+        });
+      } else {
+        return res.status(400).json({
+          error: "Only .xlsx and .csv files are allowed",
+        });
+      }
+
+      if (!values.length) {
+        return res.status(400).json({
+          error: "No valid rows found",
+        });
+      }
+
+      await pool.query(
+        `INSERT INTO customers (name, phone, city, service) VALUES ?`,
+        [values],
+      );
+
+      return res.json({
+        success: true,
+        message: "Bulk upload successfully",
+        rowsInserted: values.length,
+        file: req.file.filename,
+      });
+    } catch (err) {
+      console.error("UPLOAD ERROR:", err);
+
+      return res.status(500).json({
+        error: "Upload failed",
+        details: err.message,
+      });
+    }
+  },
+);
+
+router.post("/customerspost", authenticate, async (req, res) => {
+  try {
+    const { name, phone, city, service, status, caller, notes } = req.body;
+
+    if (!name || !phone || !city || !service || !status || !caller) {
+      return res.status(400).json({
+        message: "All required fields are required",
+      });
+    }
+
+    const sql = `
+      INSERT INTO customers
+      (
+        name,
+        phone,
+        city,
+        service,
+        status,
+        caller,
+        notes
+      )
+      VALUES (?, ?, ?, ?, ?, ?, ?)
+    `;
+
+    const [result] = await pool.execute(sql, [
+      name,
+      phone,
+      city,
+      service,
+      status,
+      caller,
+      notes || "",
+    ]);
+
+    res.status(201).json({
+      success: true,
+      message: "Customer created successfully",
+      customerId: result.insertId,
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+});
+
+router.delete("/customersdelete/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    await pool.execute("DELETE FROM customers WHERE id = ?", [id]);
+
+    res.status(200).json({
+      success: true,
+      message: "Customer deleted successfully",
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+});
+
+router.put("/customersupdate/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const { name, phone, city, service, status, caller, notes } = req.body;
+
+    await pool.execute(
+      `UPDATE customers 
+       SET 
+         name = ?, 
+         phone = ?, 
+         city = ?, 
+         service = ?, 
+         status = ?, 
+         caller = ?, 
+         notes = ?
+       WHERE id = ?`,
+      [name, phone, city, service, status, caller, notes, id],
+    );
+
+    res.status(200).json({
+      success: true,
+      message: "Customer updated successfully",
+    });
+  } catch (error) {
+    console.error(error);
+
+    res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+});
+
+router.get("/somecustomers/:id", authenticate, async (req, res) => {
+  const { id } = req.params;
+  try {
+    const SQL =
+      "SELECT id, name, phone, city, service, status, caller, notes FROM customers WHERE id = ?";
+    const [result] = await pool.execute(SQL, [id]);
+    return res.status(200).json({
+      message: "Data fetched successfully",
+      result,
     });
   } catch (error) {
     return res.status(500).json({

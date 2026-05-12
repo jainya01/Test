@@ -2,64 +2,48 @@ import { useEffect, useState } from "react";
 import { authHeader } from "../utils/authHeader";
 import "../App.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faBell,
-  faEye,
-  faEyeSlash,
-  faList,
-} from "@fortawesome/free-solid-svg-icons";
+import { faBell, faList } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 
-function CallersCreate() {
+function ServicesCreate() {
   const API_URL = import.meta.env.VITE_API_URL;
+
   const navigate = useNavigate();
 
-  const [showPassword, setShowPassword] = useState(false);
-
-  const [call, setCall] = useState({
-    fullname: "",
-    email: "",
-    password: "",
+  const [service, setService] = useState({
+    service_name: "",
+    service_code: "",
+    price: "",
     status: "",
     notes: "",
   });
 
-  const { fullname, email, password, status, notes } = call;
+  const { service_name, service_code, price, status, notes } = service;
 
   const [errors, setErrors] = useState({});
 
   const validateForm = () => {
     let newErrors = {};
 
-    if (!fullname.trim()) {
-      newErrors.fullname = "Full name is required";
+    if (!service_name.trim()) {
+      newErrors.service_name = "Service name is required";
     }
 
-    if (!email.trim()) {
-      newErrors.email = "Email is required";
+    if (!service_code.trim()) {
+      newErrors.service_code = "Service code is required";
     }
 
-    if (!password.trim()) {
-      newErrors.password = "Password is required";
+    if (!price.trim()) {
+      newErrors.price = "Price is required";
     }
 
     if (!status) {
       newErrors.status = "Status is required";
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (email && !emailRegex.test(email)) {
-      newErrors.email = "Invalid email format";
-    }
-
-    if (password && password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters";
-    }
-
     setErrors(newErrors);
-
     return Object.keys(newErrors).length === 0;
   };
 
@@ -67,27 +51,26 @@ function CallersCreate() {
     e.preventDefault();
 
     const isValid = validateForm();
-
     if (!isValid) return;
 
     try {
-      await axios.post(`${API_URL}/callerspost`, call, {
+      await axios.post(`${API_URL}/servicespost`, service, {
         headers: authHeader(),
       });
 
-      toast.success("Caller created successfully");
+      toast.success("Service created successfully");
 
       setTimeout(() => {
-        navigate("/admin/callers");
+        navigate("/admin/services");
       }, 1000);
     } catch (error) {
-      toast.error("Failed to add caller");
+      toast.error("Failed to add service");
     }
   };
 
   const onInputChange = (e) => {
-    setCall({
-      ...call,
+    setService({
+      ...service,
       [e.target.name]: e.target.value,
     });
   };
@@ -128,79 +111,67 @@ function CallersCreate() {
         <div className="row g-2 mt-3 d-flex justify-content-center">
           <div className="col-lg-6 col-12">
             <div className="card p-0 d-flex justify-content-center align-items-center">
-              <h5 className="mt-3 mb-0">Create a Caller</h5>
+              <h5 className="mt-3 mb-0">Create a Service</h5>
               <hr className="border border-dark w-100 mt-3" />
 
               <form onSubmit={handleFormSubmit}>
                 <div className="row g-3 px-3 py-2">
                   <div className="col-12">
                     <label className="form-label">
-                      Name <span className="text-danger">*</span>
+                      Service Name <span className="text-danger">*</span>
                     </label>
                     <input
                       type="text"
                       className="form-control custom-text mb-1"
-                      placeholder="Enter full name"
-                      name="fullname"
-                      value={fullname}
+                      placeholder="Enter service name"
+                      name="service_name"
+                      value={service_name}
                       onChange={onInputChange}
                       required
                     />
-                    {errors.fullname && (
+                    {errors.service_name && (
                       <small className="text-danger mt-1">
-                        {errors.fullname}
+                        {errors.service_name}
                       </small>
                     )}
                   </div>
 
                   <div className="col-12">
                     <label className="form-label">
-                      Email <span className="text-danger">*</span>
+                      Service Code <span className="text-danger">*</span>
                     </label>
                     <input
-                      type="email"
+                      type="text"
                       className="form-control custom-text mb-1"
-                      placeholder="Enter email"
-                      name="email"
-                      value={email}
+                      placeholder="Enter status code"
+                      name="service_code"
+                      value={service_code}
                       onChange={onInputChange}
                       required
                     />
-                    {errors.email && (
-                      <small className="text-danger mt-1">{errors.email}</small>
+                    {errors.service_code && (
+                      <small className="text-danger mt-1">
+                        {errors.service_code}
+                      </small>
                     )}
                   </div>
 
-                  <div className="position-relative col-12">
+                  <div className="col-12">
                     <label className="form-label">
-                      Password <span className="text-danger">*</span>
+                      Price <span className="text-danger">*</span>
                     </label>
-
                     <input
-                      type={showPassword ? "text" : "password"}
-                      className="form-control custom-text pe-5"
-                      placeholder="Enter Password"
-                      name="password"
-                      value={password}
+                      type="number"
+                      className="form-control custom-text mb-1"
+                      placeholder="Price"
+                      name="price"
+                      value={price}
                       onChange={onInputChange}
                       required
                     />
-
-                    {errors.password && (
-                      <small className="text-danger mt-1">
-                        {errors.password}
-                      </small>
+                    {errors.price && (
+                      <small className="text-danger mt-1">{errors.price}</small>
                     )}
-
-                    <span
-                      className="eye-login1"
-                      onClick={() => setShowPassword(!showPassword)}
-                    >
-                      <FontAwesomeIcon
-                        icon={showPassword ? faEyeSlash : faEye}
-                        className="me-1"
-                      />
-                    </span>
                   </div>
 
                   <div className="col-12">
@@ -227,7 +198,7 @@ function CallersCreate() {
                   </div>
 
                   <div className="col-12">
-                    <label className="form-label">Notes</label>
+                    <label className="form-label">Description</label>
                     <textarea
                       className="form-control py-2"
                       placeholder="Description..."
@@ -246,7 +217,7 @@ function CallersCreate() {
                       Submit
                     </button>
 
-                    <Link className="mt-2 text-success" to="/admin/callers">
+                    <Link className="mt-2 text-success" to="/admin/services">
                       Back
                     </Link>
                   </div>
@@ -262,4 +233,4 @@ function CallersCreate() {
   );
 }
 
-export default CallersCreate;
+export default ServicesCreate;

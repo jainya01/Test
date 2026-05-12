@@ -23,6 +23,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { useEffect, useState } from "react";
+import axios from "axios";
 
 function HomePage() {
   const API_URL = import.meta.env.VITE_API_URL;
@@ -82,6 +83,30 @@ function HomePage() {
     { week: "W3", calls: 280, conversions: 75 },
     { week: "W4", calls: 350, conversions: 95 },
   ];
+
+  const [service, setService] = useState([]);
+
+  useEffect(() => {
+    const allData = async () => {
+      try {
+        const [serviceRes] = await Promise.allSettled([
+          axios.get(`${API_URL}/allservices`, {
+            headers: authHeader(),
+          }),
+        ]);
+
+        if (serviceRes.status === "fulfilled") {
+          setService(serviceRes.value.data.result);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    allData();
+  }, []);
+
+  
 
   return (
     <>
@@ -156,9 +181,17 @@ function HomePage() {
 
               <select className="form-select sector-wise">
                 <option>All Services</option>
-                <option value="Converted">Converted</option>
-                <option value="Follow-up">Follow-up</option>
-                <option value="Interested">Interested</option>
+                {Array.isArray(service) ? (
+                  service
+                    .filter((item) => item.status === "Active")
+                    .map((item) => (
+                      <option key={item.id} value={item.service_name}>
+                        {item.service_name}
+                      </option>
+                    ))
+                ) : (
+                  <option disabled>No services found</option>
+                )}
               </select>
 
               <select className="form-select sector-wise">

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { authHeader } from "../utils/authHeader";
 import "../App.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,8 +11,11 @@ import {
   faPhoneVolume,
   faXmark,
 } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
 
-function CallerLeads() {
+function Leads() {
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const data = [
     {
       id: 1,
@@ -63,7 +66,6 @@ function CallerLeads() {
       service: "Umrah",
       status: "Converted",
     },
-
     {
       id: 7,
       name: "Imran Qureshi",
@@ -78,14 +80,13 @@ function CallerLeads() {
       service: "Misc",
       status: "New",
     },
-    {
-      id: 9,
-      name: "Hina Aslam",
-      phone: 9111111118,
-      service: "Umrah",
-      status: "Converted",
-    },
   ];
+
+  const [selectedUser, setSelectedUser] = useState(
+    Array.isArray(data) && data.length > 0 ? data[0] : null,
+  );
+
+  const hasUserData = selectedUser?.name && selectedUser?.phone;
 
   const [showPassword, setShowPassword] = useState(false);
 
@@ -94,6 +95,28 @@ function CallerLeads() {
     const phoneStr = phone.toString();
     return `${phoneStr.slice(0, 2)}xxxxxx${phoneStr.slice(-2)}`;
   };
+
+  const [service, setService] = useState([]);
+
+  useEffect(() => {
+    const allData = async () => {
+      try {
+        const [serviceRes] = await Promise.allSettled([
+          axios.get(`${API_URL}/allservices`, {
+            headers: authHeader(),
+          }),
+        ]);
+
+        if (serviceRes.status === "fulfilled") {
+          setService(serviceRes.value.data.result);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    allData();
+  }, []);
 
   return (
     <div className="content-wrapper">
@@ -132,7 +155,7 @@ function CallerLeads() {
           <div>
             <h5 className="fw-bold overview-dashboard">My Leads</h5>
             <p className="text-muted mb-md-0 overview-lead fw-bold">
-              Welcome Bilal -- 10 assigned leads today
+              Welcome Bilal -- {data.length} assigned leads today
             </p>
           </div>
         </div>
@@ -145,14 +168,17 @@ function CallerLeads() {
                   <h4 className="daily-performance fw-semibold mb-0">Queue</h4>
                 </div>
 
-                <div className="queue-scroll">
+                <div className="queue-scroll pointer-cursor">
                   {Array.isArray(data) && data.length > 0 ? (
                     data.map((item, index) => (
                       <div
                         className={`queue-item ${
-                          index === 0 ? "active-queue-item" : ""
+                          selectedUser?.phone === item.phone
+                            ? "active-queue-item"
+                            : ""
                         }`}
                         key={index}
+                        onClick={() => setSelectedUser(item)}
                       >
                         <div className="queue-left">
                           <h5 className="queue-name mb-1">{item.name}</h5>
@@ -197,50 +223,69 @@ function CallerLeads() {
                 <div className="card-body">
                   <div className="details-top d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
                     <div className="user-info-sec d-flex align-items-center gap-3">
-                      <div className="user-avatar">MA</div>
+                      <div className="user-avatar">
+                        {selectedUser?.name
+                          ?.split(" ")
+                          .map((word) => word[0])
+                          .join("")
+                          .toUpperCase() || "N/A"}
+                      </div>
 
                       <div>
-                        <h4 className="user-name mb-1">Mohammed Ali</h4>
-                        <p className="user-phone mb-0">98XXXXXX80</p>
+                        <h4 className="user-name mb-1">
+                          {selectedUser?.name || "No Name"}
+                        </h4>
+                        <p className="user-phone mb-0">
+                          {selectedUser?.phone
+                            ? showPassword
+                              ? selectedUser.phone
+                              : maskPhoneNumber(selectedUser.phone)
+                            : "No Phone"}
+                        </p>
                       </div>
                     </div>
 
-                    <button className="call-now-btn">
-                      <FontAwesomeIcon icon={faPhone} className="me-2" />
-                      Call now
-                    </button>
+                    {hasUserData && (
+                      <button className="call-now-btn">
+                        <FontAwesomeIcon icon={faPhone} className="me-2" />
+                        Call now
+                      </button>
+                    )}
                   </div>
 
-                  <div className="row g-3">
-                    <div className="col-6 col-sm-6 col-md-4">
-                      <button className="status-box answered-btn w-100">
-                        <FontAwesomeIcon icon={faPhoneVolume} /> Answered
-                      </button>
-                    </div>
+                  {hasUserData && (
+                    <div className="row g-3">
+                      <div className="col-6 col-sm-6 col-md-4">
+                        <button className="status-box answered-btn w-100">
+                          <FontAwesomeIcon icon={faPhoneVolume} /> Answered
+                        </button>
+                      </div>
 
-                    <div className="col-6 col-sm-6 col-md-4">
-                      <button className="status-box rejected-btn w-100">
-                        <FontAwesomeIcon icon={faPhoneSlash} /> Rejected
-                      </button>
-                    </div>
+                      <div className="col-6 col-sm-6 col-md-4">
+                        <button className="status-box rejected-btn w-100">
+                          <FontAwesomeIcon icon={faPhoneSlash} /> Rejected
+                        </button>
+                      </div>
 
-                    <div className="col-6 col-sm-6 col-md-4">
-                      <button className="status-box unanswered-btn w-100">
-                        <span className="fa-stack">
-                          <FontAwesomeIcon icon={faPhone} />
-                          <FontAwesomeIcon
-                            icon={faXmark}
-                            className="fa-stack-1x"
-                            style={{
-                              fontSize: "0.6em",
-                              transform: "translate(6px, -6px)",
-                            }}
-                          />
-                        </span>
-                        Unanswered
-                      </button>
+                      <div className="col-6 col-sm-6 col-md-4">
+                        <button className="status-box unanswered-btn w-100">
+                          <span className="fa-stack">
+                            <FontAwesomeIcon icon={faPhone} />
+                            <FontAwesomeIcon
+                              icon={faXmark}
+                              className="fa-stack-1x"
+                              style={{
+                                fontSize: "0.6em",
+                                transform: "translate(6px, -6px)",
+                              }}
+                            />
+                          </span>
+
+                          <span className="ms-0">Unanswered</span>
+                        </button>
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
               </div>
 
@@ -253,11 +298,20 @@ function CallerLeads() {
                       <label className="form-label custom-label">
                         Service Status
                       </label>
+
                       <select className="form-select custom-input">
-                        <option value="Interested">Interested</option>
-                        <option value="Not Interested">Not Interested</option>
-                        <option value="Converted">Converted</option>
-                        <option value="Follow-up">Follow-up</option>
+                        <option>All Services</option>
+                        {Array.isArray(service) ? (
+                          service
+                            .filter((item) => item.status === "Active")
+                            .map((item) => (
+                              <option key={item.id} value={item.service_name}>
+                                {item.service_name}
+                              </option>
+                            ))
+                        ) : (
+                          <option disabled>No services found</option>
+                        )}
                       </select>
                     </div>
 
@@ -325,4 +379,4 @@ function CallerLeads() {
   );
 }
 
-export default CallerLeads;
+export default Leads;

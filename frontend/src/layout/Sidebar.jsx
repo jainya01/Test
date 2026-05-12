@@ -12,6 +12,8 @@ import {
   faHeadset,
   faCog,
   faUpload,
+  faListCheck,
+  faList,
 } from "@fortawesome/free-solid-svg-icons";
 
 const ADMIN_LINKS = [
@@ -24,6 +26,7 @@ const ADMIN_LINKS = [
   { path: "/admin/customers", label: "Customers", icon: faUsers },
   { path: "/admin/callers", label: "Calling Executive", icon: faHeadset },
   { path: "/admin/reports", label: "Reports", icon: faChartColumn },
+  { path: "/admin/services", label: "Services", icon: faListCheck },
   { path: "/admin/leads", label: "My Leads", icon: faPhone },
   { path: "/admin/bulk-upload", label: "Bulk Upload", icon: faUpload },
   { path: "/admin/settings", label: "Settings", icon: faCog },
@@ -58,6 +61,12 @@ export default function Sidebar() {
     navigate("/", { replace: true });
   };
 
+  // const [collapsed, setCollapsed] = useState(false);
+
+  // const toggleDesktopSidebar = () => {
+  //   setCollapsed((prev) => !prev);
+  // };
+
   return (
     <>
       <nav className="navbar navbar-light bg-light d-md-none mobile-navbar-toggle">
@@ -82,7 +91,7 @@ export default function Sidebar() {
 
               <div className="d-flex flex-column ms-2 font-alfasseh">
                 <span className="text-dark fw-bold">CallTrack CRM</span>
-                <span className="laundry-app">Laraib Travels</span>
+                <span className="laundry-app text-dark">Laraib Travels</span>
               </div>
             </div>
           </Link>
@@ -107,7 +116,7 @@ export default function Sidebar() {
                 </div>
 
                 <div className="d-flex flex-column ms-2 font-alfasseh">
-                  <span className="text-dark fw-bold">CallTrack CRM</span>
+                  <span className="text-light fw-bold">CallTrack CRM</span>
                   <span className="laundry-app">Laraib Travels</span>
                 </div>
               </div>
@@ -119,7 +128,7 @@ export default function Sidebar() {
               onClick={closeSidebar}
               aria-label="Close sidebar"
             >
-              <FontAwesomeIcon icon={faXmark} className="text-dark" />
+              <FontAwesomeIcon icon={faXmark} className="text-light" />
             </button>
           </div>
 
@@ -177,7 +186,7 @@ export default function Sidebar() {
               </div>
 
               <div className="d-flex flex-column ms-2 font-alfasseh">
-                <span className="text-dark fw-bold">CallTrack CRM</span>
+                <span className="text-light fw-bold">CallTrack CRM</span>
                 <span className="laundry-app">Laraib Travels</span>
               </div>
             </div>
@@ -223,7 +232,9 @@ export default function Sidebar() {
         </div>
       </aside>
 
-      <div className="content-wrapper"></div>
+      {/* <div className="list-list-sidebar">
+        <FontAwesomeIcon icon={faList} />
+      </div> */}
     </>
   );
 }

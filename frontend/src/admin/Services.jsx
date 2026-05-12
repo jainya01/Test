@@ -6,19 +6,18 @@ import { authHeader } from "../utils/authHeader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBell,
-  faCalendar,
-  faDownload,
-  faEllipsis,
-  faFile,
+  faEdit,
   faList,
+  faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { ToastContainer, toast } from "react-toastify";
 
-function CallerExecutive() {
+function Services() {
   const API_URL = import.meta.env.VITE_API_URL;
 
   const [search, setSearch] = useState("");
   const [openMenuId, setOpenMenuId] = useState(null);
+  const [service, setService] = useState([]);
 
   useEffect(() => {
     const handleClick = () => setOpenMenuId(null);
@@ -26,15 +25,13 @@ function CallerExecutive() {
     return () => window.removeEventListener("click", handleClick);
   }, []);
 
-  const [caller, setCaller] = useState([]);
-
   useEffect(() => {
     const allData = async () => {
       try {
-        const response = await axios.get(`${API_URL}/allcallers`, {
+        const response = await axios.get(`${API_URL}/allservices`, {
           headers: authHeader(),
         });
-        setCaller(response.data.data);
+        setService(response.data.result);
       } catch (error) {
         console.error("error", error);
       }
@@ -44,43 +41,40 @@ function CallerExecutive() {
 
   const deleteData = async (id) => {
     const confirmDelete = window.confirm(
-      "Are you sure you want to delete this caller?",
+      "Are you sure you want to delete this service?",
     );
 
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`${API_URL}/callerdelete/${id}`, {
+      await axios.delete(`${API_URL}/servicesdelete/${id}`, {
         headers: authHeader(),
       });
-      setCaller((prev) => prev.filter((item) => item.id !== id));
-      toast.success("Caller deleted successfully");
+      setService((prev) => prev.filter((item) => item.id !== id));
+      toast.success("Service deleted successfully");
     } catch (error) {
-      toast.error("Failed to delete caller");
+      toast.error("Failed to delete service");
     }
   };
 
-  const filteredCaller = caller.filter((item) => {
+  const filteredServices = service.filter((item) => {
     const keyword = search.toLowerCase();
-    return (
-      item.fullname?.toLowerCase().includes(keyword) ||
-      item.email?.toLowerCase().includes(keyword)
-    );
+    return item.service_name?.toLowerCase().includes(keyword);
   });
 
-  const itemsPerPage = 11;
+  const itemsPerPage = 13;
   const [currentPage, setCurrentPage] = useState(1);
-
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const paginatedData = filteredCaller.slice(startIndex, endIndex);
-  const totalPages = Math.ceil(filteredCaller.length / itemsPerPage);
+
+  const paginatedData = filteredServices.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(filteredServices.length / itemsPerPage);
 
   useEffect(() => {
     if (currentPage > totalPages) {
       setCurrentPage(1);
     }
-  }, [filteredCaller]);
+  }, [filteredServices]);
 
   return (
     <div className="content-wrapper">
@@ -98,7 +92,7 @@ function CallerExecutive() {
                 <input
                   type="text"
                   className="form-control sector-wise"
-                  placeholder="Search caller name, email..."
+                  placeholder="Search customers, calls, agents..."
                   style={{ height: "40px" }}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
@@ -119,15 +113,17 @@ function CallerExecutive() {
       <div className="p-2 p-lg-3 mt-2">
         <div className="d-flex flex-row flex-wrap justify-content-between align-items-md-center mb-4">
           <div>
-            <h5 className="fw-bold overview-dashboard">Caller Management</h5>
+            <h5 className="fw-bold overview-dashboard">
+              Service Status Management
+            </h5>
             <p className="text-muted mb-md-0 fw-bold overview-lead">
-              Manage telecallers
+              Manage service status
             </p>
           </div>
 
           <div>
-            <Link className="btn user-added-btn" to="/admin/callers/create">
-              + Add Caller
+            <Link className="btn user-added-btn" to="/admin/services/create">
+              + Add service
             </Link>
           </div>
         </div>
@@ -142,11 +138,11 @@ function CallerExecutive() {
                       <thead className="table-secondary header-table text-nowrap">
                         <tr>
                           <th className="ps-2 py-2">S/N</th>
-                          <th>NAME</th>
-                          <th>EMAIL</th>
-                          <th>ROLE</th>
+                          <th>SERVICE NAME</th>
+                          <th>SERVICE CODE</th>
+                          <th>PRICE</th>
                           <th>STATUS</th>
-                          <th></th>
+                          <th>ACT</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -158,40 +154,20 @@ function CallerExecutive() {
 
                               <td>
                                 <Link
-                                  to={`/admin/callers/edit/${data.id}`}
+                                  to={`/admin/services/edit/${data.id}`}
                                   className="text-decoration-none text-dark"
                                 >
-                                  <span className="d-flex flex-row align-items-center fw-bold">
-                                    <div className="avatar me-2 border">
-                                      {data?.fullname
-                                        ? data.fullname
-                                            .split(" ")
-                                            .map((word) => word[0])
-                                            .join("")
-                                            .toUpperCase()
-                                        : ""}
-                                    </div>
-
-                                    <span className="short-name">
-                                      {data?.fullname || "N/A"}
-                                    </span>
+                                  <span className="short-name fw-bold">
+                                    {data?.service_name || "N/A"}
                                   </span>
                                 </Link>
                               </td>
 
-                              <td className="convert-call">{data.email}</td>
-
-                              <td>
-                                <span
-                                  className={
-                                    data.role === "Admin"
-                                      ? "admin-box"
-                                      : "caller-box"
-                                  }
-                                >
-                                  {data.role}
-                                </span>
+                              <td className="convert-call">
+                                {data.service_code}
                               </td>
+
+                              <td>{data.price}</td>
 
                               <td
                                 className={
@@ -213,46 +189,24 @@ function CallerExecutive() {
                                 </div>
                               </td>
 
-                              <td className="text-start lh-lg">
-                                <button
-                                  className="btn btn-sm border-0 p-0"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setOpenMenuId(
-                                      openMenuId === data.id ? null : data.id,
-                                    );
-                                  }}
+                              <td className="text-start">
+                                <Link
+                                  to={`/admin/services/edit/${data.id}`}
+                                  title="Edit"
                                 >
-                                  <FontAwesomeIcon icon={faEllipsis} />
-                                </button>
+                                  <FontAwesomeIcon
+                                    icon={faEdit}
+                                    className="icons-color"
+                                  />
+                                </Link>
 
-                                {openMenuId === data.id && (
-                                  <div
-                                    className="position-absolute bg-white border rounded shadow-sm px-3"
-                                    style={{
-                                      right: 0,
-                                      top: "25px",
-                                      zIndex: 1000,
-                                      width: "120px",
-                                    }}
-                                    onClick={(e) => e.stopPropagation()}
-                                  >
-                                    <button className="dropdown-item text-success">
-                                      Active
-                                    </button>
-
-                                    <button className="dropdown-item text-warning">
-                                      Inactive
-                                    </button>
-
-                                    <button
-                                      className="dropdown-item text-danger"
-                                      onClick={() => deleteData(data.id)}
-                                    >
-                                      Delete
-                                    </button>
-                                  </div>
-                                )}
+                                <span title="Delete">
+                                  <FontAwesomeIcon
+                                    icon={faTrash}
+                                    className="icons-color1 ps-2"
+                                    onClick={() => deleteData(data.id)}
+                                  />
+                                </span>
                               </td>
                             </tr>
                           ))
@@ -319,4 +273,4 @@ function CallerExecutive() {
   );
 }
 
-export default CallerExecutive;
+export default Services;
