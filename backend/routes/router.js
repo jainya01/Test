@@ -28,14 +28,15 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-router.post("/adminlogin", async (req, res) => {
-  try {
+router.post(
+  "/adminlogin",
+  asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res
-        .status(400)
-        .json({ message: "Email and password are required." });
+      const error = new Error("Email and password are required");
+      error.statusCode = 400;
+      throw error;
     }
 
     const [rows] = await pool.execute(
@@ -44,7 +45,9 @@ router.post("/adminlogin", async (req, res) => {
     );
 
     if (rows.length === 0) {
-      return res.status(401).json({ message: "Invalid email or password." });
+      const error = new Error("Invalid email or password");
+      error.statusCode = 401;
+      throw error;
     }
 
     const admin = rows[0];
@@ -52,73 +55,74 @@ router.post("/adminlogin", async (req, res) => {
     const isMatch = await bcrypt.compare(password, admin.password);
 
     if (!isMatch) {
-      return res.status(401).json({ message: "Invalid email or password." });
+      const error = new Error("Invalid email or password");
+      error.statusCode = 401;
+      throw error;
     }
 
-    if (!["admin"].includes(admin.role)) {
-      return res.status(403).json({
-        message: "You do not have permission to login as admin.",
-      });
+    if (admin.role !== "admin") {
+      const error = new Error("You are not allowed to login as admin");
+      error.statusCode = 403;
+      throw error;
     }
 
     const token = jwt.sign(
-      { id: admin.id, email: admin.email, role: admin.role },
+      {
+        id: admin.id,
+        email: admin.email,
+        role: admin.role,
+      },
       process.env.JWT_SECRET,
       { expiresIn: "9h" },
     );
 
-    res.status(200).json({
+    return res.status(200).json({
+      success: true,
       message: "Login successful",
       token,
       role: admin.role,
       id: admin.id,
       email: admin.email,
     });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error" });
-  }
-});
+  }),
+);
 
-router.post("/adminpost", async (req, res) => {
-  try {
+router.post(
+  "/adminpost",
+  asyncHandler(async (req, res) => {
     const { name, email, password } = req.body;
 
     if (!name || !email || !password) {
-      return res.status(400).json({
-        success: false,
-        message: "All fields are required",
-      });
+      const error = new Error("All fields are required");
+      error.statusCode = 400;
+      throw error;
     }
 
-    const checkSQL = "SELECT * FROM admin WHERE email = ?";
-    const [existingAdmin] = await pool.execute(checkSQL, [email]);
+    const [existingAdmin] = await pool.execute(
+      "SELECT id FROM admin WHERE email = ?",
+      [email],
+    );
 
     if (existingAdmin.length > 0) {
-      return res.status(400).json({
-        success: false,
-        message: "Email already exists",
-      });
+      const error = new Error("Email already exists");
+      error.statusCode = 409;
+      throw error;
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
-    const SQL = "INSERT INTO admin (name, email, password) VALUES (?, ?, ?)";
-    const [result] = await pool.execute(SQL, [name, email, hashedPassword]);
 
-    res.status(201).json({
+    const [result] = await pool.execute(
+      "INSERT INTO admin (name, email, password) VALUES (?, ?, ?)",
+      [name, email, hashedPassword],
+    );
+
+    return res.status(201).json({
       success: true,
       message: "Admin added successfully",
       insertedId: result.insertId,
     });
-  } catch (error) {
-    console.log(error);
-
-    res.status(500).json({
-      success: false,
-      message: error.message,
-    });
-  }
-});
+  }),
+);
 
 router.get(
   "/alladmindata",
@@ -143,36 +147,58 @@ router.get(
   }),
 );
 
-router.delete("/admindelete/:id", authenticate, async (req, res) => {
-  const { id } = req.params;
-  try {
-    const SQL = "DELETE FROM admin WHERE id=?";
+router.delete(
+  "/admindelete/:id",
+  authenticate,
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const SQL = "DELETE FROM admin WHERE id = ?";
     const [result] = await pool.execute(SQL, [id]);
-    return res
-      .status(200)
-      .json({ message: "data deleted successfully", result });
-  } catch (error) {
-    console.error("error", error);
-  }
-});
 
-router.put("/adminupdate/:id", authenticate, async (req, res) => {
-  try {
+    if (result.affectedRows <= 0) {
+      const error = new Error("Data delete failed or not found");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "data deleted successfully",
+      result,
+    });
+  }),
+);
+
+router.put(
+  "/adminupdate/:id",
+  authenticate,
+  asyncHandler(async (req, res) => {
     const { id } = req.params;
     const { email, password } = req.body;
+
     const hashedPassword = password ? await bcrypt.hash(password, 10) : null;
+
     const SQL = password
       ? "UPDATE admin SET email = ?, password = ? WHERE id = ?"
       : "UPDATE admin SET email = ? WHERE id = ?";
 
     const params = password ? [email, hashedPassword, id] : [email, id];
-    await pool.execute(SQL, params);
 
-    res.json({ success: true, message: "Updated successfully" });
-  } catch (error) {
-    res.status(500).json({ success: false, message: error.message });
-  }
-});
+    const [result] = await pool.execute(SQL, params);
+
+    if (result.affectedRows === 0) {
+      const error = new Error("Admin not found or not updated");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Updated successfully",
+      result,
+    });
+  }),
+);
 
 router.get(
   "/allcustomers",
@@ -192,6 +218,7 @@ router.get(
       FROM customers
       LEFT JOIN caller
       ON customers.caller_id = caller.id
+      ORDER BY customers.id DESC
     `;
 
     const [result] = await pool.execute(SQL);
@@ -210,14 +237,15 @@ router.get(
   }),
 );
 
-router.post("/callerlogin", async (req, res) => {
-  try {
+router.post(
+  "/callerlogin",
+  asyncHandler(async (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
-      return res
-        .status(400)
-        .json({ message: "Email and password are required." });
+      const error = new Error("Email and password are required");
+      error.statusCode = 400;
+      throw error;
     }
 
     const [rows] = await pool.execute(
@@ -226,7 +254,9 @@ router.post("/callerlogin", async (req, res) => {
     );
 
     if (rows.length === 0) {
-      return res.status(401).json({ message: "Invalid email or password." });
+      const error = new Error("Invalid email or password");
+      error.statusCode = 401;
+      throw error;
     }
 
     const caller = rows[0];
@@ -234,67 +264,91 @@ router.post("/callerlogin", async (req, res) => {
     const isMatch = await bcrypt.compare(password, caller.password);
 
     if (!isMatch) {
-      return res.status(401).json({ message: "Invalid email or password." });
+      const error = new Error("Invalid email or password");
+      error.statusCode = 401;
+      throw error;
     }
 
-    if (!["caller"].includes(caller.role)) {
-      return res.status(403).json({
-        message: "You do not have permission to login as caller.",
-      });
+    if (caller.role !== "caller") {
+      const error = new Error("You are not allowed to login");
+      error.statusCode = 403;
+      throw error;
     }
 
     const token = jwt.sign(
-      { id: caller.id, email: caller.email, role: caller.role },
+      {
+        id: caller.id,
+        email: caller.email,
+        role: caller.role,
+      },
       process.env.JWT_SECRET,
       { expiresIn: "12h" },
     );
 
-    res.status(200).json({
+    return res.status(200).json({
+      success: true,
       message: "Login successful",
       token,
       role: caller.role,
       id: caller.id,
       email: caller.email,
     });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error" });
-  }
-});
+  }),
+);
 
-router.post("/callerspost", authenticate, async (req, res) => {
-  try {
+router.post(
+  "/callerspost",
+  authenticate,
+  asyncHandler(async (req, res) => {
     const { fullname, email, password, status, notes } = req.body;
+
     if (!fullname || !email || !password || !status) {
-      return res.status(400).json({ message: "All fields required" });
+      const error = new Error("All fields are required");
+      error.statusCode = 400;
+      throw error;
+    }
+
+    const [existing] = await pool.execute(
+      "SELECT id FROM caller WHERE email = ?",
+      [email],
+    );
+
+    if (existing.length > 0) {
+      const error = new Error("Email already exists");
+      error.statusCode = 409;
+      throw error;
     }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    await pool.execute(
+    const [result] = await pool.execute(
       "INSERT INTO caller (fullname, email, password, status, notes) VALUES (?, ?, ?, ?, ?)",
       [fullname, email, hashedPassword, status, notes],
     );
 
-    res.status(201).json({ message: "Caller created" });
-  } catch (err) {
-    res.status(500).json({ message: "Server error" });
-  }
-});
+    return res.status(201).json({
+      success: true,
+      message: "Caller created successfully",
+      callerId: result.insertId,
+    });
+  }),
+);
 
-router.put("/callerupdate/:id", authenticate, async (req, res) => {
-  try {
+router.put(
+  "/callerupdate/:id",
+  authenticate,
+  asyncHandler(async (req, res) => {
     const { id } = req.params;
     const { fullname, email, status, password, notes } = req.body;
 
     if (!fullname || !email || !status) {
-      return res.status(400).json({
-        message: "All fields are required",
-      });
+      const error = new Error("All fields are required");
+      error.statusCode = 400;
+      throw error;
     }
 
     let query =
-      "UPDATE caller SET fullname = ?, email = ?, status = ?, notes=?";
+      "UPDATE caller SET fullname = ?, email = ?, status = ?, notes = ?";
     let values = [fullname, email, status, notes];
 
     if (password && password.trim() !== "") {
@@ -306,93 +360,151 @@ router.put("/callerupdate/:id", authenticate, async (req, res) => {
     query += " WHERE id = ?";
     values.push(id);
 
-    await pool.execute(query, values);
+    const [result] = await pool.execute(query, values);
 
-    res.status(200).json({
+    if (result.affectedRows === 0) {
+      const error = new Error("Caller not found or not updated");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    return res.status(200).json({
+      success: true,
       message: "Caller updated successfully",
+      result,
     });
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
-  }
-});
+  }),
+);
 
-router.delete("/callerdelete/:id", authenticate, async (req, res) => {
-  try {
+router.delete(
+  "/callerdelete/:id",
+  authenticate,
+  asyncHandler(async (req, res) => {
     const { id } = req.params;
-    await pool.execute("DELETE FROM caller WHERE id = ?", [id]);
-    res.status(200).json({
+
+    const [result] = await pool.execute("DELETE FROM caller WHERE id = ?", [
+      id,
+    ]);
+
+    if (result.affectedRows === 0) {
+      const error = new Error("Caller not found");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    return res.status(200).json({
+      success: true,
       message: "Caller deleted successfully",
     });
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
-  }
-});
+  }),
+);
 
-router.get("/allcallers", authenticate, async (req, res) => {
-  try {
+router.get(
+  "/allcallers",
+  authenticate,
+  asyncHandler(async (req, res) => {
     const SQL =
       "SELECT id, fullname, email, role, status, notes FROM caller ORDER BY id DESC LIMIT 20";
+
     const [result] = await pool.execute(SQL);
+
+    if (result.length === 0) {
+      const error = new Error("Caller not found");
+      error.statusCode = 404;
+      throw error;
+    }
+
     return res.status(200).json({
+      success: true,
       message: "Data fetched successfully",
       data: result,
     });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Failed to load data",
-    });
-  }
-});
+  }),
+);
 
-router.get("/somecallers/:id", authenticate, async (req, res) => {
-  const { id } = req.params;
-  try {
+router.get(
+  "/somecallers/:id",
+  authenticate,
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+
     const SQL =
       "SELECT id, fullname, email, role, status, notes FROM caller WHERE id = ?";
+
     const [result] = await pool.execute(SQL, [id]);
+
+    if (result.length === 0) {
+      const error = new Error("Caller not found");
+      error.statusCode = 404;
+      throw error;
+    }
+
     return res.status(200).json({
+      success: true,
       message: "Data fetched successfully",
-      data: result,
+      data: result[0],
     });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Failed to load data",
-    });
-  }
-});
+  }),
+);
 
 // services
 
-router.post("/servicespost", authenticate, async (req, res) => {
-  try {
+router.post(
+  "/servicespost",
+  authenticate,
+  asyncHandler(async (req, res) => {
     const { service_name, service_code, price, status, notes } = req.body;
+
     if (!service_name || !service_code || !price || !status) {
-      return res.status(400).json({ message: "All fields required" });
+      const error = new Error("All fields are required");
+      error.statusCode = 400;
+      throw error;
     }
 
-    await pool.execute(
+    const [existing] = await pool.execute(
+      "SELECT id FROM services WHERE service_code = ?",
+      [service_code],
+    );
+
+    if (existing.length > 0) {
+      const error = new Error("Service code already exists");
+      error.statusCode = 409;
+      throw error;
+    }
+
+    const [result] = await pool.execute(
       "INSERT INTO services (service_name, service_code, price, status, notes) VALUES (?, ?, ?, ?, ?)",
       [service_name, service_code, price, status, notes],
     );
 
-    res.status(201).json({ message: "Services created" });
-  } catch (err) {
-    res.status(500).json({ message: "Server error" });
-  }
-});
+    return res.status(201).json({
+      success: true,
+      message: "Service created successfully",
+      serviceId: result.insertId,
+    });
+  }),
+);
 
-router.put("/serviceupdate/:id", authenticate, async (req, res) => {
-  try {
+router.put(
+  "/serviceupdate/:id",
+  authenticate,
+  asyncHandler(async (req, res) => {
     const { id } = req.params;
     const { service_name, service_code, price, status, notes } = req.body;
 
+    if (!service_name || !service_code || !price || !status) {
+      const error = new Error("All fields are required");
+      error.statusCode = 400;
+      throw error;
+    }
+
     const query = `
       UPDATE services
-      SET service_name=?, service_code=?, price=?, status=?, notes=?
-      WHERE id=?
+      SET service_name = ?, service_code = ?, price = ?, status = ?, notes = ?
+      WHERE id = ?
     `;
 
-    await pool.execute(query, [
+    const [result] = await pool.execute(query, [
       service_name,
       service_code,
       price,
@@ -401,11 +513,19 @@ router.put("/serviceupdate/:id", authenticate, async (req, res) => {
       id,
     ]);
 
-    res.json({ message: "Service updated successfully" });
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
-  }
-});
+    if (result.affectedRows === 0) {
+      const error = new Error("Service not found or not updated");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Service updated successfully",
+      result,
+    });
+  }),
+);
 
 router.delete(
   "/servicesdelete/:id",
@@ -582,15 +702,14 @@ router.post(
   "/customerspost",
   authenticate,
   asyncHandler(async (req, res) => {
-    const { name, phone, city, service, status, notes } = req.body;
+    const { name, phone, city, service, notes } = req.body;
     const SQL =
-      "INSERT INTO customers(name, phone, city, service, status, notes) VALUES (?, ?, ?, ?, ?, ?)";
+      "INSERT INTO customers(name, phone, city, service, notes) VALUES (?, ?, ?, ?, ?)";
     const [result] = await pool.execute(SQL, [
       name,
       phone,
       city,
       service,
-      status,
       notes,
     ]);
 
@@ -635,28 +754,30 @@ router.put(
   authenticate,
   asyncHandler(async (req, res) => {
     const { id } = req.params;
-    const { name, phone, city, service, status, notes } = req.body;
+    const { name, phone, city, service, notes } = req.body;
+
     const SQL =
-      "UPDATE customers SET name = ?, phone = ?, city = ?, service = ?, status = ?, notes = ? WHERE id = ?";
+      "UPDATE customers SET name = ?, phone = ?, city = ?, service = ?, notes = ? WHERE id = ?";
+
     const [result] = await pool.execute(SQL, [
       name,
       phone,
       city,
       service,
-      status,
       notes,
       id,
     ]);
 
-    if (result.affectedRows <= 0) {
-      const error = new Error("data not update");
-      error.statusCode = 404;
-      throw error;
+    if (result.affectedRows === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "Data not found or not updated",
+      });
     }
 
     return res.status(200).json({
       success: true,
-      message: "data update successfully",
+      message: "Data updated successfully",
       result,
     });
   }),

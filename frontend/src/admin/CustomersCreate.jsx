@@ -16,31 +16,22 @@ function CustomersCreate() {
     phone: "",
     city: "",
     service: "",
-    status: "",
     notes: "",
   });
 
-  const { name, phone, city, service, status, notes } = customer;
+  const { name, phone, city, service, notes } = customer;
 
   const [errors, setErrors] = useState({});
-  const [servicesList, setServicesList] = useState([]);
   const [callersList, setCallersList] = useState([]);
 
   useEffect(() => {
     const allData = async () => {
       try {
-        const [serviceRes, callerRes] = await Promise.allSettled([
-          axios.get(`${API_URL}/allservices`, {
-            headers: authHeader(),
-          }),
+        const [callerRes] = await Promise.allSettled([
           axios.get(`${API_URL}/allCallers`, {
             headers: authHeader(),
           }),
         ]);
-
-        if (serviceRes.status === "fulfilled") {
-          setServicesList(serviceRes.value.data.result || []);
-        }
 
         if (callerRes.status === "fulfilled") {
           setCallersList(callerRes.value.data.data || []);
@@ -70,10 +61,6 @@ function CustomersCreate() {
 
     if (!service.trim()) {
       newErrors.service = "Service is required";
-    }
-
-    if (!status.trim()) {
-      newErrors.status = "Status is required";
     }
 
     setErrors(newErrors);
@@ -233,39 +220,6 @@ function CustomersCreate() {
 
                     {errors.service && (
                       <small className="text-danger">{errors.service}</small>
-                    )}
-                  </div>
-
-                  <div className="col-12">
-                    <label className="form-label">
-                      Status <span className="text-danger">*</span>
-                    </label>
-
-                    <select
-                      className="form-select custom-text"
-                      name="status"
-                      value={status}
-                      onChange={onInputChange}
-                      required
-                    >
-                      <option value="">Select Status</option>
-
-                      {Array.isArray(servicesList) &&
-                      servicesList.length > 0 ? (
-                        servicesList
-                          .filter((item) => item.status === "Active")
-                          .map((item) => (
-                            <option key={item.id} value={item.service_name}>
-                              {item.service_name}
-                            </option>
-                          ))
-                      ) : (
-                        <option disabled>No services found</option>
-                      )}
-                    </select>
-
-                    {errors.status && (
-                      <small className="text-danger">{errors.status}</small>
                     )}
                   </div>
 

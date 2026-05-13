@@ -2,7 +2,7 @@ import asyncHandler from "../config/asyncHandler.js";
 import pool from "../config/db.js";
 
 const assignCustomLeads = asyncHandler(async (req, res) => {
-  const limitPerCaller = 5;
+  const limitPerCaller = 50;
   const { callerIds } = req.body;
   let callers;
 
@@ -31,10 +31,10 @@ const assignCustomLeads = asyncHandler(async (req, res) => {
     const batch = customers.slice(index, index + limitPerCaller);
 
     for (const customer of batch) {
-      await pool.execute("UPDATE customers SET caller_id=? WHERE id=?", [
-        caller.id,
-        customer.id,
-      ]);
+      await pool.execute(
+        "UPDATE customers SET caller_id=?, assigned_at=NOW() WHERE id=?",
+        [caller.id, customer.id],
+      );
     }
 
     index += limitPerCaller;

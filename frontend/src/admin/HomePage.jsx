@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { authHeader } from "../utils/authHeader";
 import "../App.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -22,7 +23,6 @@ import {
   Legend,
   ResponsiveContainer,
 } from "recharts";
-import { useEffect, useState } from "react";
 import axios from "axios";
 
 function HomePage() {
@@ -106,8 +106,6 @@ function HomePage() {
     allData();
   }, []);
 
-  
-
   return (
     <>
       <div className="content-wrapper">
@@ -137,27 +135,6 @@ function HomePage() {
                 <FontAwesomeIcon icon={faBell} />
                 <span className="notification-corner bg-danger">0</span>
               </button>
-
-              <div className="d-none d-lg-flex align-items-center bg-light rounded p-1 pe-0 me-0">
-                {/* {admin?.name && (
-                  <div className="d-flex align-items-center justify-content-center rounded-circle me-2 bg-success text-white fw-bold custom-short">
-                    {admin.name
-                      .split(" ")
-                      .map((n) => n[0])
-                      .join("")
-                      .toUpperCase()}
-                  </div>
-                )} */}
-
-                <div className="d-flex flex-column">
-                  <span className="fw-semibold text-nowrap custom-shorts">
-                    {/* {admin?.name} */}
-                  </span>
-                  <small className="text-muted custom-shorts1">
-                    {/* {admin?.role} */}
-                  </small>
-                </div>
-              </div>
             </div>
           </div>
         </div>

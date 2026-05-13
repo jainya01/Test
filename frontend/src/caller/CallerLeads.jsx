@@ -16,72 +16,6 @@ import axios from "axios";
 function Leads() {
   const API_URL = import.meta.env.VITE_API_URL;
 
-  const data = [
-    {
-      id: 1,
-      name: "Mohammad Ali",
-      phone: 9111111110,
-      service: "Hajj",
-      status: "Follow-up",
-    },
-    {
-      id: 2,
-      name: "Fatima Sheikh",
-      phone: 9111111112,
-      service: "Umrah",
-      status: "Follow-up",
-    },
-    {
-      id: 3,
-      name: "Ahmed Raza",
-      phone: 9111111113,
-      service: "Umrah",
-      status: "New",
-    },
-    {
-      id: 4,
-      name: "Nadia Hassan",
-      phone: 9111111114,
-      service: "Misc",
-      status: "Interested",
-    },
-    {
-      id: 5,
-      name: "Nadia Hassan",
-      phone: 9111111115,
-      service: "Hajj",
-      status: "Follow-up",
-    },
-    {
-      id: 6,
-      name: "Yousuf Malik",
-      phone: 9111111116,
-      service: "Hajj",
-      status: "Not Interested",
-    },
-    {
-      id: 7,
-      name: "Hina Aslam",
-      phone: 9111111118,
-      service: "Umrah",
-      status: "Converted",
-    },
-    {
-      id: 7,
-      name: "Imran Qureshi",
-      phone: 9800000042,
-      service: "Packages",
-      status: "Follow-up",
-    },
-    {
-      id: 8,
-      name: "Sadia Noor",
-      phone: 9800000099,
-      service: "Misc",
-      status: "New",
-    },
-  ];
-
   const [showPassword, setShowPassword] = useState(false);
 
   const maskPhoneNumber = (phone) => {
@@ -193,52 +127,6 @@ function Leads() {
                 <div className="px-3 py-3">
                   <h4 className="daily-performance fw-semibold mb-0">Queue</h4>
                 </div>
-
-                {/* <div className="queue-scroll pointer-cursor">
-                  {Array.isArray(customers) && customers.length > 0 ? (
-                    customers.map((item, index) => (
-                      <div
-                        className={`queue-item ${
-                          selectedUser?.phone === item.phone
-                            ? "active-queue-item"
-                            : ""
-                        }`}
-                        key={index}
-                        onClick={() => setSelectedUser(item)}
-                      >
-                        <div className="queue-left">
-                          <h5 className="queue-name mb-1">{item.name}</h5>
-
-                          <p className="queue-phone mb-1">
-                            {showPassword
-                              ? item.phone
-                              : maskPhoneNumber(item.phone)}
-                          </p>
-
-                          <p className="queue-service mb-0">{item.service}</p>
-                        </div>
-
-                        <div>
-                          <span
-                            className={
-                              {
-                                "Follow-up": "follow-up cus-res",
-                                "Not Interested": "non-interested-cust cus-res",
-                                Interested: "interested-cust cus-res",
-                                New: "new-customer cus-res",
-                                Converted: "convert-status cus-res",
-                              }[item.status] || ""
-                            }
-                          >
-                            {item.status}
-                          </span>
-                        </div>
-                      </div>
-                    ))
-                  ) : (
-                    <div className="text-center py-4">no data available</div>
-                  )}
-                </div> */}
 
                 <div className="queue-scroll pointer-cursor">
                   {Array.isArray(customers) && customers.length > 0 ? (
