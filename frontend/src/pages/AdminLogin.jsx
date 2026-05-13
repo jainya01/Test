@@ -26,11 +26,10 @@ const AdminLogin = () => {
 
     try {
       const response = await axios.post(`${API_URL}/adminlogin`, admin);
-
-      const { token, role } = response.data;
-
+      const { token, role, id } = response.data;
       localStorage.setItem("adminToken", token);
       localStorage.setItem("role", role);
+      localStorage.setItem("id", id);
 
       navigate("/admin/dashboard", { replace: true });
     } catch (error) {
@@ -120,6 +119,7 @@ const AdminLogin = () => {
                     name="email"
                     value={email}
                     onChange={handleChange}
+                    autoComplete="username"
                     style={{ height: "42px" }}
                     required
                   />
@@ -128,6 +128,7 @@ const AdminLogin = () => {
 
               <div className="position-relative mb-4">
                 <label className="form-label">Password</label>
+
                 <input
                   type={showPassword ? "text" : "password"}
                   className="form-control pe-5"
@@ -135,6 +136,7 @@ const AdminLogin = () => {
                   name="password"
                   value={password}
                   onChange={handleChange}
+                  autoComplete="current-password"
                   style={{ height: "42px" }}
                   required
                 />

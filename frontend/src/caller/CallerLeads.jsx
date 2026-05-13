@@ -82,12 +82,6 @@ function Leads() {
     },
   ];
 
-  const [selectedUser, setSelectedUser] = useState(
-    Array.isArray(data) && data.length > 0 ? data[0] : null,
-  );
-
-  const hasUserData = selectedUser?.name && selectedUser?.phone;
-
   const [showPassword, setShowPassword] = useState(false);
 
   const maskPhoneNumber = (phone) => {
@@ -97,18 +91,38 @@ function Leads() {
   };
 
   const [service, setService] = useState([]);
+  const [customers, setCustomers] = useState([]);
 
   useEffect(() => {
     const allData = async () => {
       try {
-        const [serviceRes] = await Promise.allSettled([
+        const user = {
+          id: Number(localStorage.getItem("id")),
+          role: localStorage.getItem("role"),
+        };
+
+        const [serviceRes, customerRes] = await Promise.allSettled([
           axios.get(`${API_URL}/allservices`, {
+            headers: authHeader(),
+          }),
+
+          axios.get(`${API_URL}/allcustomers`, {
             headers: authHeader(),
           }),
         ]);
 
         if (serviceRes.status === "fulfilled") {
           setService(serviceRes.value.data.result);
+        }
+
+        if (customerRes.status === "fulfilled") {
+          let data = customerRes.value.data.result;
+
+          if (user?.role === "caller") {
+            data = data.filter((item) => item.caller_id === user.id);
+          }
+
+          setCustomers(data);
         }
       } catch (error) {
         console.error(error);
@@ -117,6 +131,18 @@ function Leads() {
 
     allData();
   }, []);
+
+  const [selectedUser, setSelectedUser] = useState(
+    Array.isArray(customers) && customers.length > 0 ? customers[0] : null,
+  );
+
+  const hasUserData = selectedUser?.name && selectedUser?.phone;
+
+  useEffect(() => {
+    if (customers.length > 0 && !selectedUser) {
+      setSelectedUser(customers[0]);
+    }
+  }, [customers]);
 
   return (
     <div className="content-wrapper">
@@ -155,7 +181,7 @@ function Leads() {
           <div>
             <h5 className="fw-bold overview-dashboard">My Leads</h5>
             <p className="text-muted mb-md-0 overview-lead fw-bold">
-              Welcome Bilal -- {data.length} assigned leads today
+              Welcome Bilal -- {customers.length} assigned leads today
             </p>
           </div>
         </div>
@@ -168,9 +194,55 @@ function Leads() {
                   <h4 className="daily-performance fw-semibold mb-0">Queue</h4>
                 </div>
 
+                {/* <div className="queue-scroll pointer-cursor">
+                  {Array.isArray(customers) && customers.length > 0 ? (
+                    customers.map((item, index) => (
+                      <div
+                        className={`queue-item ${
+                          selectedUser?.phone === item.phone
+                            ? "active-queue-item"
+                            : ""
+                        }`}
+                        key={index}
+                        onClick={() => setSelectedUser(item)}
+                      >
+                        <div className="queue-left">
+                          <h5 className="queue-name mb-1">{item.name}</h5>
+
+                          <p className="queue-phone mb-1">
+                            {showPassword
+                              ? item.phone
+                              : maskPhoneNumber(item.phone)}
+                          </p>
+
+                          <p className="queue-service mb-0">{item.service}</p>
+                        </div>
+
+                        <div>
+                          <span
+                            className={
+                              {
+                                "Follow-up": "follow-up cus-res",
+                                "Not Interested": "non-interested-cust cus-res",
+                                Interested: "interested-cust cus-res",
+                                New: "new-customer cus-res",
+                                Converted: "convert-status cus-res",
+                              }[item.status] || ""
+                            }
+                          >
+                            {item.status}
+                          </span>
+                        </div>
+                      </div>
+                    ))
+                  ) : (
+                    <div className="text-center py-4">no data available</div>
+                  )}
+                </div> */}
+
                 <div className="queue-scroll pointer-cursor">
-                  {Array.isArray(data) && data.length > 0 ? (
-                    data.map((item, index) => (
+                  {Array.isArray(customers) && customers.length > 0 ? (
+                    customers.map((item, index) => (
                       <div
                         className={`queue-item ${
                           selectedUser?.phone === item.phone

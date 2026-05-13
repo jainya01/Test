@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { authHeader } from "../utils/authHeader";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import "../App.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -15,6 +16,7 @@ import {
   faListCheck,
   faList,
 } from "@fortawesome/free-solid-svg-icons";
+import axios from "axios";
 
 const ADMIN_LINKS = [
   {
@@ -42,16 +44,14 @@ const CALLER_LINKS = [
 ];
 
 export default function Sidebar() {
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const navigate = useNavigate();
-
   const [isOpen, setIsOpen] = useState(false);
-
   const toggleSidebar = () => setIsOpen((s) => !s);
-
   const closeSidebar = () => setIsOpen(false);
 
   const role = localStorage.getItem("role");
-
   const navLinks = role === "admin" ? ADMIN_LINKS : CALLER_LINKS;
 
   const handleLogout = (e) => {
@@ -66,6 +66,71 @@ export default function Sidebar() {
   // const toggleDesktopSidebar = () => {
   //   setCollapsed((prev) => !prev);
   // };
+
+  const [admin, setAdmin] = useState([]);
+  const [caller, setCaller] = useState([]);
+  const [loggedUser, setLoggedUser] = useState(null);
+
+  useEffect(() => {
+    const allData = async () => {
+      try {
+        const [adminRes, callerRes] = await Promise.allSettled([
+          axios.get(`${API_URL}/alladmindata`, {
+            headers: authHeader(),
+          }),
+
+          axios.get(`${API_URL}/allcallers`, {
+            headers: authHeader(),
+          }),
+        ]);
+
+        if (adminRes.status === "fulfilled") {
+          setAdmin(adminRes.value.data.result || []);
+        }
+
+        if (callerRes.status === "fulfilled") {
+          setCaller(callerRes.value.data.data || []);
+        }
+      } catch (error) {
+        console.error("error", error);
+      }
+    };
+
+    allData();
+  }, []);
+
+  const handleLoggedUser = () => {
+    const role = localStorage.getItem("role");
+    const id = Number(localStorage.getItem("id"));
+
+    if (role === "admin") {
+      const findAdmin = admin.find((item) => Number(item.id) === id);
+
+      if (findAdmin) {
+        setLoggedUser({
+          name: findAdmin.name,
+          email: findAdmin.email,
+        });
+      }
+    }
+
+    if (role === "caller") {
+      const findCaller = caller.find((item) => Number(item.id) === id);
+
+      if (findCaller) {
+        setLoggedUser({
+          name: findCaller.fullname,
+          email: findCaller.email,
+        });
+      }
+    }
+  };
+
+  useEffect(() => {
+    if (admin.length > 0 || caller.length > 0) {
+      handleLoggedUser();
+    }
+  }, [admin, caller]);
 
   return (
     <>
@@ -157,15 +222,32 @@ export default function Sidebar() {
           <div className="mt-auto pt-0 mb-2">
             <hr className="mb-0 text-danger" />
 
-            <div
-              className="text-start mt-2 d-flex align-items-center logout-color ps-3 py-2"
-              onClick={handleLogout}
-            >
-              <FontAwesomeIcon
-                icon={faRightFromBracket}
-                className="fw-light me-2"
-              />
-              Logout
+            <div className="d-block d-flex align-items-center flex-row flex-nowrap justify-content-between rounded p-1 mt-2 w-100">
+              <div className="d-flex align-items-center">
+                <div className="d-flex align-items-center justify-content-center rounded-circle me-2 short-sidebar text-white fw-bold custom-short">
+                  {loggedUser?.name
+                    ? loggedUser.name.charAt(0).toUpperCase()
+                    : "U"}
+                </div>
+
+                <div className="d-flex flex-column">
+                  <span className="fw-semibold text-nowrap custom-shorts">
+                    {loggedUser?.name ?? "N/A"}
+                  </span>
+
+                  <small className="custom-shorts1">
+                    {loggedUser?.email ?? "N/A"}
+                  </small>
+                </div>
+              </div>
+
+              <div onClick={handleLogout}>
+                <FontAwesomeIcon
+                  icon={faRightFromBracket}
+                  className="logout-color"
+                  role="button"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -218,15 +300,32 @@ export default function Sidebar() {
           <div className="mt-auto pt-0 mb-2">
             <hr className="mb-0 text-danger" />
 
-            <div
-              className="text-start mt-2 d-flex align-items-center logout-color ps-3 py-2"
-              onClick={handleLogout}
-            >
-              <FontAwesomeIcon
-                icon={faRightFromBracket}
-                className="fw-light me-2"
-              />
-              Logout
+            <div className="d-none d-md-block d-lg-flex d-md-flex align-items-center justify-content-between rounded p-1 mt-2 w-100">
+              <div className="d-flex align-items-center">
+                <div className="d-flex align-items-center justify-content-center rounded-circle me-2 short-sidebar text-white fw-bold custom-short">
+                  {loggedUser?.name
+                    ? loggedUser.name.charAt(0).toUpperCase()
+                    : "U"}
+                </div>
+
+                <div className="d-flex flex-column">
+                  <span className="fw-semibold text-nowrap custom-shorts">
+                    {loggedUser?.name ?? "N/A"}
+                  </span>
+
+                  <small className="custom-shorts1">
+                    {loggedUser?.email ?? "N/A"}
+                  </small>
+                </div>
+              </div>
+
+              <div onClick={handleLogout}>
+                <FontAwesomeIcon
+                  icon={faRightFromBracket}
+                  className="logout-color"
+                  role="button"
+                />
+              </div>
             </div>
           </div>
         </div>

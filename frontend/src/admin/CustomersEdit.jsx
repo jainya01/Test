@@ -19,25 +19,19 @@ function CustomersEdit() {
     city: "",
     service: "",
     status: "",
-    caller: "",
     notes: "",
   });
 
-  const { name, phone, city, service, status, caller, notes } = customer;
+  const { name, phone, city, service, status, notes } = customer;
 
   const [errors, setErrors] = useState({});
   const [servicesList, setServicesList] = useState([]);
-  const [callersList, setCallersList] = useState([]);
 
   useEffect(() => {
     const allData = async () => {
       try {
-        const [serviceRes, callerRes, someRes] = await Promise.allSettled([
+        const [serviceRes, someRes] = await Promise.allSettled([
           axios.get(`${API_URL}/allservices`, {
-            headers: authHeader(),
-          }),
-
-          axios.get(`${API_URL}/allCallers`, {
             headers: authHeader(),
           }),
 
@@ -50,10 +44,6 @@ function CustomersEdit() {
           setServicesList(serviceRes.value.data.result || []);
         }
 
-        if (callerRes.status === "fulfilled") {
-          setCallersList(callerRes.value.data.data || []);
-        }
-
         if (someRes.status === "fulfilled") {
           const data = someRes.value.data.result[0];
           setCustomer({
@@ -62,7 +52,6 @@ function CustomersEdit() {
             city: data.city || "",
             service: data.service || "",
             status: data.status || "",
-            caller: data.caller || "",
             notes: data.notes || "",
           });
         }
@@ -102,10 +91,6 @@ function CustomersEdit() {
 
     if (!status.trim()) {
       newErrors.status = "Status is required";
-    }
-
-    if (!caller.trim()) {
-      newErrors.caller = "Caller is required";
     }
 
     setErrors(newErrors);
@@ -169,7 +154,7 @@ function CustomersEdit() {
 
       <div className="p-2 p-lg-3 mt-2">
         <div className="row g-2 mt-3 d-flex justify-content-center">
-          <div className="col-lg-6 col-12">
+          <div className="col-lg-6 col-12 col-md-12">
             <div className="card p-0 d-flex justify-content-center align-items-center">
               <h5 className="mt-3 mb-0">Edit Customer: {customer.name}</h5>
 
@@ -290,36 +275,6 @@ function CustomersEdit() {
 
                     {errors.status && (
                       <small className="text-danger">{errors.status}</small>
-                    )}
-                  </div>
-
-                  <div className="col-12">
-                    <label className="form-label">
-                      Caller <span className="text-danger">*</span>
-                    </label>
-
-                    <select
-                      className="form-select custom-text"
-                      name="caller"
-                      value={caller}
-                      onChange={onInputChange}
-                      required
-                    >
-                      <option value="">Select Caller</option>
-
-                      {Array.isArray(callersList) && callersList.length > 0 ? (
-                        callersList.map((item) => (
-                          <option key={item.id} value={item.fullname}>
-                            {item.fullname}
-                          </option>
-                        ))
-                      ) : (
-                        <option disabled>No callers found</option>
-                      )}
-                    </select>
-
-                    {errors.caller && (
-                      <small className="text-danger">{errors.caller}</small>
                     )}
                   </div>
 

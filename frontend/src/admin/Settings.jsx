@@ -246,6 +246,7 @@ function Settings() {
                     placeholder="Full Name"
                     name="name"
                     value={formData.name}
+                    autoComplete="name"
                     onChange={onInputChange}
                     required
                   />
@@ -270,6 +271,7 @@ function Settings() {
                     placeholder="admin@company.com"
                     name="email"
                     value={formData.email}
+                    autoComplete="email"
                     onChange={onInputChange}
                     required
                   />
@@ -290,6 +292,7 @@ function Settings() {
                     placeholder="Create Password"
                     name="password"
                     value={formData.password}
+                    autoComplete="password"
                     onChange={onInputChange}
                     required
                   />
@@ -353,6 +356,7 @@ function Settings() {
                     name="email"
                     value={updateForm.email}
                     onChange={handleUpdateChange}
+                    autoComplete="new-email"
                     required
                   />
                 </div>
@@ -365,6 +369,7 @@ function Settings() {
                     name="password"
                     value={updateForm.password}
                     onChange={handleUpdateChange}
+                    autoComplete="new-password"
                     required
                   />
 

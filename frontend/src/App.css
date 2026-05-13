@@ -234,7 +234,7 @@ aside.admin-sidebar {
 }
 
 .card-title-text {
-  font-size: 11px;
+  font-size: 13px;
   font-weight: 600;
   color: #6c757d;
   margin-bottom: 4px;
@@ -360,6 +360,11 @@ aside.admin-sidebar {
 
   .card-title-text {
     font-size: 11px;
+  }
+
+  .avatar {
+    width: 45px;
+    height: 30px;
   }
 }
 
@@ -503,16 +508,15 @@ aside.admin-sidebar {
   outline: none !important;
 }
 
-.convert-call {
-  color: #7a7a7a !important;
-  font-weight: 600;
-  font-size: 14px;
+@media (max-width: 768px) {
+  .action-state {
+    font-size: 12px;
+  }
 }
 
 .convert-rate {
   color: #111 !important;
   font-weight: 600;
-  cursor: pointer;
   font-size: 14px;
 }
 
@@ -551,22 +555,6 @@ aside.admin-sidebar {
   font-size: 14px;
 }
 
-.admin-box {
-  background-color: #4c66e8;
-  padding: 4.5px 10px;
-  color: #fff;
-  border-radius: 10px;
-  font-size: 12px;
-}
-
-.caller-box {
-  background-color: #4c66e8;
-  padding: 4.5px 10px;
-  color: #fff;
-  border-radius: 10px;
-  font-size: 12px;
-}
-
 .custom-success {
   width: 6px;
   height: 6.4px;
@@ -580,10 +568,22 @@ aside.admin-sidebar {
   font-size: 14px;
 }
 
+.convert-call {
+  color: #dc3545 !important;
+  font-weight: 600;
+  font-size: 14px;
+}
+
+@media (max-width: 768px) {
+  .convert-call {
+    font-size: 13px;
+  }
+}
+
 .custom-active {
   width: 6px;
-  height: 6.4px;
-  background-color: #7a7a7a;
+  height: 6.37px;
+  background-color: #dc3545;
   border-radius: 10px;
 }
 
@@ -687,6 +687,10 @@ aside.admin-sidebar {
   border: 1px solid #bde8d4;
 }
 
+.price-no {
+  font-size: 15px;
+}
+
 @media (max-width: 768px) {
   .queue-item {
     padding: 13px 12px;
@@ -701,6 +705,10 @@ aside.admin-sidebar {
   .cus-res {
     font-size: 11px;
     padding: 5px 10px;
+  }
+
+  .price-no {
+    font-size: 14px;
   }
 }
 
@@ -893,21 +901,27 @@ aside.admin-sidebar {
 
 .custom-short {
   font-size: 12px;
-  width: 35px;
-  height: 35px;
+  width: 30px;
+  height: 30px;
   cursor: pointer;
+}
+
+.short-sidebar {
+  background-color: #4169ff;
 }
 
 .custom-shorts {
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 800;
   cursor: pointer;
+  color: #fff;
 }
 
 .custom-shorts1 {
-  font-size: 13px;
-  font-weight: 550;
+  font-size: 11px;
+  font-weight: 500;
   cursor: pointer;
+  color: #fff !important;
 }
 
 .sign-in-btn,
@@ -994,6 +1008,7 @@ aside.admin-sidebar {
 .icons-color {
   color: #6c757d;
   cursor: pointer;
+  font-size: 16px;
 }
 
 .icons-color:hover {
@@ -1003,13 +1018,32 @@ aside.admin-sidebar {
 .icons-color1 {
   color: #6c757d;
   cursor: pointer;
+  font-size: 16px;
 }
 
 .icons-color1:hover {
   color: #dc3545;
 }
 
+.icons-color2 {
+  color: #6c757d;
+}
+
+.icons-color2:hover {
+  color: #198754;
+}
+
 .custom-name-change {
   font-size: 15px;
   font-weight: 600;
+}
+
+@media (max-width: 768px) {
+  .icons-color {
+    font-size: 14px;
+  }
+
+  .icons-color1 {
+    font-size: 14px;
+  }
 }

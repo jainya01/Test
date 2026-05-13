@@ -15,11 +15,9 @@ export const authHeader = () => {
 axios.interceptors.request.use(
   (config) => {
     const token = getToken();
-
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
-
     return config;
   },
   (error) => Promise.reject(error),
@@ -32,7 +30,7 @@ axios.interceptors.response.use(
       localStorage.removeItem("adminToken");
       localStorage.removeItem("callerToken");
       localStorage.removeItem("role");
-
+      localStorage.removeItem("id");
       window.location.href = "/";
     }
 

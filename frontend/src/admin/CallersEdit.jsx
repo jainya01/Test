@@ -180,7 +180,7 @@ function CallersEdit() {
                   </div>
 
                   <div className="position-relative col-12">
-                    <label className="form-label">Password</label>
+                    <label className="form-label">New Password</label>
                     <input
                       type={showPassword ? "text" : "password"}
                       className={`form-control custom-text pe-5 ${
@@ -189,6 +189,7 @@ function CallersEdit() {
                       placeholder="New Password"
                       name="password"
                       value={password || ""}
+                      autoComplete="password"
                       onChange={handlePasswordChange}
                     />
 
@@ -213,6 +214,7 @@ function CallersEdit() {
                       placeholder="Confirm Password"
                       name="confirmPassword"
                       value={confirmPassword || ""}
+                      autoComplete="confirm password"
                       onChange={handlePasswordChange}
                     />
                     <span

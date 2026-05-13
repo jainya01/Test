@@ -1,5 +1,6 @@
 import express from "express";
 import router from "./routes/router.js";
+import errorHandler from "./middleware/errorHandler.js";
 import path from "path";
 import cors from "cors";
 import helmet from "helmet";
@@ -30,6 +31,14 @@ app.use(
 app.use("/api", router);
 app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+
+app.use((req, res, next) => {
+  const error = new Error("Route Not Found");
+  error.statusCode = 404;
+  next(error);
+});
+
+app.use(errorHandler);
 
 const PORT = process.env.PORT;
 app.listen(PORT, "0.0.0.0", () => {

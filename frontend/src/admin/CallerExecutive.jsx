@@ -8,9 +8,12 @@ import {
   faBell,
   faCalendar,
   faDownload,
+  faEdit,
   faEllipsis,
+  faEye,
   faFile,
   faList,
+  faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { ToastContainer, toast } from "react-toastify";
 
@@ -18,14 +21,6 @@ function CallerExecutive() {
   const API_URL = import.meta.env.VITE_API_URL;
 
   const [search, setSearch] = useState("");
-  const [openMenuId, setOpenMenuId] = useState(null);
-
-  useEffect(() => {
-    const handleClick = () => setOpenMenuId(null);
-    window.addEventListener("click", handleClick);
-    return () => window.removeEventListener("click", handleClick);
-  }, []);
-
   const [caller, setCaller] = useState([]);
 
   useEffect(() => {
@@ -82,6 +77,34 @@ function CallerExecutive() {
     }
   }, [filteredCaller]);
 
+  const [selected, setSelected] = useState([]);
+  const allChecked = paginatedData.length === selected.length;
+
+  const isIndeterminate =
+    selected.length > 0 && selected.length < paginatedData.length;
+
+  const allocateNumbers = async (e) => {
+    e.preventDefault();
+
+    try {
+      await axios.post(
+        `${API_URL}/assign-custom-leads`,
+        {
+          callerIds: selected,
+        },
+        {
+          headers: authHeader(),
+        },
+      );
+
+      setSelected("");
+      toast.success("numbers allotted successfully");
+    } catch (error) {
+      toast.error("failed to allot numbers");
+      console.error(error.response?.data || error.message);
+    }
+  };
+
   return (
     <div className="content-wrapper">
       <div className="container-fluid border-bottom bg-light py-2">
@@ -125,10 +148,18 @@ function CallerExecutive() {
             </p>
           </div>
 
-          <div>
-            <Link className="btn user-added-btn" to="/admin/callers/create">
-              + Add Caller
-            </Link>
+          <div className="d-flex flex-row gap-2">
+            <div>
+              <Link className="btn user-added-btn" onClick={allocateNumbers}>
+                Allot Numbers
+              </Link>
+            </div>
+
+            <div>
+              <Link className="btn user-added-btn" to="/admin/callers/create">
+                + Add Caller
+              </Link>
+            </div>
           </div>
         </div>
 
@@ -141,12 +172,29 @@ function CallerExecutive() {
                     <table className="table table-striped mb-0">
                       <thead className="table-secondary header-table text-nowrap">
                         <tr>
-                          <th className="ps-2 py-2">S/N</th>
-                          <th>NAME</th>
-                          <th>EMAIL</th>
-                          <th>ROLE</th>
+                          <th>
+                            <input
+                              type="checkbox"
+                              className="form-check-input"
+                              checked={allChecked}
+                              ref={(el) =>
+                                el && (el.indeterminate = isIndeterminate)
+                              }
+                              onChange={(e) =>
+                                setSelected(
+                                  e.target.checked
+                                    ? paginatedData.map((d) => d.id)
+                                    : [],
+                                )
+                              }
+                            />
+                          </th>
+                          <th className="py-2">RANK</th>
+                          <th>CALLER</th>
+                          <th>CONVERSION</th>
+                          <th>BADGE</th>
                           <th>STATUS</th>
-                          <th></th>
+                          <th>ACT</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -154,11 +202,26 @@ function CallerExecutive() {
                         paginatedData.length > 0 ? (
                           paginatedData.map((data, idx) => (
                             <tr key={idx}>
+                              <td>
+                                <input
+                                  type="checkbox"
+                                  className="form-check-input"
+                                  checked={selected.includes(data.id)}
+                                  onChange={(e) =>
+                                    setSelected((prev) =>
+                                      e.target.checked
+                                        ? [...prev, data.id]
+                                        : prev.filter((id) => id !== data.id),
+                                    )
+                                  }
+                                />
+                              </td>
+
                               <td>{idx + 1}</td>
 
                               <td>
                                 <Link
-                                  to={`/admin/callers/edit/${data.id}`}
+                                  to={`/admin/callers/view/${data.id}`}
                                   className="text-decoration-none text-dark"
                                 >
                                   <span className="d-flex flex-row align-items-center fw-bold">
@@ -179,19 +242,8 @@ function CallerExecutive() {
                                 </Link>
                               </td>
 
-                              <td className="convert-call">{data.email}</td>
-
-                              <td>
-                                <span
-                                  className={
-                                    data.role === "Admin"
-                                      ? "admin-box"
-                                      : "caller-box"
-                                  }
-                                >
-                                  {data.role}
-                                </span>
-                              </td>
+                              <td>--</td>
+                              <td>--</td>
 
                               <td
                                 className={
@@ -213,53 +265,43 @@ function CallerExecutive() {
                                 </div>
                               </td>
 
-                              <td className="text-start lh-lg">
-                                <button
-                                  className="btn btn-sm border-0 p-0"
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    setOpenMenuId(
-                                      openMenuId === data.id ? null : data.id,
-                                    );
-                                  }}
-                                >
-                                  <FontAwesomeIcon icon={faEllipsis} />
-                                </button>
-
-                                {openMenuId === data.id && (
-                                  <div
-                                    className="position-absolute bg-white border rounded shadow-sm px-3"
-                                    style={{
-                                      right: 0,
-                                      top: "25px",
-                                      zIndex: 1000,
-                                      width: "120px",
-                                    }}
-                                    onClick={(e) => e.stopPropagation()}
+                              <td className="text-start">
+                                <span className="d-flex flex-row flex-nowrap">
+                                  <Link
+                                    to={`/admin/callers/view/${data.id}`}
+                                    title="View"
                                   >
-                                    <button className="dropdown-item text-success">
-                                      Active
-                                    </button>
+                                    <FontAwesomeIcon
+                                      icon={faEye}
+                                      className="icons-color2 me-1"
+                                    />
+                                  </Link>
 
-                                    <button className="dropdown-item text-warning">
-                                      Inactive
-                                    </button>
+                                  <Link
+                                    to={`/admin/callers/edit/${data.id}`}
+                                    title="Edit"
+                                  >
+                                    <FontAwesomeIcon
+                                      icon={faEdit}
+                                      className="icons-color"
+                                    />
+                                  </Link>
 
-                                    <button
-                                      className="dropdown-item text-danger"
+                                  <span title="Delete">
+                                    <FontAwesomeIcon
+                                      icon={faTrash}
+                                      className="icons-color1 ps-1"
                                       onClick={() => deleteData(data.id)}
-                                    >
-                                      Delete
-                                    </button>
-                                  </div>
-                                )}
+                                    />
+                                  </span>
+                                </span>
                               </td>
                             </tr>
                           ))
                         ) : (
                           <tr>
                             <td
-                              colSpan="6"
+                              colSpan="7"
                               className="text-center py-3 fw-bold text-muted"
                             >
                               No data available

@@ -17,11 +17,10 @@ function CustomersCreate() {
     city: "",
     service: "",
     status: "",
-    caller: "",
     notes: "",
   });
 
-  const { name, phone, city, service, status, caller, notes } = customer;
+  const { name, phone, city, service, status, notes } = customer;
 
   const [errors, setErrors] = useState({});
   const [servicesList, setServicesList] = useState([]);
@@ -75,10 +74,6 @@ function CustomersCreate() {
 
     if (!status.trim()) {
       newErrors.status = "Status is required";
-    }
-
-    if (!caller.trim()) {
-      newErrors.caller = "Caller is required";
     }
 
     setErrors(newErrors);
@@ -271,36 +266,6 @@ function CustomersCreate() {
 
                     {errors.status && (
                       <small className="text-danger">{errors.status}</small>
-                    )}
-                  </div>
-
-                  <div className="col-12">
-                    <label className="form-label">
-                      Caller <span className="text-danger">*</span>
-                    </label>
-
-                    <select
-                      className="form-select custom-text"
-                      name="caller"
-                      value={caller}
-                      onChange={onInputChange}
-                      required
-                    >
-                      <option value="">Select Caller</option>
-
-                      {Array.isArray(callersList) && callersList.length > 0 ? (
-                        callersList.map((item) => (
-                          <option key={item.id} value={item.fullname}>
-                            {item.fullname}
-                          </option>
-                        ))
-                      ) : (
-                        <option disabled>No callers found</option>
-                      )}
-                    </select>
-
-                    {errors.caller && (
-                      <small className="text-danger">{errors.caller}</small>
                     )}
                   </div>
 

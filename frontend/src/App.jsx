@@ -25,6 +25,7 @@ import ServicesCreate from "./admin/ServicesCreate";
 import ServicesEdit from "./admin/ServicesEdit";
 import CustomersCreate from "./admin/CustomersCreate";
 import CustomersEdit from "./admin/CustomersEdit";
+import CallerView from "./admin/CallerView";
 
 function App() {
   return (
@@ -45,6 +46,7 @@ function App() {
             <Route path="callers" element={<CallerExecutive />} />
             <Route path="callers/create" element={<CallersCreate />} />
             <Route path="callers/edit/:id" element={<CallersEdit />} />
+            <Route path="callers/view/:id" element={<CallerView />} />
 
             <Route path="reports" element={<Reports />} />
 

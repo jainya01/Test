@@ -32,10 +32,10 @@ const CallerLogin = () => {
     e.preventDefault();
     try {
       const response = await axios.post(`${API_URL}/callerlogin`, admin);
-      const { token, role } = response.data;
+      const { token, role, id } = response.data;
       localStorage.setItem("callerToken", token);
-
       localStorage.setItem("role", role);
+      localStorage.setItem("id", id);
 
       navigate("/caller/leads", { replace: true });
     } catch (error) {
@@ -110,6 +110,7 @@ const CallerLogin = () => {
             <form onSubmit={handleCallerLogin}>
               <div className="mb-3">
                 <label className="form-label">Email</label>
+
                 <div className="input-group">
                   <input
                     type="email"
@@ -118,6 +119,7 @@ const CallerLogin = () => {
                     name="email"
                     value={email}
                     onChange={handleChange}
+                    autoComplete="email"
                     style={{ height: "42px" }}
                     required
                   />
@@ -126,6 +128,7 @@ const CallerLogin = () => {
 
               <div className="position-relative mb-4">
                 <label className="form-label">Password</label>
+
                 <input
                   type={showPassword ? "text" : "password"}
                   className="form-control pe-5"
@@ -133,6 +136,7 @@ const CallerLogin = () => {
                   name="password"
                   value={password}
                   onChange={handleChange}
+                  autoComplete="current-password"
                   style={{ height: "42px" }}
                   required
                 />

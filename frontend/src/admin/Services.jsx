@@ -92,7 +92,7 @@ function Services() {
                 <input
                   type="text"
                   className="form-control sector-wise"
-                  placeholder="Search customers, calls, agents..."
+                  placeholder="Search service name..."
                   style={{ height: "40px" }}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
@@ -167,7 +167,7 @@ function Services() {
                                 {data.service_code}
                               </td>
 
-                              <td>{data.price}</td>
+                              <td className="price-no">{data.price}</td>
 
                               <td
                                 className={
@@ -185,27 +185,31 @@ function Services() {
                                     }`}
                                   ></div>
 
-                                  {data.status || "N/A"}
+                                  <span className="action-state">
+                                    {data.status || "N/A"}
+                                  </span>
                                 </div>
                               </td>
 
                               <td className="text-start">
-                                <Link
-                                  to={`/admin/services/edit/${data.id}`}
-                                  title="Edit"
-                                >
-                                  <FontAwesomeIcon
-                                    icon={faEdit}
-                                    className="icons-color"
-                                  />
-                                </Link>
+                                <span className="d-flex flex-nowrap">
+                                  <Link
+                                    to={`/admin/services/edit/${data.id}`}
+                                    title="Edit"
+                                  >
+                                    <FontAwesomeIcon
+                                      icon={faEdit}
+                                      className="icons-color"
+                                    />
+                                  </Link>
 
-                                <span title="Delete">
-                                  <FontAwesomeIcon
-                                    icon={faTrash}
-                                    className="icons-color1 ps-2"
-                                    onClick={() => deleteData(data.id)}
-                                  />
+                                  <span title="Delete">
+                                    <FontAwesomeIcon
+                                      icon={faTrash}
+                                      className="icons-color1 ps-2"
+                                      onClick={() => deleteData(data.id)}
+                                    />
+                                  </span>
                                 </span>
                               </td>
                             </tr>

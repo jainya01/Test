@@ -9,6 +9,8 @@ import csvParser from "csv-parser";
 import bcrypt from "bcrypt";
 import pool from "../config/db.js";
 import authenticate from "../middleware/auth.js";
+import asyncHandler from "../config/asyncHandler.js";
+import assignCustomerLeads from "../controllers/customerController.js";
 
 dotenv.config();
 const router = express.Router();
@@ -118,25 +120,28 @@ router.post("/adminpost", async (req, res) => {
   }
 });
 
-router.get("/alladmindata", authenticate, async (req, res) => {
-  try {
+router.get(
+  "/alladmindata",
+  authenticate,
+  asyncHandler(async (req, res) => {
     const SQL =
       "SELECT id, name, email, role FROM admin ORDER BY id DESC LIMIT 50";
+
     const [result] = await pool.execute(SQL);
+
+    if (!result || result.length === 0) {
+      const error = new Error("No admin data found");
+      error.statusCode = 404;
+      throw error;
+    }
+
     return res.status(200).json({
       success: true,
       message: "Data fetched successfully",
       result,
     });
-  } catch (error) {
-    console.error("error", error);
-
-    return res.status(500).json({
-      success: false,
-      message: error.message || "Internal Server Error",
-    });
-  }
-});
+  }),
+);
 
 router.delete("/admindelete/:id", authenticate, async (req, res) => {
   const { id } = req.params;
@@ -169,16 +174,41 @@ router.put("/adminupdate/:id", authenticate, async (req, res) => {
   }
 });
 
-router.get("/allcustomers", authenticate, async (req, res) => {
-  try {
-    const SQL =
-      "SELECT id, name, phone, city, service, status, caller, notes FROM customers ORDER BY id DESC";
+router.get(
+  "/allcustomers",
+  authenticate,
+  asyncHandler(async (req, res) => {
+    const SQL = `
+      SELECT 
+        customers.id,
+        customers.name,
+        customers.phone,
+        customers.city,
+        customers.service,
+        customers.status,
+        customers.caller_id,
+        caller.fullname,
+        customers.notes
+      FROM customers
+      LEFT JOIN caller
+      ON customers.caller_id = caller.id
+    `;
+
     const [result] = await pool.execute(SQL);
-    return res.status(200).json({ message: "data come successfully", result });
-  } catch (error) {
-    return res.status(500).json({ message: "data failed to loaded" });
-  }
-});
+
+    if (result.length <= 0) {
+      const error = new Error("data not found");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "data fetched successfully",
+      result,
+    });
+  }),
+);
 
 router.post("/callerlogin", async (req, res) => {
   try {
@@ -357,7 +387,7 @@ router.put("/serviceupdate/:id", authenticate, async (req, res) => {
     const { service_name, service_code, price, status, notes } = req.body;
 
     const query = `
-      UPDATE services 
+      UPDATE services
       SET service_name=?, service_code=?, price=?, status=?, notes=?
       WHERE id=?
     `;
@@ -377,50 +407,72 @@ router.put("/serviceupdate/:id", authenticate, async (req, res) => {
   }
 });
 
-router.delete("/servicesdelete/:id", authenticate, async (req, res) => {
-  try {
+router.delete(
+  "/servicesdelete/:id",
+  authenticate,
+  asyncHandler(async (req, res) => {
     const { id } = req.params;
-    await pool.execute("DELETE FROM services WHERE id = ?", [id]);
-    res.status(200).json({
-      message: "Service deleted successfully",
-    });
-  } catch (error) {
-    res.status(500).json({ message: "Server error" });
-  }
-});
+    const SQL = "DELETE FROM services WHERE id = ?";
+    const [result] = await pool.execute(SQL, [id]);
 
-router.get("/allservices", authenticate, async (req, res) => {
-  try {
+    if (result.affectedRows <= 0) {
+      const error = new Error("service not deleted");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "data deleted successfully",
+      result,
+    });
+  }),
+);
+
+router.get(
+  "/allservices",
+  authenticate,
+  asyncHandler(async (req, res) => {
     const SQL =
       "SELECT id, service_name, service_code, price, status, notes FROM services ORDER BY id DESC LIMIT 20";
     const [result] = await pool.execute(SQL);
+
+    if (result.affectedRows <= 0) {
+      const error = new Error("data not found");
+      error.statusCode = 404;
+      throw error;
+    }
+
     return res.status(200).json({
-      message: "Data fetched successfully",
+      success: true,
+      message: "data fetched successfully",
       result,
     });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Failed to load data",
-    });
-  }
-});
+  }),
+);
 
-router.get("/someservices/:id", authenticate, async (req, res) => {
-  const { id } = req.params;
-  try {
+router.get(
+  "/someservices/:id",
+  authenticate,
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
     const SQL =
       "SELECT id, service_name, service_code, price, status, notes FROM services WHERE id = ?";
     const [result] = await pool.execute(SQL, [id]);
+
+    if (result.affectedRows <= 0) {
+      const error = new Error("data not found");
+      error.statusCode = 404;
+      throw error;
+    }
+
     return res.status(200).json({
-      message: "Data fetched successfully",
+      success: true,
+      message: "data fetched successfully",
       result,
     });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Failed to load data",
-    });
-  }
-});
+  }),
+);
 
 // customers
 
@@ -526,124 +578,113 @@ router.post(
   },
 );
 
-router.post("/customerspost", authenticate, async (req, res) => {
-  try {
-    const { name, phone, city, service, status, caller, notes } = req.body;
-
-    if (!name || !phone || !city || !service || !status || !caller) {
-      return res.status(400).json({
-        message: "All required fields are required",
-      });
-    }
-
-    const sql = `
-      INSERT INTO customers
-      (
-        name,
-        phone,
-        city,
-        service,
-        status,
-        caller,
-        notes
-      )
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-    `;
-
-    const [result] = await pool.execute(sql, [
+router.post(
+  "/customerspost",
+  authenticate,
+  asyncHandler(async (req, res) => {
+    const { name, phone, city, service, status, notes } = req.body;
+    const SQL =
+      "INSERT INTO customers(name, phone, city, service, status, notes) VALUES (?, ?, ?, ?, ?, ?)";
+    const [result] = await pool.execute(SQL, [
       name,
       phone,
       city,
       service,
       status,
-      caller,
-      notes || "",
+      notes,
     ]);
 
-    res.status(201).json({
-      success: true,
-      message: "Customer created successfully",
-      customerId: result.insertId,
-    });
-  } catch (error) {
-    console.error(error);
+    if (result.affectedRows <= 0) {
+      const error = new Error("data not posted");
+      error.statusCode = 404;
+      throw error;
+    }
 
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
-  }
-});
-
-router.delete("/customersdelete/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    await pool.execute("DELETE FROM customers WHERE id = ?", [id]);
-
-    res.status(200).json({
-      success: true,
-      message: "Customer deleted successfully",
-    });
-  } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
-  }
-});
-
-router.put("/customersupdate/:id", async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const { name, phone, city, service, status, caller, notes } = req.body;
-
-    await pool.execute(
-      `UPDATE customers 
-       SET 
-         name = ?, 
-         phone = ?, 
-         city = ?, 
-         service = ?, 
-         status = ?, 
-         caller = ?, 
-         notes = ?
-       WHERE id = ?`,
-      [name, phone, city, service, status, caller, notes, id],
-    );
-
-    res.status(200).json({
-      success: true,
-      message: "Customer updated successfully",
-    });
-  } catch (error) {
-    console.error(error);
-
-    res.status(500).json({
-      success: false,
-      message: "Server error",
-    });
-  }
-});
-
-router.get("/somecustomers/:id", authenticate, async (req, res) => {
-  const { id } = req.params;
-  try {
-    const SQL =
-      "SELECT id, name, phone, city, service, status, caller, notes FROM customers WHERE id = ?";
-    const [result] = await pool.execute(SQL, [id]);
     return res.status(200).json({
-      message: "Data fetched successfully",
+      success: true,
+      message: "data post successfully",
       result,
     });
-  } catch (error) {
-    return res.status(500).json({
-      message: "Failed to load data",
+  }),
+);
+
+router.delete(
+  "/customersdelete/:id",
+  authenticate,
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const SQL = "DELETE FROM customers WHERE id = ?";
+    const [result] = await pool.execute(SQL, [id]);
+
+    if (result.affectedRows <= 0) {
+      const error = new Error("not not deleted");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "data deleted successfully",
+      result,
     });
-  }
-});
+  }),
+);
+
+router.put(
+  "/customersupdate/:id",
+  authenticate,
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const { name, phone, city, service, status, notes } = req.body;
+    const SQL =
+      "UPDATE customers SET name = ?, phone = ?, city = ?, service = ?, status = ?, notes = ? WHERE id = ?";
+    const [result] = await pool.execute(SQL, [
+      name,
+      phone,
+      city,
+      service,
+      status,
+      notes,
+      id,
+    ]);
+
+    if (result.affectedRows <= 0) {
+      const error = new Error("data not update");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "data update successfully",
+      result,
+    });
+  }),
+);
+
+router.get(
+  "/somecustomers/:id",
+  authenticate,
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const SQL =
+      "SELECT id, name, phone, city, service, status, notes FROM customers WHERE id = ?";
+    const [result] = await pool.execute(SQL, [id]);
+
+    if (result.length <= 0) {
+      const error = new Error("data not found");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "data fetch successfully",
+      result,
+    });
+  }),
+);
+
+router.post("/assign-custom-leads", authenticate, assignCustomerLeads);
 
 export default router;

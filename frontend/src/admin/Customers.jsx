@@ -228,7 +228,9 @@ function Customers() {
                         paginatedData.length > 0 ? (
                           paginatedData.map((item, index) => (
                             <tr key={index}>
-                              <td>{index + 1}</td>
+                              <td>
+                                {(currentPage - 1) * itemsPerPage + index + 1}
+                              </td>
 
                               <td>
                                 <Link
@@ -273,7 +275,7 @@ function Customers() {
                                 </span>
                               </td>
 
-                              <td>{item.caller || "--"}</td>
+                              <td>{item.fullname || "--"}</td>
 
                               <td className="text-start">
                                 <span className="d-flex flex-row flex-nowrap">
@@ -311,7 +313,7 @@ function Customers() {
                         ) : (
                           <tr>
                             <td
-                              colSpan="7"
+                              colSpan="8"
                               className="text-center py-3 fw-bold text-muted"
                             >
                               No data available
