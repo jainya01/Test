@@ -16,6 +16,8 @@ import axios from "axios";
 function Leads() {
   const API_URL = import.meta.env.VITE_API_URL;
 
+  const [service, setService] = useState([]);
+  const [customers, setCustomers] = useState([]);
   const [showPassword, setShowPassword] = useState(false);
 
   const maskPhoneNumber = (phone) => {
@@ -23,9 +25,6 @@ function Leads() {
     const phoneStr = phone.toString();
     return `${phoneStr.slice(0, 2)}xxxxxx${phoneStr.slice(-2)}`;
   };
-
-  const [service, setService] = useState([]);
-  const [customers, setCustomers] = useState([]);
 
   useEffect(() => {
     const allData = async () => {

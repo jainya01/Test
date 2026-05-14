@@ -69,8 +69,7 @@ function CallerView() {
           <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-3">
             <div>
               <h5 className="fw-bold overview-dashboard">
-                Caller view:
-                {caller.fullname}, {caller.email}
+                Caller view: {caller.fullname}, {caller.email}
               </h5>
             </div>
           </div>
