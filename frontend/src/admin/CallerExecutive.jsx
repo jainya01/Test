@@ -22,14 +22,23 @@ function CallerExecutive() {
 
   const [search, setSearch] = useState("");
   const [caller, setCaller] = useState([]);
+  const [logs, setLogs] = useState([]);
 
   useEffect(() => {
     const allData = async () => {
       try {
-        const response = await axios.get(`${API_URL}/allcallers`, {
-          headers: authHeader(),
-        });
-        setCaller(response.data.data);
+        const [callerRes, logRes] = await Promise.allSettled([
+          axios.get(`${API_URL}/allcallers`, { headers: authHeader() }),
+          axios.get(`${API_URL}/allcalllogs`, { headers: authHeader() }),
+        ]);
+
+        if (callerRes.status === "fulfilled") {
+          setCaller(callerRes.value.data.data);
+        }
+
+        if (logRes.status === "fulfilled") {
+          setLogs(logRes.value.data.result);
+        }
       } catch (error) {
         console.error("error", error);
       }
@@ -66,22 +75,11 @@ function CallerExecutive() {
   const itemsPerPage = 11;
   const [currentPage, setCurrentPage] = useState(1);
 
-  const startIndex = (currentPage - 1) * itemsPerPage;
-  const endIndex = startIndex + itemsPerPage;
-  const paginatedData = filteredCaller.slice(startIndex, endIndex);
-  const totalPages = Math.ceil(filteredCaller.length / itemsPerPage);
-
   useEffect(() => {
     if (currentPage > totalPages) {
       setCurrentPage(1);
     }
   }, [filteredCaller]);
-
-  const [selected, setSelected] = useState([]);
-  const allChecked = paginatedData.length === selected.length;
-
-  const isIndeterminate =
-    selected.length > 0 && selected.length < paginatedData.length;
 
   const allocateNumbers = async (e) => {
     e.preventDefault();
@@ -104,6 +102,35 @@ function CallerExecutive() {
       console.error(error.response?.data || error.message);
     }
   };
+
+  const convertedLeads = (callerId) => {
+    const total = logs.filter(
+      (item) => item.call_log_caller_id === callerId,
+    ).length;
+
+    const converted = logs.filter(
+      (item) =>
+        item.call_log_caller_id === callerId &&
+        item.call_log_status === "Converted",
+    ).length;
+
+    return total ? ((converted / total) * 100).toFixed(2) : 0;
+  };
+
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+
+  const sortedCaller = [...caller].sort(
+    (a, b) => convertedLeads(b.id) - convertedLeads(a.id),
+  );
+
+  const paginatedData = sortedCaller.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(filteredCaller.length / itemsPerPage);
+  const [selected, setSelected] = useState([]);
+  const allChecked = paginatedData.length === selected.length;
+
+  const isIndeterminate =
+    selected.length > 0 && selected.length < paginatedData.length;
 
   return (
     <div className="content-wrapper">
@@ -242,8 +269,29 @@ function CallerExecutive() {
                                 </Link>
                               </td>
 
-                              <td>--</td>
-                              <td>--</td>
+                              <td>{convertedLeads(data.id)}%</td>
+
+                              <td>
+                                <span
+                                  className={`badge ${
+                                    convertedLeads(data.id) >= 80
+                                      ? "bg-success"
+                                      : convertedLeads(data.id) >= 60
+                                        ? "bg-primary"
+                                        : convertedLeads(data.id) >= 40
+                                          ? "bg-warning text-dark"
+                                          : "bg-danger"
+                                  }`}
+                                >
+                                  {convertedLeads(data.id) >= 80
+                                    ? "Excellent"
+                                    : convertedLeads(data.id) >= 60
+                                      ? "Good"
+                                      : convertedLeads(data.id) >= 40
+                                        ? "Avg"
+                                        : "Need Improvement"}
+                                </span>
+                              </td>
 
                               <td
                                 className={

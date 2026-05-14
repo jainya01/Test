@@ -4,6 +4,7 @@ import fs from "fs";
 import multer from "multer";
 import path from "path";
 import jwt from "jsonwebtoken";
+import cron from "node-cron";
 import ExcelJS from "exceljs";
 import csvParser from "csv-parser";
 import bcrypt from "bcrypt";
@@ -807,5 +808,201 @@ router.get(
 );
 
 router.post("/assign-custom-leads", authenticate, assignCustomerLeads);
+
+router.post(
+  "/caller-lead-post",
+  authenticate,
+  asyncHandler(async (req, res) => {
+    const {
+      customer_id,
+      caller_id,
+      call_status,
+      call_duration,
+      status,
+      service,
+      sub_category,
+      package_name,
+      notes,
+    } = req.body;
+
+    if (!customer_id || !caller_id || !call_status) {
+      return res.status(400).json({
+        success: false,
+        message:
+          "Please select one of the following options: Answered, Rejected, or Unanswered.",
+      });
+    }
+
+    const customerId = Number(customer_id);
+    const callerId = Number(caller_id);
+
+    await pool.execute(
+      `INSERT INTO call_logs (
+        customer_id,
+        caller_id,
+        call_status,
+        call_duration,
+        status,
+        service,
+        sub_category,
+        package_name,
+        notes
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [
+        customerId,
+        callerId,
+        call_status || null,
+        call_duration || 0,
+        status || null,
+        service || null,
+        sub_category || null,
+        package_name || null,
+        notes || null,
+      ],
+    );
+
+    await pool.execute(
+      `UPDATE customers
+       SET status=?, notes=?
+       WHERE id=? AND caller_id=?`,
+      [status || null, notes || null, customerId, callerId],
+    );
+
+    await pool.execute(
+      `UPDATE caller
+        SET status = 'Active'
+        WHERE id = ?
+        AND status = 'Inactive'`,
+      [callerId],
+    );
+
+    const [remainingLeads] = await pool.execute(
+      `SELECT COUNT(*) AS total
+       FROM customers
+       WHERE caller_id=? AND status IS NULL`,
+      [callerId],
+    );
+
+    if (remainingLeads[0].total <= 0) {
+      const limitPerCaller = 5;
+
+      const [newCustomers] = await pool.query(
+        `SELECT id
+         FROM customers
+         WHERE caller_id IS NULL
+         LIMIT ${limitPerCaller}`,
+      );
+
+      for (const customer of newCustomers) {
+        await pool.execute(
+          `UPDATE customers
+           SET caller_id=?, assigned_at=NOW()
+           WHERE id=?`,
+          [callerId, customer.id],
+        );
+      }
+    }
+
+    return res.status(201).json({
+      success: true,
+      message: "Lead updated successfully",
+    });
+  }),
+);
+
+// router.get(
+//   "/allcalllogs",
+//   authenticate,
+//   asyncHandler(async (req, res) => {
+//     const SQL = `
+//     SELECT
+//       customers.id AS customer_id,
+//       customers.name,
+//       customers.service AS customer_service,
+//       customers.status AS customer_status,
+//       customers.caller_id,
+//       customers.assigned_at,
+
+//       call_logs.id AS call_log_id,
+//       call_logs.customer_id AS log_customer_id,
+//       call_logs.caller_id AS log_caller_id,
+//       call_logs.call_status,
+//       call_logs.status AS call_log_status,
+//       call_logs.service AS call_log_service,
+//       call_logs.sub_category,
+//       call_logs.package_name,
+
+//       caller.id AS caller_id,
+//       caller.fullname AS caller_name,
+//       caller.email
+//       FROM customers
+
+//       LEFT JOIN call_logs
+//         ON customers.id = call_logs.customer_id
+
+//       LEFT JOIN caller
+//         ON customers.caller_id = caller.id
+
+//       ORDER BY customers.id DESC
+//      `;
+
+//     const [result] = await pool.execute(SQL);
+
+//     if (result.length <= 0) {
+//       const error = new Error("data not found");
+//       error.statusCode = 404;
+//       throw error;
+//     }
+
+//     return res.status(200).json({
+//       success: true,
+//       message: "data fetched successfully",
+//       result,
+//     });
+//   }),
+// );
+
+router.get(
+  "/allcalllogs",
+  authenticate,
+  asyncHandler(async (req, res) => {
+    const SQL = `
+    SELECT 
+      c.id AS customer_id,
+      c.status AS customer_status,
+      c.caller_id AS caller_id,
+      c.notes,
+      c.assigned_at,
+
+      cl.id AS call_log_id,
+      cl.customer_id AS call_log_customer_id,
+      cl.caller_id AS call_log_caller_id,
+      cl.call_status,
+      cl.call_duration,
+      cl.status AS call_log_status,
+      cl.created_at
+
+      FROM customers c
+      LEFT JOIN call_logs cl
+        ON cl.customer_id = c.id
+      WHERE c.assigned_at IS NOT NULL
+      ORDER BY c.id DESC
+  `;
+
+    const [result] = await pool.execute(SQL);
+
+    if (!result || result.length === 0) {
+      const error = new Error("data not found");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "data fetched successfully",
+      result,
+    });
+  }),
+);
 
 export default router;

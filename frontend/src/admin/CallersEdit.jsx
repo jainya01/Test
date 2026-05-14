@@ -92,11 +92,12 @@ function CallersEdit() {
           headers: authHeader(),
         });
         setCall({
-          fullname: res.data?.data?.[0]?.fullname || "",
-          email: res.data?.data?.[0]?.email || "",
+          fullname: res.data?.data?.fullname || "",
+          email: res.data?.data?.email || "",
           password: "",
-          status: res.data?.data?.[0]?.status || "",
-          notes: res.data?.data?.[0]?.notes || "",
+          confirmPassword: "",
+          status: res.data?.data?.status || "",
+          notes: res.data?.data?.notes || "",
         });
       } catch (error) {
         console.error("error", error);

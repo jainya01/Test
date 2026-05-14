@@ -574,8 +574,18 @@ aside.admin-sidebar {
   font-size: 14px;
 }
 
+.convert-code {
+  color: #6c757d !important;
+  font-weight: 600;
+  font-size: 14px;
+}
+
 @media (max-width: 768px) {
   .convert-call {
+    font-size: 13px;
+  }
+
+  .convert-code {
     font-size: 13px;
   }
 }
@@ -1045,5 +1055,21 @@ aside.admin-sidebar {
 
   .icons-color1 {
     font-size: 14px;
+  }
+}
+
+.active-status {
+  border: 2px solid #000;
+  transform: scale(1.03);
+  opacity: 1;
+}
+
+.lead-message {
+  font-size: 20px;
+}
+
+@media (max-width: 768px) {
+  .lead-message {
+    font-size: 16px;
   }
 }

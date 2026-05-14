@@ -65,14 +65,18 @@ function Customers() {
 
   const filteredCustomers = customers.filter((item) => {
     const keyword = search.toLowerCase();
+    const name = item.name ? item.name.toLowerCase() : "";
+    const phone = item.phone ? item.phone.toString() : "";
     return (
-      item.name?.toLowerCase().includes(keyword) ||
-      item.phone?.toLowerCase().includes(keyword)
+      (name.includes(keyword) || phone.includes(keyword)) &&
+      item.status &&
+      item.status.trim() !== "" &&
+      item.status !== "null"
     );
   });
 
   const itemsPerPage = 14;
-  const totalPages = Math.ceil(filteredCustomers.length / itemsPerPage) || 1;
+  const totalPages = Math.ceil(filteredCustomers.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const paginatedData = filteredCustomers.slice(startIndex, endIndex);
@@ -147,10 +151,16 @@ function Customers() {
             </p>
           </div>
 
-          <div>
-            <Link className="btn user-added-btn" to="/admin/customers/create">
-              + Add Customer
-            </Link>
+          <div className="d-flex flex-wrap gap-2 flex-wrap">
+            <div>
+              <Link className="btn user-added-btn">Download CSV</Link>
+            </div>
+
+            <div>
+              <Link className="btn user-added-btn" to="/admin/customers/create">
+                + Add Customer
+              </Link>
+            </div>
           </div>
         </div>
 
@@ -323,41 +333,43 @@ function Customers() {
                       </tbody>
                     </table>
 
-                    <div className="d-flex justify-content-center align-items-center flex-wrap mt-3 mb-3 gap-2">
-                      <button
-                        className={`btn rounded-pill px-3 py-1 shadow-sm ${
-                          currentPage <= 1
-                            ? "btn-light border text-muted"
-                            : "btn-success border-0"
-                        }`}
-                        disabled={currentPage <= 1}
-                        onClick={() =>
-                          setCurrentPage((prev) => Math.max(prev - 1, 1))
-                        }
-                      >
-                        ← Prev
-                      </button>
+                    {filteredCustomers.length > itemsPerPage && (
+                      <div className="d-flex justify-content-center align-items-center flex-wrap mt-3 mb-3 gap-2">
+                        <button
+                          className={`btn rounded-pill px-3 py-1 shadow-sm ${
+                            currentPage <= 1
+                              ? "btn-light border text-muted"
+                              : "btn-success border-0"
+                          }`}
+                          disabled={currentPage <= 1}
+                          onClick={() =>
+                            setCurrentPage((prev) => Math.max(prev - 1, 1))
+                          }
+                        >
+                          ← Prev
+                        </button>
 
-                      <span className="fw-semibold px-2">
-                        Page {currentPage} of {totalPages}
-                      </span>
+                        <span className="fw-semibold px-2">
+                          Page {currentPage} of {totalPages}
+                        </span>
 
-                      <button
-                        className={`btn rounded-pill px-3 py-1 shadow-sm ${
-                          currentPage >= totalPages
-                            ? "btn-light border text-muted"
-                            : "btn-success border-0"
-                        }`}
-                        disabled={currentPage >= totalPages}
-                        onClick={() =>
-                          setCurrentPage((prev) =>
-                            Math.min(prev + 1, totalPages),
-                          )
-                        }
-                      >
-                        Next →
-                      </button>
-                    </div>
+                        <button
+                          className={`btn rounded-pill px-3 py-1 shadow-sm ${
+                            currentPage >= totalPages
+                              ? "btn-light border text-muted"
+                              : "btn-success border-0"
+                          }`}
+                          disabled={currentPage >= totalPages}
+                          onClick={() =>
+                            setCurrentPage((prev) =>
+                              Math.min(prev + 1, totalPages),
+                            )
+                          }
+                        >
+                          Next →
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

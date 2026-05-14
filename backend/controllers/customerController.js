@@ -1,15 +1,65 @@
+// import asyncHandler from "../config/asyncHandler.js";
+// import pool from "../config/db.js";
+
+// const assignCustomLeads = asyncHandler(async (req, res) => {
+//   const limitPerCaller = 10;
+//   const { callerIds } = req.body;
+//   let callers;
+
+//   if (callerIds && callerIds.length > 0) {
+//     [callers] = await pool.query(
+//       `SELECT id, fullname
+//        FROM caller
+//        WHERE id IN (${callerIds.map(() => "?").join(",")})`,
+//       callerIds,
+//     );
+//   } else {
+//     [callers] = await pool.query("SELECT id, fullname FROM caller");
+//   }
+
+//   const totalLimit = callers.length * limitPerCaller;
+
+//   const [customers] = await pool.query(
+//     `SELECT id FROM customers
+//      WHERE caller_id IS NULL
+//      LIMIT ${totalLimit}`,
+//   );
+
+//   let index = 0;
+
+//   for (const caller of callers) {
+//     const batch = customers.slice(index, index + limitPerCaller);
+
+//     for (const customer of batch) {
+//       await pool.execute(
+//         "UPDATE customers SET caller_id=?, assigned_at=NOW() WHERE id=?",
+//         [caller.id, customer.id],
+//       );
+//     }
+
+//     index += limitPerCaller;
+//   }
+
+//   res.status(200).json({
+//     success: true,
+//     message: "Numbers allotted successfully",
+//   });
+// });
+
+// export default assignCustomLeads;
+
 import asyncHandler from "../config/asyncHandler.js";
 import pool from "../config/db.js";
 
 const assignCustomLeads = asyncHandler(async (req, res) => {
-  const limitPerCaller = 50;
+  const limitPerCaller = 5;
   const { callerIds } = req.body;
   let callers;
 
   if (callerIds && callerIds.length > 0) {
     [callers] = await pool.query(
-      `SELECT id, fullname 
-       FROM caller 
+      `SELECT id, fullname
+       FROM caller
        WHERE id IN (${callerIds.map(() => "?").join(",")})`,
       callerIds,
     );
@@ -17,32 +67,38 @@ const assignCustomLeads = asyncHandler(async (req, res) => {
     [callers] = await pool.query("SELECT id, fullname FROM caller");
   }
 
-  const totalLimit = callers.length * limitPerCaller;
-
-  const [customers] = await pool.query(
-    `SELECT id FROM customers
-     WHERE caller_id IS NULL
-     LIMIT ${totalLimit}`,
-  );
-
-  let index = 0;
-
   for (const caller of callers) {
-    const batch = customers.slice(index, index + limitPerCaller);
+    const [activeLeads] = await pool.execute(
+      `SELECT COUNT(*) AS total
+       FROM customers
+       WHERE caller_id=? AND status IS NULL`,
+      [caller.id],
+    );
 
-    for (const customer of batch) {
-      await pool.execute(
-        "UPDATE customers SET caller_id=?, assigned_at=NOW() WHERE id=?",
-        [caller.id, customer.id],
+    const remaining = activeLeads[0].total;
+
+    if (remaining <= 0) {
+      const [newCustomers] = await pool.query(
+        `SELECT id
+         FROM customers
+         WHERE caller_id IS NULL
+         LIMIT ${limitPerCaller}`,
       );
-    }
 
-    index += limitPerCaller;
+      for (const customer of newCustomers) {
+        await pool.execute(
+          `UPDATE customers
+           SET caller_id=?, assigned_at=NOW()
+           WHERE id=?`,
+          [caller.id, customer.id],
+        );
+      }
+    }
   }
 
   res.status(200).json({
     success: true,
-    message: "Numbers allotted successfully",
+    message: "Auto refill completed",
   });
 });
 

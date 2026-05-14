@@ -329,13 +329,13 @@ function Reports() {
 
                               <td className="convert-rate">{data.agent}</td>
 
-                              <td className="convert-call">
+                              <td className="convert-code">
                                 {data.totalCalls}
                               </td>
 
                               <td className="convert-no">{data.conversions}</td>
 
-                              <td className="convert-call">{data.followUps}</td>
+                              <td className="convert-code">{data.followUps}</td>
 
                               <td className="convert-rate">
                                 {data.conversionRate}

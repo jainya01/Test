@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBell,
@@ -17,6 +17,22 @@ function BulkUpload() {
 
   const [bulk, setBulk] = useState([]);
   const [file, setFile] = useState(null);
+  const [customers, setCustomers] = useState([]);
+
+  const fetchCustomers = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/allcustomers`, {
+        headers: authHeader(),
+      });
+      setCustomers(response.data.result.length);
+    } catch (error) {
+      console.error("error", error);
+    }
+  };
+
+  useEffect(() => {
+    fetchCustomers();
+  }, []);
 
   const handleBulkSubmit = async (e) => {
     e.preventDefault();
@@ -28,7 +44,6 @@ function BulkUpload() {
 
     const formData = new FormData();
     formData.append("file", file);
-
     const token = localStorage.getItem("adminToken");
 
     try {
@@ -38,6 +53,7 @@ function BulkUpload() {
 
       toast.success("Bulk upload successfully");
       setFile(null);
+      fetchCustomers();
     } catch (error) {
       toast.error(error.response?.data?.message || "Bulk upload failed");
     }
@@ -134,6 +150,10 @@ function BulkUpload() {
                     >
                       Submit
                     </button>
+
+                    <div className="mt-3 text-success fw-bold">
+                      Total customers data: {customers}
+                    </div>
                   </div>
                 </div>
               </div>

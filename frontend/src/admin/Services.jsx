@@ -163,7 +163,7 @@ function Services() {
                                 </Link>
                               </td>
 
-                              <td className="convert-call">
+                              <td className="convert-code">
                                 {data.service_code}
                               </td>
 
