@@ -366,6 +366,11 @@ aside.admin-sidebar {
     width: 32px;
     height: 30px;
   }
+
+  .avatar1 {
+    width: 44px;
+    height: 30px;
+  }
 }
 
 .custom-progress {

@@ -265,7 +265,7 @@ function Customers() {
                                   to={`/admin/customers/edit/${item.id}`}
                                 >
                                   <span className="d-flex flex-row align-items-center fw-bold">
-                                    <div className="avatar me-2 border">
+                                    <div className="avatar avatar1 me-2 border">
                                       {item.name
                                         .split(" ")
                                         .map((word) => word[0])
