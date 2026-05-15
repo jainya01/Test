@@ -57,7 +57,7 @@ body {
   z-index: 1040;
 }
 
-.list-list-sidebar {
+/* .list-list-sidebar {
   position: absolute;
   top: 50%;
   left: 13%;
@@ -70,7 +70,7 @@ body {
   justify-content: center;
   border-radius: 20px;
   cursor: pointer;
-}
+} */
 
 .admin-sidebar .list-group .list-group-item.active,
 .admin-sidebar .list-group .list-group-item:focus,

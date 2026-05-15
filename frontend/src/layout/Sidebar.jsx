@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { authHeader } from "../utils/authHeader";
 import { Link, NavLink, useNavigate } from "react-router-dom";
 import "../App.css";
+import { authHeader } from "../utils/authHeader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faTableColumns,
@@ -14,7 +14,7 @@ import {
   faCog,
   faUpload,
   faListCheck,
-  faList,
+  // faList,
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 
