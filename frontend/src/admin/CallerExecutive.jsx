@@ -269,25 +269,27 @@ function CallerExecutive() {
                                 </Link>
                               </td>
 
-                              <td>{convertedLeads(data.id)}%</td>
+                              <td className="convert-percent">
+                                {convertedLeads(data.id)}%
+                              </td>
 
                               <td>
                                 <span
                                   className={`badge ${
-                                    convertedLeads(data.id) >= 80
+                                    convertedLeads(data.id) === 100
                                       ? "bg-success"
-                                      : convertedLeads(data.id) >= 60
+                                      : convertedLeads(data.id) >= 80
                                         ? "bg-primary"
-                                        : convertedLeads(data.id) >= 40
+                                        : convertedLeads(data.id) >= 50
                                           ? "bg-warning text-dark"
                                           : "bg-danger"
                                   }`}
                                 >
-                                  {convertedLeads(data.id) >= 80
+                                  {convertedLeads(data.id) === 100
                                     ? "Excellent"
-                                    : convertedLeads(data.id) >= 60
+                                    : convertedLeads(data.id) >= 80
                                       ? "Good"
-                                      : convertedLeads(data.id) >= 40
+                                      : convertedLeads(data.id) >= 50
                                         ? "Avg"
                                         : "Need Improvement"}
                                 </span>

@@ -28,75 +28,37 @@ import axios from "axios";
 function HomePage() {
   const API_URL = import.meta.env.VITE_API_URL;
 
-  const data = [
-    {
-      initials: "MA",
-      name: "Mohammed Ali",
-      detail: "Hajj • Bilal Ahmed",
-      status1: "Answered",
-      status2: "Converted",
-      color1: "success",
-      color2: "success",
-    },
-    {
-      initials: "FS",
-      name: "Fatima Sheikh",
-      detail: "Umrah • Sana Yusuf",
-      status1: "Unanswered",
-      status2: "Follow-up",
-      color1: "secondary",
-      color2: "warning",
-    },
-    {
-      initials: "AR",
-      name: "Ahmed Raza",
-      detail: "Packages • Omar Farooq",
-      status1: "Rejected",
-      status2: "New",
-      color1: "danger",
-      color2: "light",
-    },
-    {
-      initials: "NH",
-      name: "Nadia Hassan",
-      detail: "Misc • Zara Iqbal",
-      status1: "Answered",
-      status2: "Interested",
-      color1: "success",
-      color2: "info",
-    },
-  ];
-
-  const chartData = [
-    { day: "Mon", calls: 40, conversions: 8 },
-    { day: "Tue", calls: 55, conversions: 12 },
-    { day: "Wed", calls: 38, conversions: 6 },
-    { day: "Thu", calls: 62, conversions: 15 },
-    { day: "Fri", calls: 70, conversions: 18 },
-    { day: "Sat", calls: 48, conversions: 10 },
-    { day: "Sun", calls: 28, conversions: 5 },
-  ];
-
-  const lineData = [
-    { week: "W1", calls: 250, conversions: 60 },
-    { week: "W2", calls: 300, conversions: 80 },
-    { week: "W3", calls: 280, conversions: 75 },
-    { week: "W4", calls: 350, conversions: 95 },
-  ];
-
   const [service, setService] = useState([]);
+  const [report, setReport] = useState([]);
+  const [caller, setCaller] = useState([]);
 
   useEffect(() => {
     const allData = async () => {
       try {
-        const [serviceRes] = await Promise.allSettled([
+        const [serviceRes, reportRes, callerRes] = await Promise.allSettled([
           axios.get(`${API_URL}/allservices`, {
+            headers: authHeader(),
+          }),
+
+          axios.get(`${API_URL}/allcalllogs`, {
+            headers: authHeader(),
+          }),
+
+          axios.get(`${API_URL}/allcallers`, {
             headers: authHeader(),
           }),
         ]);
 
         if (serviceRes.status === "fulfilled") {
-          setService(serviceRes.value.data.result);
+          setService(serviceRes.value.data.result || []);
+        }
+
+        if (reportRes.status === "fulfilled") {
+          setReport(reportRes.value.data.result || []);
+        }
+
+        if (callerRes.status === "fulfilled") {
+          setCaller(callerRes.value.data.data || []);
         }
       } catch (error) {
         console.error(error);
@@ -105,6 +67,129 @@ function HomePage() {
 
     allData();
   }, []);
+
+  const totalCalls = report.filter((item) => item.call_status !== null).length;
+
+  const answeredCalls = report.filter(
+    (item) => item.call_status === "answered",
+  ).length;
+
+  const rejectedCalls = report.filter(
+    (item) => item.call_status === "rejected",
+  ).length;
+
+  const unansweredCalls = report.filter(
+    (item) => item.call_status === "unanswered",
+  ).length;
+
+  const convertedCalls = report.filter(
+    (item) => item.call_log_status === "Converted",
+  ).length;
+
+  const convertedPercentage =
+    totalCalls > 0 ? ((convertedCalls / totalCalls) * 100).toFixed(1) : 0;
+
+  const now = new Date();
+  const currentWeekCalls = report.filter(
+    (item) =>
+      item.call_status &&
+      new Date(item.created_at) >= new Date(now.setDate(now.getDate() - 7)),
+  ).length;
+
+  const previousWeekCalls = report.filter((item) => {
+    const date = new Date(item.created_at);
+    return (
+      item.call_status &&
+      date >= new Date(new Date().setDate(new Date().getDate() - 14)) &&
+      date < new Date(new Date().setDate(new Date().getDate() - 7))
+    );
+  }).length;
+
+  const growthPercentage = previousWeekCalls
+    ? (
+        ((currentWeekCalls - previousWeekCalls) / previousWeekCalls) *
+        100
+      ).toFixed(1)
+    : 0;
+
+  const recentActivity = [...report]
+    .filter((item) => item.current_status === "Completed")
+    .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))
+    .slice(0, 5);
+
+  // chart data
+
+  const days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+
+  const chartData = days.map((day, index) => {
+    const date = new Date();
+
+    const currentDay = date.getDay();
+    const mondayOffset = currentDay === 0 ? -6 : 1 - currentDay;
+    date.setDate(date.getDate() + mondayOffset + index);
+
+    const formattedDate = `${date.getFullYear()}-${String(
+      date.getMonth() + 1,
+    ).padStart(2, "0")}-${String(date.getDate()).padStart(2, "0")}`;
+
+    const calls = report.filter(
+      (item) => item.created_at?.split("T")[0] === formattedDate,
+    ).length;
+
+    const conversions = report.filter(
+      (item) =>
+        item.created_at?.split("T")[0] === formattedDate &&
+        item.call_log_status === "Converted",
+    ).length;
+
+    return {
+      day,
+      calls,
+      conversions,
+    };
+  });
+
+  // line data
+
+  const lineData = Array.from({ length: 4 }, (_, index) => {
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = now.getMonth();
+    const lastDayOfMonth = new Date(year, month + 1, 0).getDate();
+
+    const weekRanges = [
+      { start: 1, end: 7 },
+      { start: 8, end: 14 },
+      { start: 15, end: 21 },
+      { start: 22, end: lastDayOfMonth },
+    ];
+
+    const { start, end } = weekRanges[index];
+    const startDate = new Date(year, month, start, 0, 0, 0, 0);
+    const endDate = new Date(year, month, end, 23, 59, 59, 999);
+
+    const calls = report.filter((item) => {
+      if (!item.created_at) return false;
+      const itemDate = new Date(item.created_at);
+      return itemDate >= startDate && itemDate <= endDate;
+    }).length;
+
+    const conversions = report.filter((item) => {
+      if (!item.created_at) return false;
+      const itemDate = new Date(item.created_at);
+      return (
+        itemDate >= startDate &&
+        itemDate <= endDate &&
+        item.call_log_status === "Converted"
+      );
+    }).length;
+
+    return {
+      week: `W${index + 1}`,
+      calls,
+      conversions,
+    };
+  });
 
   return (
     <>
@@ -150,14 +235,14 @@ function HomePage() {
 
             <div className="d-flex flex-wrap flex-lg-nowrap gap-2">
               <select className="form-select sector-wise">
-                <option>All Calls</option>
+                <option value="">All Calls</option>
                 <option value="Answered">Answered</option>
                 <option value="Rejected">Rejected</option>
                 <option value="Unanswered">Unanswered</option>
               </select>
 
               <select className="form-select sector-wise">
-                <option>All Services</option>
+                <option value="">All status</option>
                 {Array.isArray(service) ? (
                   service
                     .filter((item) => item.status === "Active")
@@ -172,11 +257,16 @@ function HomePage() {
               </select>
 
               <select className="form-select sector-wise">
-                <option>All Agents</option>
-                <option value="Bilal Ahmed">Bilal Ahmed</option>
-                <option value="Sana Yusuf">Sana Yusuf</option>
-                <option value="Omar Farooq">Omar Farooq</option>
-                <option value="Zara">Zara</option>
+                <option value="">All Caller</option>
+                {Array.isArray(caller) ? (
+                  caller.map((item) => (
+                    <option key={item.id} value={item.fullname}>
+                      {item.fullname}
+                    </option>
+                  ))
+                ) : (
+                  <option disabled>No caller found</option>
+                )}
               </select>
             </div>
           </div>
@@ -187,8 +277,10 @@ function HomePage() {
                 <div className="card-body d-flex justify-content-between">
                   <div>
                     <p className="card-title-text">TOTAL CALLS</p>
-                    <h4 className="card-value">90</h4>
-                    <small className="card-subtext">+12% vs last week</small>
+                    <h4 className="card-value">{totalCalls}</h4>
+                    <small className="card-subtext">
+                      +{growthPercentage}% vs last week
+                    </small>
                   </div>
 
                   <div className="icon-wrapper icon-calls">
@@ -203,7 +295,7 @@ function HomePage() {
                 <div className="card-body d-flex justify-content-between">
                   <div>
                     <p className="card-title-text">ANSWERED</p>
-                    <h4 className="card-value">30</h4>
+                    <h4 className="card-value">{answeredCalls}</h4>
                     <small className="card-subtext">69% answer rate</small>
                   </div>
                   <div className="icon-wrapper icon-success-bg">
@@ -221,7 +313,7 @@ function HomePage() {
                 <div className="card-body d-flex justify-content-between">
                   <div>
                     <p className="card-title-text">REJECTED</p>
-                    <h4 className="card-value">30</h4>
+                    <h4 className="card-value">{rejectedCalls}</h4>
                   </div>
                   <div className="icon-wrapper icon-danger-bg">
                     <FontAwesomeIcon
@@ -238,7 +330,7 @@ function HomePage() {
                 <div className="card-body d-flex justify-content-between">
                   <div>
                     <p className="card-title-text">UNANSWERED</p>
-                    <h3 className="card-value">30</h3>
+                    <h3 className="card-value">{unansweredCalls}</h3>
                   </div>
 
                   <div className="icon-wrapper icon-answer-bg">
@@ -263,7 +355,7 @@ function HomePage() {
                 <div className="card-body d-flex justify-content-between">
                   <div>
                     <p className="card-title-text">CONVERSION</p>
-                    <h4 className="card-value">20%</h4>
+                    <h4 className="card-value">{convertedPercentage}%</h4>
                     <small className="card-subtext fw-bold">6 converted</small>
                   </div>
                   <div className="icon-wrapper icon-convert-bg">
@@ -304,6 +396,7 @@ function HomePage() {
                           fill="#3b82f6"
                           radius={[6, 6, 0, 0]}
                         />
+
                         <Bar
                           dataKey="conversions"
                           fill="#10b981"
@@ -366,40 +459,54 @@ function HomePage() {
                     <h5 className="fw-bold mb-0 daily-performance">
                       Recent Activity
                     </h5>
+
                     <div className="mt-1 overview-lead">
                       Latest customer interactions
                     </div>
                   </div>
 
-                  {data.map((item, index) => (
-                    <div
-                      key={index}
-                      className="d-flex justify-content-between m-1 border rounded-3 align-items-center py-3 px-2"
-                    >
-                      <div className="d-flex align-items-center">
-                        <div className="avatar me-3">{item.initials}</div>
-                        <div>
-                          <div className="fw-semibold callers-name">
-                            {item.name}
+                  {recentActivity.map((item, index) => {
+                    const callerData = caller.find(
+                      (c) => c.id === item.caller_id,
+                    );
+
+                    return (
+                      <div
+                        key={index}
+                        className="d-flex justify-content-between m-1 border rounded-3 align-items-center py-3 px-2"
+                      >
+                        <div className="d-flex align-items-center">
+                          <div className="avatar me-3">
+                            {callerData?.fullname
+                              ?.split(" ")
+                              .map((word) => word.charAt(0))
+                              .join("")
+                              .toUpperCase() || "U"}
                           </div>
-                          <small className="callers-name">{item.detail}</small>
+
+                          <div>
+                            <div className="fw-semibold callers-name">
+                              {callerData?.fullname || "Unknown"}
+                            </div>
+
+                            <small className="callers-name">
+                              {item.service}
+                            </small>
+                          </div>
+                        </div>
+
+                        <div className="d-flex gap-2">
+                          <span className="badge bg-success-subtle text-success">
+                            {item.call_status || "Answered"}
+                          </span>
+
+                          <span className="badge bg-primary-subtle text-primary">
+                            {item.call_log_status || "Converted"}
+                          </span>
                         </div>
                       </div>
-
-                      <div className="d-flex gap-2">
-                        <span
-                          className={`badge bg-${item.color1}-subtle text-${item.color1}`}
-                        >
-                          {item.status1}
-                        </span>
-                        <span
-                          className={`badge bg-${item.color2}-subtle text-${item.color2}`}
-                        >
-                          {item.status2}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             </div>
@@ -414,34 +521,61 @@ function HomePage() {
                     <h4 className="daily-performance mb-0">Top Callers</h4>
                   </div>
 
-                  {[
-                    { name: "Bilal", value: 12, total: 80 },
-                    { name: "Sana", value: 17, total: 103 },
-                    { name: "Omar", value: 22, total: 126 },
-                    { name: "Zara", value: 27, total: 149 },
-                  ].map((item, index) => {
-                    const percent = (item.value / item.total) * 100;
+                  {Array.isArray(caller) && caller.length > 0 ? (
+                    [...caller]
+                      .sort((a, b) => {
+                        const completedA = report.filter(
+                          (data) =>
+                            data.caller_id === a.id &&
+                            data.current_status === "Completed",
+                        ).length;
 
-                    return (
-                      <div key={index} className="mb-3">
-                        <div className="d-flex justify-content-between mb-1">
-                          <span className="fw-semibold callers-name">
-                            {item.name}
-                          </span>
-                          <small className="fw-bold">
-                            {item.value}/{item.total}
-                          </small>
-                        </div>
+                        const completedB = report.filter(
+                          (data) =>
+                            data.caller_id === b.id &&
+                            data.current_status === "Completed",
+                        ).length;
 
-                        <div className="progress custom-progress">
-                          <div
-                            className="progress-bar custom-bar"
-                            style={{ width: `${percent}%` }}
-                          ></div>
-                        </div>
-                      </div>
-                    );
-                  })}
+                        return completedB - completedA;
+                      })
+                      .map((item) => {
+                        const completed = report.filter(
+                          (data) =>
+                            data.caller_id === item.id &&
+                            data.current_status === "Completed",
+                        ).length;
+
+                        const total = report.filter(
+                          (data) => data.caller_id === item.id,
+                        ).length;
+
+                        const percent =
+                          total > 0 ? (completed / total) * 100 : 0;
+
+                        return (
+                          <div key={item.id} className="mb-3">
+                            <div className="d-flex justify-content-between mb-1">
+                              <span className="fw-semibold callers-name">
+                                {item.fullname}
+                              </span>
+
+                              <small className="fw-bold">
+                                {completed}/{total}
+                              </small>
+                            </div>
+
+                            <div className="progress custom-progress">
+                              <div
+                                className="progress-bar custom-bar"
+                                style={{ width: `${percent}%` }}
+                              ></div>
+                            </div>
+                          </div>
+                        );
+                      })
+                  ) : (
+                    <p className="text-muted">No callers available</p>
+                  )}
                 </div>
               </div>
             </div>

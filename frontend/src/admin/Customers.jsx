@@ -24,15 +24,17 @@ function Customers() {
   const token = localStorage.getItem("adminToken");
   const [showPassword, setShowPassword] = useState(false);
   const [search, setSearch] = useState("");
+  const [customers, setCustomers] = useState([]);
+  const [service, setService] = useState([]);
+  const [selectedStatus, setSelectedStatus] = useState("");
+  const [selectedService, setSelectedService] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
 
   const maskPhoneNumber = (phone) => {
     if (!phone) return "";
     const phoneStr = phone.toString();
     return `${phoneStr.slice(0, 2)}xxxxxx${phoneStr.slice(-2)}`;
   };
-
-  const [customers, setCustomers] = useState([]);
-  const [service, setService] = useState([]);
 
   useEffect(() => {
     const allData = async () => {
@@ -61,18 +63,19 @@ function Customers() {
     allData();
   }, []);
 
-  const [currentPage, setCurrentPage] = useState(1);
-
   const filteredCustomers = customers.filter((item) => {
     const keyword = search.toLowerCase();
     const name = item.name ? item.name.toLowerCase() : "";
     const phone = item.phone ? item.phone.toString() : "";
-    return (
-      (name.includes(keyword) || phone.includes(keyword)) &&
-      item.status &&
-      item.status.trim() !== "" &&
-      item.status !== "null"
-    );
+    const matchesSearch = name.includes(keyword) || phone.includes(keyword);
+    const matchesStatus =
+      selectedStatus === ""
+        ? item.status && item.status.trim() !== "" && item.status !== "null"
+        : item.status === selectedStatus;
+
+    const matchesService =
+      selectedService === "" ? true : item.service === selectedService;
+    return matchesSearch && matchesStatus && matchesService;
   });
 
   const itemsPerPage = 14;
@@ -177,7 +180,14 @@ function Customers() {
 
                   <div className="d-flex justify-content-end me-2 gap-1">
                     <div>
-                      <select className="form-select sector-wise">
+                      <select
+                        className="form-select sector-wise"
+                        value={selectedService}
+                        onChange={(e) => {
+                          setSelectedService(e.target.value);
+                          setCurrentPage(1);
+                        }}
+                      >
                         <option value="">All Service</option>
                         <option value="Hajj">Hajj</option>
                         <option value="Umrah">Umrah</option>
@@ -187,8 +197,15 @@ function Customers() {
                     </div>
 
                     <div>
-                      <select className="form-select sector-wise">
-                        <option>All Status</option>
+                      <select
+                        className="form-select sector-wise"
+                        value={selectedStatus}
+                        onChange={(e) => {
+                          setSelectedStatus(e.target.value);
+                          setCurrentPage(1);
+                        }}
+                      >
+                        <option value="">All Status</option>
                         {Array.isArray(service) ? (
                           service
                             .filter((item) => item.status === "Active")

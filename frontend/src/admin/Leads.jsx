@@ -307,7 +307,7 @@ function Leads() {
                         </label>
 
                         <select className="form-select custom-input" required>
-                          <option>All Services</option>
+                          <option value="">All Services</option>
                           {Array.isArray(service) ? (
                             service
                               .filter((item) => item.status === "Active")

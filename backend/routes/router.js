@@ -381,10 +381,17 @@ router.delete(
   "/callerdelete/:id",
   authenticate,
   asyncHandler(async (req, res) => {
-    const { id } = req.params;
+    const callerId = Number(req.params.id);
+
+    await pool.execute(
+      `UPDATE customers
+       SET caller_id = NULL
+       WHERE caller_id = ?`,
+      [callerId],
+    );
 
     const [result] = await pool.execute("DELETE FROM caller WHERE id = ?", [
-      id,
+      callerId,
     ]);
 
     if (result.affectedRows === 0) {
@@ -863,8 +870,11 @@ router.post(
 
     await pool.execute(
       `UPDATE customers
-       SET status=?, notes=?
-       WHERE id=? AND caller_id=?`,
+       SET status = ?, 
+       notes = ?, 
+       current_status = 'Completed'
+       WHERE id = ? 
+       AND caller_id = ?`,
       [status || null, notes || null, customerId, callerId],
     );
 
@@ -888,17 +898,21 @@ router.post(
 
       const [newCustomers] = await pool.query(
         `SELECT id
-         FROM customers
-         WHERE caller_id IS NULL
-         LIMIT ${limitPerCaller}`,
+        FROM customers
+        WHERE caller_id IS NULL
+        AND current_status = 'New'
+        LIMIT ?`,
+        [limitPerCaller],
       );
 
-      for (const customer of newCustomers) {
-        await pool.execute(
+      const ids = newCustomers.map((c) => c.id);
+
+      if (ids.length > 0) {
+        await pool.query(
           `UPDATE customers
-           SET caller_id=?, assigned_at=NOW()
-           WHERE id=?`,
-          [callerId, customer.id],
+            SET caller_id = ?, assigned_at = NOW()
+            WHERE id IN (?)`,
+          [callerId, ids],
         );
       }
     }
@@ -910,58 +924,6 @@ router.post(
   }),
 );
 
-// router.get(
-//   "/allcalllogs",
-//   authenticate,
-//   asyncHandler(async (req, res) => {
-//     const SQL = `
-//     SELECT
-//       customers.id AS customer_id,
-//       customers.name,
-//       customers.service AS customer_service,
-//       customers.status AS customer_status,
-//       customers.caller_id,
-//       customers.assigned_at,
-
-//       call_logs.id AS call_log_id,
-//       call_logs.customer_id AS log_customer_id,
-//       call_logs.caller_id AS log_caller_id,
-//       call_logs.call_status,
-//       call_logs.status AS call_log_status,
-//       call_logs.service AS call_log_service,
-//       call_logs.sub_category,
-//       call_logs.package_name,
-
-//       caller.id AS caller_id,
-//       caller.fullname AS caller_name,
-//       caller.email
-//       FROM customers
-
-//       LEFT JOIN call_logs
-//         ON customers.id = call_logs.customer_id
-
-//       LEFT JOIN caller
-//         ON customers.caller_id = caller.id
-
-//       ORDER BY customers.id DESC
-//      `;
-
-//     const [result] = await pool.execute(SQL);
-
-//     if (result.length <= 0) {
-//       const error = new Error("data not found");
-//       error.statusCode = 404;
-//       throw error;
-//     }
-
-//     return res.status(200).json({
-//       success: true,
-//       message: "data fetched successfully",
-//       result,
-//     });
-//   }),
-// );
-
 router.get(
   "/allcalllogs",
   authenticate,
@@ -971,6 +933,8 @@ router.get(
       c.id AS customer_id,
       c.status AS customer_status,
       c.caller_id AS caller_id,
+      c.current_status,
+      c.service,
       c.notes,
       c.assigned_at,
 

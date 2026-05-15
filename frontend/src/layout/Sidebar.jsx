@@ -29,7 +29,7 @@ const ADMIN_LINKS = [
   { path: "/admin/callers", label: "Calling Executive", icon: faHeadset },
   { path: "/admin/reports", label: "Reports", icon: faChartColumn },
   { path: "/admin/services", label: "Services", icon: faListCheck },
-  { path: "/admin/leads", label: "My Leads", icon: faPhone },
+  // { path: "/admin/leads", label: "My Leads", icon: faPhone },
   { path: "/admin/bulk-upload", label: "Bulk Upload", icon: faUpload },
   { path: "/admin/settings", label: "Settings", icon: faCog },
 ];

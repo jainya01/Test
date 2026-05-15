@@ -1,5 +1,7 @@
+import { useEffect, useState } from "react";
 import { authHeader } from "../utils/authHeader";
 import "../App.css";
+import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBell,
@@ -21,75 +23,97 @@ import {
   Pie,
   Cell,
 } from "recharts";
+import { Link } from "react-router-dom";
 
 function Reports() {
-  const chartData = [
-    {
-      agent: "Bilal",
-      calls: 80,
-      conversions: 12,
-      followups: 8,
-    },
-    {
-      agent: "Sana",
-      calls: 103,
-      conversions: 17,
-      followups: 11,
-    },
-    {
-      agent: "Omar",
-      calls: 126,
-      conversions: 22,
-      followups: 14,
-    },
-    {
-      agent: "Zara",
-      calls: 149,
-      conversions: 27,
-      followups: 17,
-    },
-  ];
+  const API_URL = import.meta.env.VITE_API_URL;
+
+  const [report, setReport] = useState([]);
+  const [caller, setCaller] = useState([]);
+
+  useEffect(() => {
+    const allData = async () => {
+      try {
+        const [reportRes, callerRes] = await Promise.allSettled([
+          axios.get(`${API_URL}/allcalllogs`, { headers: authHeader() }),
+          axios.get(`${API_URL}/allcallers`, { headers: authHeader() }),
+        ]);
+
+        if (reportRes.status == "fulfilled") {
+          setReport(reportRes.value.data.result);
+        }
+
+        if (callerRes.status == "fulfilled") {
+          setCaller(callerRes.value.data.data);
+        }
+      } catch (error) {
+        console.error("error", error);
+      }
+    };
+    allData();
+  }, []);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 7;
 
   const outcomeData = [
-    { name: "Answered", value: 30, color: "#10b981" },
-    { name: "Rejected", value: 30, color: "#ff3b30" },
-    { name: "Unanswered", value: 30, color: "#f4a300" },
+    { name: "Answered", value: "answered", color: "#10b981" },
+    { name: "Rejected", value: "rejected", color: "#ff3b30" },
+    { name: "Unanswered", value: "unanswered", color: "#f4a300" },
   ];
 
-  const agent = [
-    {
-      id: 1,
-      agent: "Bilal",
-      totalCalls: 80,
-      conversions: 12,
-      followUps: 8,
-      conversionRate: "15%",
-    },
-    {
-      id: 2,
-      agent: "Sana",
-      totalCalls: 103,
-      conversions: 17,
-      followUps: 11,
-      conversionRate: "17%",
-    },
-    {
-      id: 3,
-      agent: "Omar",
-      totalCalls: 126,
-      conversions: 22,
-      followUps: 14,
-      conversionRate: "17%",
-    },
-    {
-      id: 4,
-      agent: "Zara",
-      totalCalls: 149,
-      conversions: 27,
-      followUps: 17,
-      conversionRate: "18%",
-    },
-  ];
+  const totalByStatus = (status) => {
+    return report.filter((item) => item.call_status === status).length;
+  };
+
+  const totalCalls = (callerId) => {
+    return report.filter(
+      (item) => item.caller_id === callerId && item.call_status !== null,
+    ).length;
+  };
+
+  const totalConversions = (callerId) => {
+    return report.filter(
+      (item) =>
+        item.caller_id === callerId && item.call_log_status === "Converted",
+    ).length;
+  };
+
+  const totalFollowUps = (callerId) => {
+    return report.filter(
+      (item) =>
+        item.caller_id === callerId && item.call_log_status === "Follow-up",
+    ).length;
+  };
+
+  const conversionRate = (callerId) => {
+    const calls = totalCalls(callerId);
+    const conversions = totalConversions(callerId);
+    return calls > 0 ? ((conversions / calls) * 100).toFixed(0) + "%" : "0%";
+  };
+
+  const sortedCaller = [...caller].sort(
+    (a, b) => totalCalls(b.id) - totalCalls(a.id),
+  );
+
+  const totalPages = Math.ceil(sortedCaller.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const paginatedData = sortedCaller.slice(startIndex, endIndex);
+
+  const chartData = [...caller]
+    .map((agent) => {
+      const filtered = report.filter((item) => item.caller_id === agent.id);
+      return {
+        agent: agent.fullname.split(" ")[0],
+        calls: filtered.filter((i) => i.call_status !== null).length,
+        conversions: filtered.filter((i) => i.call_log_status === "Converted")
+          .length,
+        followups: filtered.filter((i) => i.call_log_status === "Follow-up")
+          .length,
+      };
+    })
+    .sort((a, b) => b.calls - a.calls);
 
   return (
     <div className="content-wrapper">
@@ -246,7 +270,10 @@ function Reports() {
                   <ResponsiveContainer width="100%" height="100%" minWidth={0}>
                     <PieChart>
                       <Pie
-                        data={outcomeData}
+                        data={outcomeData.map((item) => ({
+                          ...item,
+                          value: totalByStatus(item.value),
+                        }))}
                         dataKey="value"
                         nameKey="name"
                         cx="50%"
@@ -255,10 +282,7 @@ function Reports() {
                         outerRadius={85}
                         paddingAngle={2}
                         stroke="none"
-                        activeShape={false}
                         isAnimationActive={true}
-                        tabIndex={-1}
-                        style={{ outline: "none" }}
                       >
                         {outcomeData.map((entry, index) => (
                           <Cell
@@ -281,15 +305,14 @@ function Reports() {
                       <div className="d-flex align-items-center gap-2">
                         <span
                           className="outcome-data"
-                          style={{
-                            backgroundColor: item.color,
-                          }}
+                          style={{ backgroundColor: item.color }}
                         />
-
                         <span className="outcome-data1">{item.name}</span>
                       </div>
 
-                      <span className="outcome-data2">{item.value}</span>
+                      <span className="outcome-data2">
+                        {totalByStatus(item.value) || 0}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -322,23 +345,35 @@ function Reports() {
                         </tr>
                       </thead>
                       <tbody className="body-table">
-                        {Array.isArray(agent) && agent.length > 0 ? (
-                          agent.map((data, idx) => (
+                        {Array.isArray(paginatedData) &&
+                        paginatedData.length > 0 ? (
+                          paginatedData.map((data, idx) => (
                             <tr key={idx}>
-                              <td className="ps-2">{data.id}</td>
-
-                              <td className="convert-rate">{data.agent}</td>
-
-                              <td className="convert-code">
-                                {data.totalCalls}
-                              </td>
-
-                              <td className="convert-no">{data.conversions}</td>
-
-                              <td className="convert-code">{data.followUps}</td>
+                              <td className="ps-2">{startIndex + idx + 1}</td>
 
                               <td className="convert-rate">
-                                {data.conversionRate}
+                                <Link
+                                  to={`/admin/callers/view/${data.id}`}
+                                  className="text-dark text-decoration-none"
+                                >
+                                  {data.fullname}
+                                </Link>
+                              </td>
+
+                              <td className="convert-code">
+                                {totalCalls(data.id) || 0}
+                              </td>
+
+                              <td className="convert-no">
+                                {totalConversions(data.id) || 0}
+                              </td>
+
+                              <td className="convert-code">
+                                {totalFollowUps(data.id) || 0}
+                              </td>
+
+                              <td className="convert-rate">
+                                {conversionRate(data.id)}
                               </td>
                             </tr>
                           ))
@@ -351,6 +386,44 @@ function Reports() {
                         )}
                       </tbody>
                     </table>
+
+                    {sortedCaller.length > itemsPerPage && (
+                      <div className="d-flex justify-content-center align-items-center flex-wrap mt-3 mb-3 gap-2">
+                        <button
+                          className={`btn rounded-pill px-3 py-1 shadow-sm ${
+                            currentPage <= 1
+                              ? "btn-light border text-muted"
+                              : "btn-success border-0"
+                          }`}
+                          disabled={currentPage <= 1}
+                          onClick={() =>
+                            setCurrentPage((prev) => Math.max(prev - 1, 1))
+                          }
+                        >
+                          ← Prev
+                        </button>
+
+                        <span className="fw-semibold px-2">
+                          Page {currentPage} of {totalPages}
+                        </span>
+
+                        <button
+                          className={`btn rounded-pill px-3 py-1 shadow-sm ${
+                            currentPage >= totalPages
+                              ? "btn-light border text-muted"
+                              : "btn-success border-0"
+                          }`}
+                          disabled={currentPage >= totalPages}
+                          onClick={() =>
+                            setCurrentPage((prev) =>
+                              Math.min(prev + 1, totalPages),
+                            )
+                          }
+                        >
+                          Next →
+                        </button>
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

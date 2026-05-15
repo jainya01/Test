@@ -297,7 +297,7 @@ function Leads() {
                   ) : (
                     <div className="text-center text-success fw-bold">
                       <h5 className="lead-message pt-0">
-                        Congratulations! you have completed all leads.
+                        No! leads available.
                       </h5>
                     </div>
                   )}
@@ -416,7 +416,7 @@ function Leads() {
                           onChange={onInputChange}
                           required
                         >
-                          <option>All Services</option>
+                          <option value="">All Services</option>
                           {Array.isArray(statuses) ? (
                             statuses
                               .filter((item) => item.status === "Active")
