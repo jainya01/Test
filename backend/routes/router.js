@@ -220,7 +220,6 @@ router.get(
       FROM customers
       LEFT JOIN caller
       ON customers.caller_id = caller.id
-      WHERE customers.current_status = 'Completed'
       ORDER BY customers.id DESC
     `;
 

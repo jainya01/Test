@@ -232,6 +232,7 @@ aside.admin-sidebar.collapsed {
   justify-content: center;
   font-weight: bold;
   margin-left: 5px;
+  cursor: pointer;
 }
 
 .laundry-app {
