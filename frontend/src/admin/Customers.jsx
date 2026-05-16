@@ -176,9 +176,11 @@ function Customers() {
           </div>
 
           <div className="d-flex flex-wrap gap-2 flex-wrap">
-            <div onClick={downloadCSV}>
-              <Link className="btn user-added-btn">Download CSV</Link>
-            </div>
+            {filteredCustomers.length > 0 && (
+              <div onClick={downloadCSV}>
+                <Link className="btn user-added-btn">Download CSV</Link>
+              </div>
+            )}
 
             <div>
               <Link className="btn user-added-btn" to="/admin/customers/create">

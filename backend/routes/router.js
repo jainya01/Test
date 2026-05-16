@@ -240,6 +240,27 @@ router.get(
   }),
 );
 
+router.get(
+  "/allcustomersdata",
+  authenticate,
+  asyncHandler(async (req, res) => {
+    const SQL = "SELECT name, phone, city, service, status FROM  customers";
+    const [result] = await pool.execute(SQL);
+
+    if (result.length <= 0) {
+      const error = new Error("data not found");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "data fetched successfully",
+      result,
+    });
+  }),
+);
+
 router.post(
   "/callerlogin",
   asyncHandler(async (req, res) => {

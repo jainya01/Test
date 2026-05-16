@@ -16,14 +16,17 @@ function BulkUpload() {
 
   const [bulk, setBulk] = useState([]);
   const [file, setFile] = useState(null);
-  const [customers, setCustomers] = useState([]);
+  const [customers, setCustomers] = useState(0);
 
   const fetchCustomers = async () => {
     try {
-      const response = await axios.get(`${API_URL}/allcustomers`, {
-        headers: authHeader(),
-      });
-      setCustomers(response.data.result.length);
+      const [customerRes] = await Promise.allSettled([
+        axios.get(`${API_URL}/allcustomersdata`, { headers: authHeader() }),
+      ]);
+
+      if (customerRes.status === "fulfilled") {
+        setCustomers(customerRes.value.data.result.length);
+      }
     } catch (error) {
       console.error("error", error);
     }
