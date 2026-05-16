@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { authHeader } from "../utils/authHeader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCircleNotch,
@@ -6,14 +7,63 @@ import {
   faPhone,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
+import axios from "axios";
 
 const Login = () => {
+  const API_URL = import.meta.env.VITE_API_URL;
+
   const navigate = useNavigate();
+  const [caller, setCaller] = useState(0);
+  const [logs, setLogs] = useState([]);
+
+  useEffect(() => {
+    const allData = async () => {
+      try {
+        const [callerRes, logsRes] = await Promise.allSettled([
+          axios.get(`${API_URL}/allcallers`, { headers: authHeader() }),
+          axios.get(`${API_URL}/allcalllogs`, { headers: authHeader() }),
+        ]);
+
+        if (callerRes.status === "fulfilled") {
+          setCaller(callerRes.value.data.data.length);
+        }
+
+        if (logsRes.status === "fulfilled") {
+          setLogs(logsRes.value.data.result);
+        }
+      } catch (error) {
+        console.error("error", error);
+      }
+    };
+
+    allData();
+  }, []);
+
+  const totalCalls = logs.filter((item) => item.call_status !== null).length;
+
+  const convertedCalls = logs.filter(
+    (item) => item.call_log_status === "Converted",
+  ).length;
+
+  const convertedPercentage =
+    totalCalls > 0 ? ((convertedCalls / totalCalls) * 100).toFixed(1) : 0;
+
+  const callerId = logs?.id;
+
+  const dailyCalls = logs.filter(
+    (item) =>
+      item.created_at &&
+      new Date(item.created_at).toDateString() === new Date().toDateString(),
+  ).length;
 
   useEffect(() => {
     const token = localStorage.getItem("adminToken");
+    const callerToken = localStorage.getItem("callerToken");
+
     if (token) {
       navigate("/admin/dashboard", { replace: true });
+    } else if (callerToken) {
+      navigate("/caller/leads", { replace: true });
     }
   }, []);
 
@@ -41,6 +91,7 @@ const Login = () => {
           <h1 className="fw-bold track-calls">
             Track every call. Convert every lead.
           </h1>
+
           <p className="mb-4 telecalls-admin">
             A purpose-built CRM for telecallers and admin managers. Smart
             filters, masked contacts, and real-time conversion metrics.
@@ -52,17 +103,17 @@ const Login = () => {
           >
             <div>
               <small>Calls / Day</small>
-              <h4 className="fw-bold mt-2">1,842</h4>
+              <h4 className="fw-bold mt-2">{dailyCalls}</h4>
             </div>
 
             <div>
               <small>Conversion</small>
-              <h4 className="fw-bold mt-2">12.4%</h4>
+              <h4 className="fw-bold mt-2">{convertedPercentage}%</h4>
             </div>
 
             <div>
               <small>Agents</small>
-              <h4 className="fw-bold mt-2">24</h4>
+              <h4 className="fw-bold mt-2">{caller ? caller : 0}</h4>
             </div>
           </div>
         </div>

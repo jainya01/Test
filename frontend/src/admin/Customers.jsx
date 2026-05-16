@@ -13,7 +13,6 @@ import {
   faEye,
   faEyeSlash,
   faFile,
-  faList,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { ToastContainer, toast } from "react-toastify";
@@ -111,18 +110,40 @@ function Customers() {
     }
   };
 
+  const downloadCSV = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.post(
+        `${API_URL}/download-completed-customers`,
+        {
+          selectedService,
+          selectedStatus,
+        },
+        {
+          responseType: "blob",
+          headers: authHeader(),
+        },
+      );
+
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement("a");
+      link.href = url;
+      link.setAttribute("download", "Customers.xlsx");
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Download Error:", error);
+    }
+  };
+
   return (
     <div className="content-wrapper">
       <div className="container-fluid border-bottom bg-light py-2">
         <div className="row align-items-center">
           <div className="col-10 col-md-11">
             <div className="row align-items-center">
-              <div className="col-auto">
-                <button className="btn border-0">
-                  <FontAwesomeIcon icon={faList} />
-                </button>
-              </div>
-
               <div className="col-9 col-md-8 col-lg-4">
                 <input
                   type="text"
@@ -155,7 +176,7 @@ function Customers() {
           </div>
 
           <div className="d-flex flex-wrap gap-2 flex-wrap">
-            <div>
+            <div onClick={downloadCSV}>
               <Link className="btn user-added-btn">Download CSV</Link>
             </div>
 
@@ -247,7 +268,7 @@ function Customers() {
                           <th>STATUS</th>
                           <th>CALLER</th>
                           <th>ACT</th>
-                          <th></th>
+                          {/* <th></th> */}
                         </tr>
                       </thead>
                       <tbody className="body-table">
@@ -326,7 +347,7 @@ function Customers() {
                                 </span>
                               </td>
 
-                              <td className="view-right">
+                              {/* <td className="view-right">
                                 <span className="d-flex flex-row align-items-center">
                                   View
                                   <FontAwesomeIcon
@@ -334,7 +355,7 @@ function Customers() {
                                     className="ms-1"
                                   />
                                 </span>
-                              </td>
+                              </td> */}
                             </tr>
                           ))
                         ) : (
@@ -395,7 +416,7 @@ function Customers() {
         </div>
       </div>
 
-      <ToastContainer position="bottom-right" autoClose="1500" />
+      <ToastContainer position="bottom-right" autoClose={1500} />
     </div>
   );
 }

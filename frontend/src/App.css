@@ -57,21 +57,6 @@ body {
   z-index: 1040;
 }
 
-/* .list-list-sidebar {
-  position: absolute;
-  top: 50%;
-  left: 13%;
-  width: 30px;
-  height: 30px;
-  background-color: #0b5a4a;
-  color: #fff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 20px;
-  cursor: pointer;
-} */
-
 .admin-sidebar .list-group .list-group-item.active,
 .admin-sidebar .list-group .list-group-item:focus,
 .mobile-sidebar .list-group .list-group-item.active {
@@ -88,13 +73,79 @@ aside.admin-sidebar {
   position: fixed;
   top: 0;
   left: 0;
+  z-index: 1000;
   background-color: #111827;
   border-right: 1px solid rgba(0, 0, 0, 0.08);
+  overflow-x: hidden;
   overflow-y: auto;
+  transition: width 0.2s ease;
+}
+
+aside.admin-sidebar.collapsed {
+  width: 60px;
+}
+
+.admin-sidebar .list-group-item {
+  display: flex;
+  align-items: center;
+  min-height: 36px;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.admin-sidebar .label-span,
+.admin-sidebar .font-alfasseh,
+.admin-sidebar .custom-font-crm,
+.admin-sidebar .logout-text {
+  opacity: 1;
+  white-space: nowrap;
+  transition: opacity 0.1s linear;
+}
+
+.admin-sidebar.collapsed .label-span,
+.admin-sidebar.collapsed .font-alfasseh,
+.admin-sidebar.collapsed .custom-font-crm,
+.admin-sidebar.collapsed .logout-text {
+  opacity: 0;
+  width: 0;
+  overflow: hidden;
+  margin: 0 !important;
+  pointer-events: none;
+}
+
+.admin-sidebar.collapsed .list-group-item {
+  justify-content: center;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+.admin-sidebar.collapsed .custom-box {
+  margin: auto;
+}
+
+.list-list-sidebar {
+  position: fixed;
+  top: 14px;
+  left: 205px;
+  width: 30px;
+  height: 30px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  cursor: pointer;
+  z-index: 1100;
+  transition: left 0.2s ease;
+}
+
+.list-list-sidebar.collapsed-btn {
+  left: 45px;
 }
 
 .content-wrapper {
-  width: 100%;
+  min-width: 0;
+  width: auto;
   max-width: 100%;
   overflow-x: hidden;
 }
@@ -102,11 +153,29 @@ aside.admin-sidebar {
 @media (min-width: 768px) {
   .content-wrapper {
     margin-left: 240px;
-    max-width: calc(100% - 240px);
+    width: calc(100% - 240px);
+    transition:
+      margin-left 0s ease,
+      width 0s ease;
   }
 
-  .mobile-navbar-toggle {
-    display: none;
+  .admin-sidebar.collapsed ~ .content-wrapper {
+    margin-left: 60px;
+    width: calc(100% - 60px);
+  }
+}
+
+@media (min-width: 576px) and (max-width: 767px) {
+  .content-wrapper {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+@media (max-width: 575px) {
+  .content-wrapper {
+    margin-left: 0;
+    width: 100%;
   }
 }
 

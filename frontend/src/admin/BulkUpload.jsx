@@ -4,7 +4,6 @@ import {
   faBell,
   faCircleInfo,
   faFileExcel,
-  faList,
   faUpload,
   faX,
 } from "@fortawesome/free-solid-svg-icons";
@@ -38,7 +37,7 @@ function BulkUpload() {
     e.preventDefault();
 
     if (!file) {
-      toast.error("Please select a .xlsx or csv file first");
+      toast.error("Please select a .xlsx or .csv file first");
       return;
     }
 
@@ -69,12 +68,6 @@ function BulkUpload() {
         <div className="row align-items-center">
           <div className="col-10 col-md-11">
             <div className="row align-items-center">
-              <div className="col-auto">
-                <button className="btn border-0">
-                  <FontAwesomeIcon icon={faList} />
-                </button>
-              </div>
-
               <div className="col-9 col-md-8 col-lg-4">
                 <input
                   type="text"
@@ -152,7 +145,7 @@ function BulkUpload() {
                     </button>
 
                     <div className="mt-3 text-success fw-bold">
-                      Total customers data: {customers}
+                      Total Customer Records: {customers}
                     </div>
                   </div>
                 </div>
@@ -176,14 +169,14 @@ function BulkUpload() {
           </div>
         </div>
 
-        <div className="col-12 col-lg-6 col-md-6 d-flex flex-column">
+        {/* <div className="col-12 col-lg-6 col-md-6 d-flex flex-column">
           <div className="card rounded-2">
             <div className="px-2 py-2 mt-2">Package Upload</div>
           </div>
-        </div>
+        </div> */}
       </div>
 
-      <ToastContainer position="bottom-right" autoClose="1500" />
+      <ToastContainer position="bottom-right" autoClose={1500} />
     </div>
   );
 }

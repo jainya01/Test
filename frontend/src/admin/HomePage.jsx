@@ -5,7 +5,6 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBell,
   faChartLine,
-  faList,
   faPhone,
   faPhoneSlash,
   faPhoneVolume,
@@ -198,12 +197,6 @@ function HomePage() {
           <div className="row align-items-center">
             <div className="col-10 col-md-11">
               <div className="row align-items-center">
-                <div className="col-auto">
-                  <button className="btn border-0">
-                    <FontAwesomeIcon icon={faList} />
-                  </button>
-                </div>
-
                 <div className="col-9 col-md-8 col-lg-6">
                   <input
                     type="text"
@@ -350,7 +343,7 @@ function HomePage() {
               </div>
             </div>
 
-            <div className="col-6 col-sm-6 col-md-4 col-lg col-xl">
+            <div className="col-6 col-sm-6 col-md-4 col-lg-3 col-xl">
               <div className="card custom-card shadow-sm border-0 h-100 rounded-3">
                 <div className="card-body d-flex justify-content-between">
                   <div>

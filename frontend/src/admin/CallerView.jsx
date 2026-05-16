@@ -135,12 +135,6 @@ function CallerView() {
           <div className="row align-items-center">
             <div className="col-10 col-md-11">
               <div className="row align-items-center">
-                <div className="col-auto">
-                  <button className="btn border-0">
-                    <FontAwesomeIcon icon={faList} />
-                  </button>
-                </div>
-
                 <div className="col-9 col-md-8 col-lg-6">
                   <input
                     type="text"

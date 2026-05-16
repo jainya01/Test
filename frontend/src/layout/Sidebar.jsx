@@ -14,7 +14,7 @@ import {
   faCog,
   faUpload,
   faListCheck,
-  // faList,
+  faColumns,
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 
@@ -50,7 +50,6 @@ export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const toggleSidebar = () => setIsOpen((s) => !s);
   const closeSidebar = () => setIsOpen(false);
-
   const role = localStorage.getItem("role");
   const navLinks = role === "admin" ? ADMIN_LINKS : CALLER_LINKS;
 
@@ -60,12 +59,6 @@ export default function Sidebar() {
     localStorage.clear();
     navigate("/", { replace: true });
   };
-
-  // const [collapsed, setCollapsed] = useState(false);
-
-  // const toggleDesktopSidebar = () => {
-  //   setCollapsed((prev) => !prev);
-  // };
 
   const [admin, setAdmin] = useState([]);
   const [caller, setCaller] = useState([]);
@@ -131,6 +124,12 @@ export default function Sidebar() {
       handleLoggedUser();
     }
   }, [admin, caller]);
+
+  const [collapsed, setCollapsed] = useState(false);
+
+  const toggleDesktopSidebar = () => {
+    setCollapsed((prev) => !prev);
+  };
 
   return (
     <>
@@ -223,23 +222,25 @@ export default function Sidebar() {
             <hr className="mb-0 text-danger" />
 
             <div className="d-block d-flex align-items-center flex-row flex-nowrap justify-content-between rounded p-1 mt-2 w-100">
-              <div className="d-flex align-items-center">
-                <div className="d-flex align-items-center justify-content-center rounded-circle me-2 short-sidebar text-white fw-bold custom-short">
-                  {loggedUser?.name
-                    ? loggedUser.name.charAt(0).toUpperCase()
-                    : "U"}
-                </div>
+              <Link to="/admin/settings" className="text-decoration-none">
+                <div className="d-flex align-items-center">
+                  <div className="d-flex align-items-center justify-content-center rounded-circle me-2 short-sidebar text-white fw-bold custom-short">
+                    {loggedUser?.name
+                      ? loggedUser.name.charAt(0).toUpperCase()
+                      : "U"}
+                  </div>
 
-                <div className="d-flex flex-column">
-                  <span className="fw-semibold text-nowrap custom-shorts">
-                    {loggedUser?.name ?? "N/A"}
-                  </span>
+                  <div className="d-flex flex-column">
+                    <span className="fw-semibold text-nowrap custom-shorts">
+                      {loggedUser?.name ?? "N/A"}
+                    </span>
 
-                  <small className="custom-shorts1">
-                    {loggedUser?.email ?? "N/A"}
-                  </small>
+                    <small className="custom-shorts1">
+                      {loggedUser?.email ?? "N/A"}
+                    </small>
+                  </div>
                 </div>
-              </div>
+              </Link>
 
               <div onClick={handleLogout}>
                 <FontAwesomeIcon
@@ -254,25 +255,26 @@ export default function Sidebar() {
       </div>
 
       <aside
-        className="d-none d-md-block admin-sidebar"
-        aria-label="Admin sidebar"
+        className={`d-none d-md-block admin-sidebar ${collapsed ? "collapsed" : ""}`}
       >
         <div className="p-0 d-flex flex-column" style={{ minHeight: "100%" }}>
-          <Link
-            to={role === "admin" ? "/admin/dashboard" : "/caller/leads"}
-            className="text-decoration-none"
-          >
-            <div className="d-flex mt-3">
-              <div className="custom-box mt-0">
-                <FontAwesomeIcon icon={faPhone} />
-              </div>
-
-              <div className="d-flex flex-column ms-2 font-alfasseh">
-                <span className="text-light fw-bold">CallTrack CRM</span>
-                <span className="laundry-app">Laraib Travels</span>
-              </div>
+          <div className="d-flex mt-3 align-items-center">
+            <div className="custom-box mt-0" onClick={toggleDesktopSidebar}>
+              <FontAwesomeIcon icon={collapsed ? faTableColumns : faPhone} />
             </div>
-          </Link>
+
+            {!collapsed && (
+              <Link
+                to={role === "admin" ? "/admin/dashboard" : "/caller/leads"}
+                className="text-decoration-none"
+              >
+                <div className="d-flex flex-column ms-2 font-alfasseh">
+                  <span className="text-light fw-bold">CallTrack CRM</span>
+                  <span className="laundry-app">Laraib Travels</span>
+                </div>
+              </Link>
+            )}
+          </div>
 
           <div className="mt-3 mb-2 custom-font-crm">
             {role === "admin" ? "Admin" : "Caller"}
@@ -299,41 +301,55 @@ export default function Sidebar() {
 
           <div className="mt-auto pt-0 mb-2">
             <hr className="mb-0 text-danger" />
+            <div
+              className={`d-none d-md-flex align-items-center rounded p-1 mt-2 w-100 ${
+                collapsed ? "justify-content-center" : "justify-content-between"
+              }`}
+            >
+              <Link className="text-decoration-none" to="/admin/settings">
+                <div className="d-flex align-items-center overflow-hidden">
+                  <div className="d-flex align-items-center justify-content-center rounded-circle me-2 short-sidebar text-white fw-bold custom-short">
+                    {loggedUser?.name
+                      ? loggedUser.name.charAt(0).toUpperCase()
+                      : "U"}
+                  </div>
 
-            <div className="d-none d-md-block d-lg-flex d-md-flex align-items-center justify-content-between rounded p-1 mt-2 w-100">
-              <div className="d-flex align-items-center">
-                <div className="d-flex align-items-center justify-content-center rounded-circle me-2 short-sidebar text-white fw-bold custom-short">
-                  {loggedUser?.name
-                    ? loggedUser.name.charAt(0).toUpperCase()
-                    : "U"}
+                  {!collapsed && (
+                    <div className="d-flex flex-column overflow-hidden">
+                      <span className="fw-semibold text-nowrap custom-shorts text-truncate">
+                        {loggedUser?.name || "N/A"}
+                      </span>
+
+                      <small className="custom-shorts1 text-truncate">
+                        {loggedUser?.email || "N/A"}
+                      </small>
+                    </div>
+                  )}
                 </div>
+              </Link>
 
-                <div className="d-flex flex-column">
-                  <span className="fw-semibold text-nowrap custom-shorts">
-                    {loggedUser?.name ?? "N/A"}
-                  </span>
-
-                  <small className="custom-shorts1">
-                    {loggedUser?.email ?? "N/A"}
-                  </small>
+              {!collapsed && (
+                <div onClick={handleLogout}>
+                  <FontAwesomeIcon
+                    icon={faRightFromBracket}
+                    className="logout-color"
+                    role="button"
+                  />
                 </div>
-              </div>
-
-              <div onClick={handleLogout}>
-                <FontAwesomeIcon
-                  icon={faRightFromBracket}
-                  className="logout-color"
-                  role="button"
-                />
-              </div>
+              )}
             </div>
           </div>
         </div>
       </aside>
 
-      {/* <div className="list-list-sidebar">
-        <FontAwesomeIcon icon={faList} />
-      </div> */}
+      {!collapsed && (
+        <div
+          className={`list-list-sidebar d-lg-flex mt-2 d-lg-block d-md-block d-none ${collapsed ? "collapsed-btn" : ""}`}
+          onClick={toggleDesktopSidebar}
+        >
+          <FontAwesomeIcon icon={faTableColumns} />
+        </div>
+      )}
     </>
   );
 }
