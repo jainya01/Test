@@ -16,11 +16,11 @@ function ServicesEdit() {
   const [service, setService] = useState({
     service_name: "",
     service_code: "",
-    price: "",
     status: "",
     notes: "",
   });
-  const { service_name, service_code, price, status, notes } = service;
+
+  const { service_name, service_code, status, notes } = service;
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -53,7 +53,6 @@ function ServicesEdit() {
         setService({
           service_name: res.data?.result?.[0]?.service_name || "",
           service_code: res.data?.result?.[0]?.service_code || "",
-          price: res.data?.result?.[0]?.price || "",
           status: res.data?.result?.[0]?.status || "",
           notes: res.data?.result?.[0]?.notes || "",
         });
@@ -130,21 +129,6 @@ function ServicesEdit() {
                       placeholder="Enter status code"
                       name="service_code"
                       value={service_code}
-                      onChange={onInputChange}
-                      required
-                    />
-                  </div>
-
-                  <div className="col-12">
-                    <label className="form-label">
-                      Price <span className="text-danger">*</span>
-                    </label>
-                    <input
-                      type="number"
-                      className="form-control custom-text mb-1"
-                      placeholder="Price"
-                      name="price"
-                      value={price}
                       onChange={onInputChange}
                       required
                     />

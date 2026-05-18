@@ -129,7 +129,6 @@ function Services() {
                           <th className="ps-2 py-2">S/N</th>
                           <th>SERVICE NAME</th>
                           <th>SERVICE CODE</th>
-                          <th>PRICE</th>
                           <th>STATUS</th>
                           <th>ACT</th>
                         </tr>
@@ -155,8 +154,6 @@ function Services() {
                               <td className="convert-code">
                                 {data.service_code}
                               </td>
-
-                              <td className="price-no">{data.price}</td>
 
                               <td
                                 className={

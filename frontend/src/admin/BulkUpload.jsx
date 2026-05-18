@@ -94,8 +94,8 @@ function BulkUpload() {
       <div className="row mt-3 gx-2 ms-2 me-2 gy-2">
         <div>
           <h5 className="fw-bold overview-dashboard">Bulk Upload</h5>
-          <p className="text-muted mb-md-0 overview-lead">
-            Import Contact from Excel - deplicate auto-skipped
+          <p className="text-muted mb-md-0 overview-lead fw-bold">
+            Import Contact from Excel
           </p>
         </div>
 
@@ -171,12 +171,6 @@ function BulkUpload() {
             </div>
           </div>
         </div>
-
-        {/* <div className="col-12 col-lg-6 col-md-6 d-flex flex-column">
-          <div className="card rounded-2">
-            <div className="px-2 py-2 mt-2">Package Upload</div>
-          </div>
-        </div> */}
       </div>
 
       <ToastContainer position="bottom-right" autoClose={1500} />

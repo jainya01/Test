@@ -482,9 +482,9 @@ router.post(
   "/servicespost",
   authenticate,
   asyncHandler(async (req, res) => {
-    const { service_name, service_code, price, status, notes } = req.body;
+    const { service_name, service_code, status, notes } = req.body;
 
-    if (!service_name || !service_code || !price || !status) {
+    if (!service_name || !service_code || !status) {
       const error = new Error("All fields are required");
       error.statusCode = 400;
       throw error;
@@ -502,8 +502,8 @@ router.post(
     }
 
     const [result] = await pool.execute(
-      "INSERT INTO services (service_name, service_code, price, status, notes) VALUES (?, ?, ?, ?, ?)",
-      [service_name, service_code, price, status, notes],
+      "INSERT INTO services (service_name, service_code, status, notes) VALUES (?, ?, ?, ?)",
+      [service_name, service_code, status, notes],
     );
 
     return res.status(201).json({
@@ -519,9 +519,9 @@ router.put(
   authenticate,
   asyncHandler(async (req, res) => {
     const { id } = req.params;
-    const { service_name, service_code, price, status, notes } = req.body;
+    const { service_name, service_code, status, notes } = req.body;
 
-    if (!service_name || !service_code || !price || !status) {
+    if (!service_name || !service_code || !status) {
       const error = new Error("All fields are required");
       error.statusCode = 400;
       throw error;
@@ -529,14 +529,13 @@ router.put(
 
     const query = `
       UPDATE services
-      SET service_name = ?, service_code = ?, price = ?, status = ?, notes = ?
+      SET service_name = ?, service_code = ?, status = ?, notes = ?
       WHERE id = ?
     `;
 
     const [result] = await pool.execute(query, [
       service_name,
       service_code,
-      price,
       status,
       notes,
       id,
@@ -583,7 +582,7 @@ router.get(
   authenticate,
   asyncHandler(async (req, res) => {
     const SQL =
-      "SELECT id, service_name, service_code, price, status, notes FROM services ORDER BY id DESC LIMIT 20";
+      "SELECT id, service_name, service_code, status, notes FROM services ORDER BY id DESC LIMIT 20";
     const [result] = await pool.execute(SQL);
 
     if (result.affectedRows <= 0) {
@@ -606,7 +605,7 @@ router.get(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     const SQL =
-      "SELECT id, service_name, service_code, price, status, notes FROM services WHERE id = ?";
+      "SELECT id, service_name, service_code, status, notes FROM services WHERE id = ?";
     const [result] = await pool.execute(SQL, [id]);
 
     if (result.affectedRows <= 0) {

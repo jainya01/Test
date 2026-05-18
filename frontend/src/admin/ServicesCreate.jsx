@@ -15,12 +15,11 @@ function ServicesCreate() {
   const [service, setService] = useState({
     service_name: "",
     service_code: "",
-    price: "",
     status: "",
     notes: "",
   });
 
-  const { service_name, service_code, price, status, notes } = service;
+  const { service_name, service_code, status, notes } = service;
 
   const [errors, setErrors] = useState({});
 
@@ -33,10 +32,6 @@ function ServicesCreate() {
 
     if (!service_code.trim()) {
       newErrors.service_code = "Service code is required";
-    }
-
-    if (!price.trim()) {
-      newErrors.price = "Price is required";
     }
 
     if (!status) {
@@ -147,24 +142,6 @@ function ServicesCreate() {
                       <small className="text-danger mt-1">
                         {errors.service_code}
                       </small>
-                    )}
-                  </div>
-
-                  <div className="col-12">
-                    <label className="form-label">
-                      Price <span className="text-danger">*</span>
-                    </label>
-                    <input
-                      type="number"
-                      className="form-control custom-text mb-1"
-                      placeholder="Price"
-                      name="price"
-                      value={price}
-                      onChange={onInputChange}
-                      required
-                    />
-                    {errors.price && (
-                      <small className="text-danger mt-1">{errors.price}</small>
                     )}
                   </div>
 
