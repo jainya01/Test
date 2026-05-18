@@ -10,8 +10,8 @@ import { ToastContainer, toast } from "react-toastify";
 function CustomersEdit() {
   const API_URL = import.meta.env.VITE_API_URL;
 
-  const navigate = useNavigate();
   const { id } = useParams();
+  const navigate = useNavigate();
 
   const [customer, setCustomer] = useState({
     name: "",
@@ -225,7 +225,8 @@ function CustomersEdit() {
                       <option value="Hajj">Hajj</option>
                       <option value="Umrah">Umrah</option>
                       <option value="Packages">Packages</option>
-                      <option value="Misc">Misc</option>
+                      <option value="Medical">Medical</option>
+                      <option value="Ticket">Ticket</option>
                     </select>
 
                     {errors.service && (

@@ -209,7 +209,8 @@ function CustomersCreate() {
                       <option value="Hajj">Hajj</option>
                       <option value="Umrah">Umrah</option>
                       <option value="Packages">Packages</option>
-                      <option value="Misc">Misc</option>
+                      <option value="Medical">Medical</option>
+                      <option value="Ticket">Ticket</option>
                     </select>
 
                     {errors.service && (
