@@ -30,7 +30,7 @@ function ServicesEdit() {
       });
       toast.success("Service updated successfully");
       setTimeout(() => {
-        navigate("/admin/services");
+        navigate("/admin/status");
       }, 1000);
     } catch (error) {
       toast.error("Failed to update service");
@@ -171,7 +171,7 @@ function ServicesEdit() {
                       Update
                     </button>
 
-                    <Link className="mt-2 text-success" to="/admin/services">
+                    <Link className="mt-2 text-success" to="/admin/status">
                       Back
                     </Link>
                   </div>

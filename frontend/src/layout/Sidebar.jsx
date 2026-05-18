@@ -28,7 +28,7 @@ const ADMIN_LINKS = [
   { path: "/admin/customers", label: "Customers", icon: faUsers },
   { path: "/admin/callers", label: "Calling Executive", icon: faHeadset },
   { path: "/admin/reports", label: "Reports", icon: faChartColumn },
-  { path: "/admin/services", label: "Services", icon: faListCheck },
+  { path: "/admin/status", label: "Status", icon: faListCheck },
   // { path: "/admin/leads", label: "My Leads", icon: faPhone },
   { path: "/admin/bulk-upload", label: "Bulk Upload", icon: faUpload },
   { path: "/admin/settings", label: "Settings", icon: faCog },
@@ -222,25 +222,23 @@ export default function Sidebar() {
             <hr className="mb-0 text-danger" />
 
             <div className="d-block d-flex align-items-center flex-row flex-nowrap justify-content-between rounded p-1 mt-2 w-100">
-              <Link to="/admin/settings" className="text-decoration-none">
-                <div className="d-flex align-items-center">
-                  <div className="d-flex align-items-center justify-content-center rounded-circle me-2 short-sidebar text-white fw-bold custom-short">
-                    {loggedUser?.name
-                      ? loggedUser.name.charAt(0).toUpperCase()
-                      : "U"}
-                  </div>
-
-                  <div className="d-flex flex-column">
-                    <span className="fw-semibold text-nowrap custom-shorts">
-                      {loggedUser?.name ?? "N/A"}
-                    </span>
-
-                    <small className="custom-shorts1">
-                      {loggedUser?.email ?? "N/A"}
-                    </small>
-                  </div>
+              <div className="d-flex align-items-center">
+                <div className="d-flex align-items-center justify-content-center rounded-circle me-2 short-sidebar text-white fw-bold custom-short">
+                  {loggedUser?.name
+                    ? loggedUser.name.charAt(0).toUpperCase()
+                    : "U"}
                 </div>
-              </Link>
+
+                <div className="d-flex flex-column">
+                  <span className="fw-semibold text-nowrap custom-shorts">
+                    {loggedUser?.name ?? "N/A"}
+                  </span>
+
+                  <small className="custom-shorts1">
+                    {loggedUser?.email ?? "N/A"}
+                  </small>
+                </div>
+              </div>
 
               <div onClick={handleLogout}>
                 <FontAwesomeIcon
@@ -306,27 +304,25 @@ export default function Sidebar() {
                 collapsed ? "justify-content-center" : "justify-content-between"
               }`}
             >
-              <Link className="text-decoration-none" to="/admin/settings">
-                <div className="d-flex align-items-center overflow-hidden">
-                  <div className="d-flex align-items-center justify-content-center rounded-circle me-2 short-sidebar text-white fw-bold custom-short">
-                    {loggedUser?.name
-                      ? loggedUser.name.charAt(0).toUpperCase()
-                      : "U"}
-                  </div>
-
-                  {!collapsed && (
-                    <div className="d-flex flex-column overflow-hidden">
-                      <span className="fw-semibold text-nowrap custom-shorts text-truncate">
-                        {loggedUser?.name || "N/A"}
-                      </span>
-
-                      <small className="custom-shorts1 text-truncate">
-                        {loggedUser?.email || "N/A"}
-                      </small>
-                    </div>
-                  )}
+              <div className="d-flex align-items-center overflow-hidden">
+                <div className="d-flex align-items-center justify-content-center rounded-circle me-2 short-sidebar text-white fw-bold custom-short">
+                  {loggedUser?.name
+                    ? loggedUser.name.charAt(0).toUpperCase()
+                    : "U"}
                 </div>
-              </Link>
+
+                {!collapsed && (
+                  <div className="d-flex flex-column overflow-hidden">
+                    <span className="fw-semibold text-nowrap custom-shorts text-truncate">
+                      {loggedUser?.name || "N/A"}
+                    </span>
+
+                    <small className="custom-shorts1 text-truncate">
+                      {loggedUser?.email || "N/A"}
+                    </small>
+                  </div>
+                )}
+              </div>
 
               {!collapsed && (
                 <div onClick={handleLogout}>

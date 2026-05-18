@@ -102,17 +102,15 @@ function Services() {
       <div className="p-2 p-lg-3 mt-2">
         <div className="d-flex flex-row flex-wrap justify-content-between align-items-md-center mb-4">
           <div>
-            <h5 className="fw-bold overview-dashboard">
-              Service Status Management
-            </h5>
+            <h5 className="fw-bold overview-dashboard">Status Management</h5>
             <p className="text-muted mb-md-0 fw-bold overview-lead">
-              Manage service status
+              Manage status
             </p>
           </div>
 
           <div>
-            <Link className="btn user-added-btn" to="/admin/services/create">
-              + Add service
+            <Link className="btn user-added-btn" to="/admin/status/create">
+              + Add Status
             </Link>
           </div>
         </div>
@@ -142,7 +140,7 @@ function Services() {
 
                               <td>
                                 <Link
-                                  to={`/admin/services/edit/${data.id}`}
+                                  to={`/admin/status/edit/${data.id}`}
                                   className="text-decoration-none text-dark"
                                 >
                                   <span className="short-name fw-bold">
@@ -180,7 +178,7 @@ function Services() {
                               <td className="text-start">
                                 <span className="d-flex flex-nowrap">
                                   <Link
-                                    to={`/admin/services/edit/${data.id}`}
+                                    to={`/admin/status/edit/${data.id}`}
                                     title="Edit"
                                   >
                                     <FontAwesomeIcon

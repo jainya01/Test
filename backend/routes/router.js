@@ -20,7 +20,6 @@ const storage = multer.diskStorage({
   destination: function (req, file, cb) {
     cb(null, "uploads");
   },
-
   filename: function (req, file, cb) {
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
     cb(null, uniqueSuffix + path.extname(file.originalname));
@@ -215,6 +214,8 @@ router.get(
         customers.status,
         customers.current_status,
         customers.caller_id,
+        customers.created_at,
+        customers.updated_at,
         caller.fullname,
         customers.notes
       FROM customers

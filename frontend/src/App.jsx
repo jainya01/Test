@@ -20,9 +20,9 @@ import Settings from "./admin/Settings";
 import CallerLeads from "./caller/CallerLeads";
 import CallersCreate from "./admin/CallersCreate";
 import CallersEdit from "./admin/CallersEdit";
-import Services from "./admin/Services";
-import ServicesCreate from "./admin/ServicesCreate";
-import ServicesEdit from "./admin/ServicesEdit";
+import Status from "./admin/Status";
+import StatusCreate from "./admin/StatusCreate";
+import StatusEdit from "./admin/StatusEdit";
 import CustomersCreate from "./admin/CustomersCreate";
 import CustomersEdit from "./admin/CustomersEdit";
 import CallerView from "./admin/CallerView";
@@ -50,9 +50,9 @@ function App() {
 
             <Route path="reports" element={<Reports />} />
 
-            <Route path="services" element={<Services />} />
-            <Route path="services/create" element={<ServicesCreate />} />
-            <Route path="services/edit/:id" element={<ServicesEdit />} />
+            <Route path="status" element={<Status />} />
+            <Route path="status/create" element={<StatusCreate />} />
+            <Route path="status/edit/:id" element={<StatusEdit />} />
 
             <Route path="leads" element={<Leads />} />
             <Route path="bulk-upload" element={<BulkUpload />} />

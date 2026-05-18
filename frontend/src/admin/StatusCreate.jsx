@@ -56,7 +56,7 @@ function ServicesCreate() {
       toast.success("Service created successfully");
 
       setTimeout(() => {
-        navigate("/admin/services");
+        navigate("/admin/status");
       }, 1000);
     } catch (error) {
       toast.error("Failed to add service");
@@ -188,7 +188,7 @@ function ServicesCreate() {
                       Submit
                     </button>
 
-                    <Link className="mt-2 text-success" to="/admin/services">
+                    <Link className="mt-2 text-success" to="/admin/status">
                       Back
                     </Link>
                   </div>
