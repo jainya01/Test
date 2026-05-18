@@ -62,20 +62,26 @@ function Customers() {
     allData();
   }, []);
 
-  const filteredCustomers = customers.filter((item) => {
-    const keyword = search.toLowerCase();
-    const name = item.name ? item.name.toLowerCase() : "";
-    const phone = item.phone ? item.phone.toString() : "";
-    const matchesSearch = name.includes(keyword) || phone.includes(keyword);
-    const matchesStatus =
-      selectedStatus === ""
-        ? item.status && item.status.trim() !== "" && item.status !== "null"
-        : item.status === selectedStatus;
+  const filteredCustomers = [...customers]
+    .sort((a, b) => {
+      return new Date(b.updated_at) - new Date(a.updated_at);
+    })
 
-    const matchesService =
-      selectedService === "" ? true : item.service === selectedService;
-    return matchesSearch && matchesStatus && matchesService;
-  });
+    .filter((item) => {
+      const keyword = search.toLowerCase();
+      const name = item.name ? item.name.toLowerCase() : "";
+      const phone = item.phone ? item.phone.toString() : "";
+      const matchesSearch = name.includes(keyword) || phone.includes(keyword);
+
+      const matchesStatus =
+        selectedStatus === ""
+          ? item.status && item.status.trim() !== "" && item.status !== "null"
+          : item.status === selectedStatus;
+
+      const matchesService =
+        selectedService === "" ? true : item.service === selectedService;
+      return matchesSearch && matchesStatus && matchesService;
+    });
 
   const itemsPerPage = 14;
   const totalPages = Math.ceil(filteredCustomers.length / itemsPerPage);
