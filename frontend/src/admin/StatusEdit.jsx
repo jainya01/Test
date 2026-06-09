@@ -92,25 +92,26 @@ function ServicesEdit() {
         </div>
       </div>
 
-      <div className="p-2 p-lg-3 mt-2">
-        <div className="row g-2 mt-3 d-flex justify-content-center">
-          <div className="col-lg-6 col-12">
-            <div className="card p-0 d-flex justify-content-center align-items-center">
-              <h5 className="mt-3 mb-0">
-                Edit Service: {service.service_name}
-              </h5>
+      <div className="p-2 p-lg-3">
+        <div className="col-12">
+          <div className="card shadow border-0">
+            <div className="card-header profile-header">
+              Edit Service: {service.service_name}
+            </div>
 
-              <hr className="border border-dark w-100 mt-3" />
-
+            <div className="card-body">
               <form onSubmit={handleFormSubmit}>
-                <div className="row g-3 px-3 py-2">
-                  <div className="col-12">
-                    <label className="form-label">
-                      Service Name <span className="text-danger">*</span>
+                <div className="row">
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label" htmlFor="service_name">
+                      Service Name
+                      <span className="text-danger fw-bolder">*</span>
                     </label>
+
                     <input
                       type="text"
-                      className="form-control custom-text mb-1"
+                      id="service_name"
+                      className="form-control sector-wise mb-1"
                       placeholder="Enter service name"
                       name="service_name"
                       value={service_name}
@@ -119,14 +120,17 @@ function ServicesEdit() {
                     />
                   </div>
 
-                  <div className="col-12">
-                    <label className="form-label">
-                      Service Code <span className="text-danger">*</span>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label" htmlFor="service_code">
+                      Service Code
+                      <span className="text-danger fw-bolder">*</span>
                     </label>
+
                     <input
                       type="text"
-                      className="form-control custom-text mb-1"
-                      placeholder="Enter status code"
+                      id="service_code"
+                      className="form-control sector-wise mb-1"
+                      placeholder="Enter service code"
                       name="service_code"
                       value={service_code}
                       onChange={onInputChange}
@@ -134,12 +138,15 @@ function ServicesEdit() {
                     />
                   </div>
 
-                  <div className="col-12">
-                    <label className="form-label">
-                      Status <span className="text-danger">*</span>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label" htmlFor="status">
+                      Status
+                      <span className="text-danger fw-bolder">*</span>
                     </label>
+
                     <select
-                      className="form-select custom-text mb-1"
+                      id="status"
+                      className="form-select sector-wise mb-1"
                       name="status"
                       value={status}
                       onChange={onInputChange}
@@ -151,30 +158,36 @@ function ServicesEdit() {
                     </select>
                   </div>
 
-                  <div className="col-12">
-                    <label className="form-label">Description</label>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label" htmlFor="notes">
+                      Description (optional)
+                    </label>
+
                     <textarea
-                      className="form-control py-2"
+                      id="notes"
+                      className="form-control py-2 sector-wise"
                       placeholder="Description..."
                       name="notes"
                       value={notes}
                       onChange={onInputChange}
-                      style={{ height: "90px" }}
+                      style={{ height: "60px" }}
                     ></textarea>
                   </div>
+                </div>
 
-                  <div className="col-12 mt-3 mb-4">
+                <div className="col-md-6 d-flex flex-column">
+                  <div>
                     <button
                       type="submit"
-                      className="btn btn-success w-100 mb-2"
+                      className="btn btn-success mb-2 submit-btn"
                     >
                       Update
                     </button>
-
-                    <Link className="mt-2 text-success" to="/admin/status">
-                      Back
-                    </Link>
                   </div>
+
+                  <Link className="text-success" to="/admin/status">
+                    Back
+                  </Link>
                 </div>
               </form>
             </div>

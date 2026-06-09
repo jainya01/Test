@@ -113,28 +113,30 @@ function CallersCreate() {
         </div>
       </div>
 
-      <div className="p-2 p-lg-3 mt-2">
-        <div className="row g-2 mt-3 d-flex justify-content-center">
-          <div className="col-lg-6 col-12">
-            <div className="card p-0 d-flex justify-content-center align-items-center">
-              <h5 className="mt-3 mb-0">Create a Caller</h5>
-              <hr className="border border-dark w-100 mt-3" />
+      <div className="p-2 p-lg-3">
+        <div className="col-12">
+          <div className="card shadow border-0">
+            <div className="card-header profile-header">Create New Caller</div>
 
+            <div className="card-body">
               <form onSubmit={handleFormSubmit}>
-                <div className="row g-3 px-3 py-2">
-                  <div className="col-12">
-                    <label className="form-label">
-                      Name <span className="text-danger">*</span>
+                <div className="row">
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label" htmlFor="fullname">
+                      Name <span className="text-danger fw-bolder">*</span>
                     </label>
+
                     <input
                       type="text"
-                      className="form-control custom-text mb-1"
+                      id="fullname"
+                      className="form-control sector-wise mb-1"
                       placeholder="Enter full name"
                       name="fullname"
                       value={fullname}
                       onChange={onInputChange}
                       required
                     />
+
                     {errors.fullname && (
                       <small className="text-danger mt-1">
                         {errors.fullname}
@@ -142,37 +144,44 @@ function CallersCreate() {
                     )}
                   </div>
 
-                  <div className="col-12">
-                    <label className="form-label">
-                      Email <span className="text-danger">*</span>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label" htmlFor="email">
+                      Email <span className="text-danger fw-bolder">*</span>
                     </label>
+
                     <input
                       type="email"
-                      className="form-control custom-text mb-1"
+                      id="email"
+                      className="form-control sector-wise mb-1"
                       placeholder="Enter email"
                       name="email"
                       value={email}
                       onChange={onInputChange}
                       required
                     />
+
                     {errors.email && (
                       <small className="text-danger mt-1">{errors.email}</small>
                     )}
                   </div>
 
-                  <div className="position-relative col-12">
-                    <label className="form-label">
-                      Password <span className="text-danger">*</span>
+                  <div
+                    className="col-md-6 mb-3"
+                    style={{ position: "relative" }}
+                  >
+                    <label className="form-label" htmlFor="password">
+                      Password <span className="text-danger fw-bolder">*</span>
                     </label>
 
                     <input
+                      id="password"
                       type={showPassword ? "text" : "password"}
-                      className="form-control custom-text pe-5"
+                      className="form-control sector-wise pe-5"
                       placeholder="Enter Password"
                       name="password"
                       value={password}
                       onChange={onInputChange}
-                      autoComplete="password"
+                      autoComplete="new-password"
                       required
                     />
 
@@ -193,12 +202,14 @@ function CallersCreate() {
                     </span>
                   </div>
 
-                  <div className="col-12">
-                    <label className="form-label">
-                      Status <span className="text-danger">*</span>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label" htmlFor="status">
+                      Status <span className="text-danger fw-bolder">*</span>
                     </label>
+
                     <select
-                      className="form-select custom-text mb-1"
+                      id="status"
+                      className="form-select sector-wise mb-1"
                       name="status"
                       value={status}
                       onChange={onInputChange}
@@ -216,30 +227,36 @@ function CallersCreate() {
                     )}
                   </div>
 
-                  <div className="col-12">
-                    <label className="form-label">Notes</label>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label" htmlFor="notes">
+                      Notes (optional)
+                    </label>
+
                     <textarea
-                      className="form-control py-2"
+                      id="notes"
+                      className="form-control py-2 sector-wise"
                       placeholder="Description..."
                       name="notes"
                       value={notes}
                       onChange={onInputChange}
-                      style={{ height: "90px" }}
+                      style={{ height: "60px" }}
                     ></textarea>
                   </div>
+                </div>
 
-                  <div className="col-12 mt-3 mb-4">
+                <div className="col-md-6 d-flex flex-column">
+                  <div>
                     <button
                       type="submit"
-                      className="btn btn-success w-100 mb-2"
+                      className="btn btn-success submit-btn mb-2"
                     >
                       Submit
                     </button>
-
-                    <Link className="mt-2 text-success" to="/admin/callers">
-                      Back
-                    </Link>
                   </div>
+
+                  <Link className="text-success" to="/admin/callers">
+                    Back
+                  </Link>
                 </div>
               </form>
             </div>

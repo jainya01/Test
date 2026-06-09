@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-toastify/dist/ReactToastify.css";
-
 import Login from "./components/Login";
 import AdminLogin from "./pages/AdminLogin";
 import CallerLogin from "./pages/CallerLogin";
@@ -17,6 +16,7 @@ import Customers from "./admin/Customers";
 import Leads from "./admin/Leads";
 import BulkUpload from "./admin/BulkUpload";
 import Settings from "./admin/Settings";
+
 import CallerLeads from "./caller/CallerLeads";
 import CallersCreate from "./admin/CallersCreate";
 import CallersEdit from "./admin/CallersEdit";

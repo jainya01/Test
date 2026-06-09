@@ -1090,10 +1090,11 @@ aside.admin-sidebar.collapsed {
 
 .eye-login1 {
   position: absolute;
-  right: 12px;
+  right: 14px;
   top: 38px;
   cursor: pointer;
   color: #6c757d;
+  font-size: 14px;
 }
 
 .icons-color {
@@ -1153,4 +1154,14 @@ aside.admin-sidebar.collapsed {
   .lead-message {
     font-size: 16px;
   }
+}
+
+.profile-header {
+  background-color: #111827;
+  color: #fff;
+  padding: 10px 10px;
+}
+
+.submit-btn {
+  font-size: 15px;
 }

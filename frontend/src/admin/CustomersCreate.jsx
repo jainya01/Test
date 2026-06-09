@@ -125,23 +125,24 @@ function CustomersCreate() {
       </div>
 
       <div className="p-2 p-lg-3 mt-2">
-        <div className="row g-2 mt-3 d-flex justify-content-center">
-          <div className="col-lg-6 col-12">
-            <div className="card p-0 d-flex justify-content-center align-items-center">
-              <h5 className="mt-3 mb-0">Create a Customer</h5>
+        <div className="col-12">
+          <div className="card shadow border-0">
+            <div className="card-header profile-header">
+              Create New Customer
+            </div>
 
-              <hr className="border border-dark w-100 mt-3" />
-
+            <div className="card-body">
               <form onSubmit={handleFormSubmit}>
-                <div className="row g-3 px-3 py-2">
-                  <div className="col-12">
-                    <label className="form-label">
-                      Name <span className="text-danger">*</span>
+                <div className="row">
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label" htmlFor="name">
+                      Name <span className="text-danger fw-bolder">*</span>
                     </label>
 
                     <input
                       type="text"
-                      className="form-control custom-text mb-1"
+                      id="name"
+                      className="form-control sector-wise mb-1"
                       placeholder="Enter full name"
                       name="name"
                       value={name}
@@ -150,18 +151,19 @@ function CustomersCreate() {
                     />
 
                     {errors.name && (
-                      <small className="text-danger">{errors.name}</small>
+                      <small className="text-danger mt-1">{errors.name}</small>
                     )}
                   </div>
 
-                  <div className="col-12">
-                    <label className="form-label">
-                      Phone <span className="text-danger">*</span>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label" htmlFor="phone">
+                      Phone <span className="text-danger fw-bolder">*</span>
                     </label>
 
                     <input
                       type="text"
-                      className="form-control custom-text mb-1"
+                      id="phone"
+                      className="form-control sector-wise mb-1"
                       placeholder="Enter phone no"
                       name="phone"
                       value={phone}
@@ -170,18 +172,19 @@ function CustomersCreate() {
                     />
 
                     {errors.phone && (
-                      <small className="text-danger">{errors.phone}</small>
+                      <small className="text-danger mt-1">{errors.phone}</small>
                     )}
                   </div>
 
-                  <div className="col-12">
-                    <label className="form-label">
-                      City <span className="text-danger">*</span>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label" htmlFor="city">
+                      City <span className="text-danger fw-bolder">*</span>
                     </label>
 
                     <input
                       type="text"
-                      className="form-control custom-text"
+                      id="city"
+                      className="form-control sector-wise mb-1"
                       placeholder="Enter City"
                       name="city"
                       value={city}
@@ -190,16 +193,18 @@ function CustomersCreate() {
                     />
 
                     {errors.city && (
-                      <small className="text-danger">{errors.city}</small>
+                      <small className="text-danger mt-1">{errors.city}</small>
                     )}
                   </div>
 
-                  <div className="col-12">
-                    <label className="form-label">
-                      Service <span className="text-danger">*</span>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label" htmlFor="service">
+                      Service <span className="text-danger fw-bolder">*</span>
                     </label>
+
                     <select
-                      className="form-select custom-text"
+                      id="service"
+                      className="form-select sector-wise mb-1"
                       name="service"
                       value={service}
                       onChange={onInputChange}
@@ -214,35 +219,42 @@ function CustomersCreate() {
                     </select>
 
                     {errors.service && (
-                      <small className="text-danger">{errors.service}</small>
+                      <small className="text-danger mt-1">
+                        {errors.service}
+                      </small>
                     )}
                   </div>
 
-                  <div className="col-12">
-                    <label className="form-label">Notes</label>
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label" htmlFor="notes">
+                      Notes (optional)
+                    </label>
 
                     <textarea
-                      className="form-control py-2"
+                      id="notes"
+                      className="form-control py-2 sector-wise"
                       placeholder="Description..."
                       name="notes"
                       value={notes}
                       onChange={onInputChange}
-                      style={{ height: "90px" }}
+                      style={{ height: "60px" }}
                     />
                   </div>
+                </div>
 
-                  <div className="col-12 mt-3 mb-4">
+                <div className="col-md-6 d-flex flex-column">
+                  <div>
                     <button
                       type="submit"
-                      className="btn btn-success w-100 mb-2"
+                      className="btn btn-success submit-btn mb-2"
                     >
                       Submit
                     </button>
-
-                    <Link className="mt-2 text-success" to="/admin/customers">
-                      Back
-                    </Link>
                   </div>
+
+                  <Link className="text-success" to="/admin/customers">
+                    Back
+                  </Link>
                 </div>
               </form>
             </div>
