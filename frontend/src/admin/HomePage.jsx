@@ -192,7 +192,7 @@ function HomePage() {
 
   return (
     <>
-      <div className="content-wrapper">
+      <main className="content-wrapper">
         <div className="container-fluid border-bottom bg-light pb-2 pt-md-2 pb-lg-1">
           <div className="row align-items-center">
             <div className="col-10 col-md-11">
@@ -227,14 +227,22 @@ function HomePage() {
             </div>
 
             <div className="d-flex flex-wrap flex-lg-nowrap gap-2">
-              <select className="form-select sector-wise">
+              <select
+                id="callStatus"
+                className="form-select sector-wise"
+                aria-label="Call Status"
+              >
                 <option value="">All Calls</option>
                 <option value="Answered">Answered</option>
                 <option value="Rejected">Rejected</option>
                 <option value="Unanswered">Unanswered</option>
               </select>
 
-              <select className="form-select sector-wise">
+              <select
+                id="serviceStatus"
+                className="form-select sector-wise"
+                aria-label="Service Status"
+              >
                 <option value="">All status</option>
                 {Array.isArray(service) ? (
                   service
@@ -249,7 +257,11 @@ function HomePage() {
                 )}
               </select>
 
-              <select className="form-select sector-wise">
+              <select
+                id="callerSelect"
+                className="form-select sector-wise"
+                aria-label="Caller"
+              >
                 <option value="">All Caller</option>
                 {Array.isArray(caller) ? (
                   caller.map((item) => (
@@ -489,11 +501,11 @@ function HomePage() {
                         </div>
 
                         <div className="d-flex gap-2">
-                          <span className="badge bg-success-subtle text-success">
+                          <span className="badge bg-success-safe text-success-safe">
                             {item.call_status || "Answered"}
                           </span>
 
-                          <span className="badge bg-primary-subtle text-primary">
+                          <span className="badge bg-primary-safe text-primary-safe">
                             {item.call_log_status || "Converted"}
                           </span>
                         </div>
@@ -574,7 +586,7 @@ function HomePage() {
             </div>
           </div>
         </div>
-      </div>
+      </main>
     </>
   );
 }

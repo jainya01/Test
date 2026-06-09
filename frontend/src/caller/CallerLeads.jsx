@@ -196,7 +196,7 @@ function Leads() {
   };
 
   return (
-    <div className="content-wrapper">
+    <main className="content-wrapper">
       <div className="container-fluid border-bottom bg-light py-2">
         <div className="row align-items-center">
           <div className="col-10 col-md-11">
@@ -403,6 +403,8 @@ function Leads() {
                         </label>
 
                         <select
+                          aria-label="Service Status"
+                          id="status"
                           className="form-select custom-input"
                           name="status"
                           value={status}
@@ -429,6 +431,8 @@ function Leads() {
                           Service Head
                         </label>
                         <select
+                          aria-label="Service Type"
+                          id="service"
                           className="form-select custom-input"
                           name="service"
                           value={service}
@@ -447,6 +451,8 @@ function Leads() {
                           Sub-category
                         </label>
                         <select
+                          aria-label="Sub Category"
+                          id="sub_category"
                           className="form-select custom-input"
                           name="sub_category"
                           value={sub_category}
@@ -463,6 +469,8 @@ function Leads() {
                           Package
                         </label>
                         <select
+                          aria-label="Package Name"
+                          id="package_name"
                           className="form-select custom-input"
                           name="package_name"
                           value={package_name}
@@ -512,7 +520,7 @@ function Leads() {
       </div>
 
       <ToastContainer position="top-right" autoClose={1500} />
-    </div>
+    </main>
   );
 }
 

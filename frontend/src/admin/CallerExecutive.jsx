@@ -132,7 +132,7 @@ function CallerExecutive() {
     selected.length > 0 && selected.length < paginatedData.length;
 
   return (
-    <div className="content-wrapper">
+    <main className="content-wrapper">
       <div className="container-fluid border-bottom bg-light py-2">
         <div className="row align-items-center">
           <div className="col-10 col-md-11">
@@ -196,6 +196,7 @@ function CallerExecutive() {
                             <input
                               type="checkbox"
                               className="form-check-input"
+                              aria-label="Select all callers"
                               checked={allChecked}
                               ref={(el) =>
                                 el && (el.indeterminate = isIndeterminate)
@@ -226,6 +227,7 @@ function CallerExecutive() {
                                 <input
                                   type="checkbox"
                                   className="form-check-input"
+                                  aria-label={`Select caller ${data.id}`}
                                   checked={selected.includes(data.id)}
                                   onChange={(e) =>
                                     setSelected((prev) =>
@@ -309,35 +311,34 @@ function CallerExecutive() {
                               </td>
 
                               <td className="text-start">
-                                <span className="d-flex flex-row flex-nowrap">
+                                <div className="d-flex align-items-center gap-2">
                                   <Link
                                     to={`/admin/callers/view/${data.id}`}
                                     title="View"
+                                    aria-label="View caller details"
+                                    className="action-icon icons-color2"
                                   >
-                                    <FontAwesomeIcon
-                                      icon={faEye}
-                                      className="icons-color2 me-1"
-                                    />
+                                    <FontAwesomeIcon icon={faEye} />
                                   </Link>
 
                                   <Link
                                     to={`/admin/callers/edit/${data.id}`}
                                     title="Edit"
+                                    aria-label="Edit caller"
+                                    className="action-icon icons-color"
                                   >
-                                    <FontAwesomeIcon
-                                      icon={faEdit}
-                                      className="icons-color"
-                                    />
+                                    <FontAwesomeIcon icon={faEdit} />
                                   </Link>
 
-                                  <span title="Delete">
-                                    <FontAwesomeIcon
-                                      icon={faTrash}
-                                      className="icons-color1 ps-1"
-                                      onClick={() => deleteData(data.id)}
-                                    />
+                                  <span
+                                    role="button"
+                                    title="Delete"
+                                    className="action-icon icons-color1"
+                                    onClick={() => deleteData(data.id)}
+                                  >
+                                    <FontAwesomeIcon icon={faTrash} />
                                   </span>
-                                </span>
+                                </div>
                               </td>
                             </tr>
                           ))
@@ -400,7 +401,7 @@ function CallerExecutive() {
       </div>
 
       <ToastContainer position="bottom-right" autoClose={1500} />
-    </div>
+    </main>
   );
 }
 

@@ -194,7 +194,7 @@ function Settings() {
   };
 
   return (
-    <div className="content-wrapper">
+    <main className="content-wrapper">
       <div className="container-fluid border-bottom bg-light py-2">
         <div className="row align-items-center">
           <div className="col-10 col-md-11">
@@ -232,8 +232,8 @@ function Settings() {
                   >
                     Admin Name
                   </label>
-
                   <input
+                    id="name-input"
                     type="text"
                     className="form-control custom-text"
                     placeholder="Full Name"
@@ -243,6 +243,7 @@ function Settings() {
                     onChange={onInputChange}
                     required
                   />
+
                   {errors.name && (
                     <span className="text-danger error-font">
                       {errors.name}
@@ -259,6 +260,7 @@ function Settings() {
                   </label>
 
                   <input
+                    id="email-input"
                     className="form-control custom-text"
                     type="email"
                     placeholder="admin@company.com"
@@ -268,6 +270,7 @@ function Settings() {
                     onChange={onInputChange}
                     required
                   />
+
                   {errors.email && (
                     <span className="text-danger error-font">
                       {errors.email}
@@ -276,19 +279,25 @@ function Settings() {
                 </div>
 
                 <div className="mb-2">
-                  <label className="form-label small fw-medium mt-2 mb-1">
+                  <label
+                    htmlFor="password"
+                    className="form-label small fw-medium mt-2 mb-1"
+                  >
                     Password
                   </label>
+
                   <input
+                    id="password"
                     type="password"
                     className="form-control custom-text"
                     placeholder="Create Password"
                     name="password"
                     value={formData.password}
-                    autoComplete="password"
+                    autoComplete="new-password"
                     onChange={onInputChange}
                     required
                   />
+
                   {errors.password && (
                     <span className="text-danger error-font">
                       {errors.password}
@@ -327,6 +336,7 @@ function Settings() {
                     className="form-select custom-text"
                     value={selectedAdmin}
                     onChange={handleSelectAdmin}
+                    aria-label="Select Admin"
                   >
                     <option value="">Choose a Admin</option>
                     {Array.isArray(adminEmail) && adminEmail.length > 0 ? (
@@ -346,10 +356,11 @@ function Settings() {
                     type="email"
                     className="form-control custom-text"
                     placeholder="New Email"
+                    aria-label="Email Address"
                     name="email"
                     value={updateForm.email}
                     onChange={handleUpdateChange}
-                    autoComplete="new-email"
+                    autoComplete="email"
                     required
                   />
                 </div>
@@ -359,6 +370,7 @@ function Settings() {
                     className="form-control custom-text"
                     type={showPassword ? "text" : "password"}
                     placeholder="New Password"
+                    aria-label="New Password"
                     name="password"
                     value={updateForm.password}
                     onChange={handleUpdateChange}
@@ -441,7 +453,7 @@ function Settings() {
       </div>
 
       <ToastContainer position="bottom-right" autoClose={1500} />
-    </div>
+    </main>
   );
 }
 

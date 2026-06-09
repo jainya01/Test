@@ -71,7 +71,7 @@ function ServicesCreate() {
   };
 
   return (
-    <div className="content-wrapper">
+    <main className="content-wrapper">
       <div className="container-fluid border-bottom bg-light py-2">
         <div className="row align-items-center">
           <div className="col-10 col-md-11">
@@ -201,7 +201,10 @@ function ServicesCreate() {
 
                     <div className="col-md-6 d-flex flex-column">
                       <div>
-                        <button type="submit" className="btn btn-success mb-2 submit-btn">
+                        <button
+                          type="submit"
+                          className="btn btn-success mb-2 submit-btn"
+                        >
                           Submit
                         </button>
                       </div>
@@ -219,7 +222,7 @@ function ServicesCreate() {
       </div>
 
       <ToastContainer position="bottom-right" autoClose={1500} />
-    </div>
+    </main>
   );
 }
 

@@ -1,4 +1,3 @@
-import { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-toastify/dist/ReactToastify.css";
@@ -28,46 +27,44 @@ import CallerView from "./admin/CallerView";
 function App() {
   return (
     <BrowserRouter>
-      <Suspense>
-        <Routes>
-          <Route path="/" element={<Login />} />
-          <Route path="admin/login" element={<AdminLogin />} />
-          <Route path="caller/login" element={<CallerLogin />} />
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="admin/login" element={<AdminLogin />} />
+        <Route path="caller/login" element={<CallerLogin />} />
 
-          <Route element={<AdminProtected />}>
-            <Route path="/admin" element={<User />}>
-              <Route path="dashboard" element={<HomePage />} />
+        <Route element={<AdminProtected />}>
+          <Route path="/admin" element={<User />}>
+            <Route path="dashboard" element={<HomePage />} />
 
-              <Route path="customers" element={<Customers />} />
-              <Route path="customers/create" element={<CustomersCreate />} />
-              <Route path="customers/edit/:id" element={<CustomersEdit />} />
+            <Route path="customers" element={<Customers />} />
+            <Route path="customers/create" element={<CustomersCreate />} />
+            <Route path="customers/edit/:id" element={<CustomersEdit />} />
 
-              <Route path="callers" element={<CallerExecutive />} />
-              <Route path="callers/create" element={<CallersCreate />} />
-              <Route path="callers/edit/:id" element={<CallersEdit />} />
-              <Route path="callers/view/:id" element={<CallerView />} />
+            <Route path="callers" element={<CallerExecutive />} />
+            <Route path="callers/create" element={<CallersCreate />} />
+            <Route path="callers/edit/:id" element={<CallersEdit />} />
+            <Route path="callers/view/:id" element={<CallerView />} />
 
-              <Route path="reports" element={<Reports />} />
+            <Route path="reports" element={<Reports />} />
 
-              <Route path="status" element={<Status />} />
-              <Route path="status/create" element={<StatusCreate />} />
-              <Route path="status/edit/:id" element={<StatusEdit />} />
+            <Route path="status" element={<Status />} />
+            <Route path="status/create" element={<StatusCreate />} />
+            <Route path="status/edit/:id" element={<StatusEdit />} />
 
-              <Route path="leads" element={<Leads />} />
-              <Route path="bulk-upload" element={<BulkUpload />} />
-              <Route path="settings" element={<Settings />} />
-            </Route>
+            <Route path="leads" element={<Leads />} />
+            <Route path="bulk-upload" element={<BulkUpload />} />
+            <Route path="settings" element={<Settings />} />
           </Route>
+        </Route>
 
-          <Route element={<UserProtected />}>
-            <Route path="/caller" element={<User />}>
-              <Route path="leads" element={<CallerLeads />} />
-            </Route>
+        <Route element={<UserProtected />}>
+          <Route path="/caller" element={<User />}>
+            <Route path="leads" element={<CallerLeads />} />
           </Route>
+        </Route>
 
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </Suspense>
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     </BrowserRouter>
   );
 }

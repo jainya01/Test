@@ -46,9 +46,9 @@ function Services() {
         headers: authHeader(),
       });
       setService((prev) => prev.filter((item) => item.id !== id));
-      toast.success("Service deleted successfully");
+      toast.success("Status deleted successfully");
     } catch (error) {
-      toast.error("Failed to delete service");
+      toast.error("Failed to delete status");
     }
   };
 
@@ -72,7 +72,7 @@ function Services() {
   }, [filteredServices]);
 
   return (
-    <div className="content-wrapper">
+    <main className="content-wrapper">
       <div className="container-fluid border-bottom bg-light py-2">
         <div className="row align-items-center">
           <div className="col-10 col-md-11">
@@ -257,7 +257,7 @@ function Services() {
       </div>
 
       <ToastContainer position="bottom-right" autoClose={1500} />
-    </div>
+    </main>
   );
 }
 

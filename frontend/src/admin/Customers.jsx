@@ -145,7 +145,7 @@ function Customers() {
   };
 
   return (
-    <div className="content-wrapper">
+    <main className="content-wrapper">
       <div className="container-fluid border-bottom bg-light py-2">
         <div className="row align-items-center">
           <div className="col-10 col-md-11">
@@ -211,6 +211,7 @@ function Customers() {
                     <div>
                       <select
                         className="form-select sector-wise"
+                        aria-label="Filter by service"
                         value={selectedService}
                         onChange={(e) => {
                           setSelectedService(e.target.value);
@@ -229,6 +230,7 @@ function Customers() {
                     <div>
                       <select
                         className="form-select sector-wise"
+                        aria-label="Filter by status"
                         value={selectedStatus}
                         onChange={(e) => {
                           setSelectedStatus(e.target.value);
@@ -428,7 +430,7 @@ function Customers() {
       </div>
 
       <ToastContainer position="bottom-right" autoClose={1500} />
-    </div>
+    </main>
   );
 }
 

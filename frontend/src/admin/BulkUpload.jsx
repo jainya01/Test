@@ -66,7 +66,7 @@ function BulkUpload() {
   };
 
   return (
-    <div className="content-wrapper">
+    <main className="content-wrapper">
       <div className="container-fluid border-bottom bg-light py-2">
         <div className="row align-items-center">
           <div className="col-10 col-md-11">
@@ -99,57 +99,55 @@ function BulkUpload() {
           </p>
         </div>
 
-        <div className="col-12 col-lg-6 col-md-6 d-flex flex-column">
+        <div className="col-12 col-lg-6 d-flex flex-column h-100">
           <form onSubmit={handleBulkSubmit}>
-            <div className="card rounded-2 h-100 px-2 py-2">
-              <div className="dotted-class">
-                <div className="dotted-class p-5 text-center bg-light">
-                  <div className="mb-3">
-                    <div className="d-inline-flex align-items-center justify-content-center bg-success text-white custom-typo">
-                      <FontAwesomeIcon icon={faFileExcel} size="lg" />
-                    </div>
+            <div className="card rounded-3 h-100 px-3 py-3 border-0">
+              <span className="mb-2 uploaded-customer">Customers Upload</span>
+
+              <div className="dotted-class text-center">
+                <div className="mb-3">
+                  <div className="d-inline-flex align-items-center justify-content-center bg-success text-white custom-typo">
+                    <FontAwesomeIcon icon={faFileExcel} size="lg" />
                   </div>
+                </div>
 
-                  <h6 className="mb-2 fw-semibold">
-                    Drop your Excel file here
-                  </h6>
+                <h6 className="mb-2 fw-semibold">Drop your Excel file here</h6>
 
-                  <p className="text-muted small mb-2 fw-bold">
-                    .xlsx, .csv up to 10MB
-                  </p>
+                <p className="text-secondary-safe mb-2">
+                  .xlsx, .csv up to 10MB
+                </p>
 
-                  {file && (
-                    <div className="text-success small fw-semibold mb-2">
-                      Selected File: {file.name}
-                      <FontAwesomeIcon
-                        icon={faX}
-                        className="text-danger fw-bold pointer-cursor ms-2"
-                        onClick={() => setFile(null)}
-                      />
-                    </div>
-                  )}
+                {file && (
+                  <div className="file-selected mb-2">
+                    Selected File: {file.name}
+                    <FontAwesomeIcon
+                      icon={faX}
+                      className="text-danger fw-bold pointer-cursor ms-2"
+                      onClick={() => setFile(null)}
+                    />
+                  </div>
+                )}
 
-                  <div className="d-flex flex-column justify-content-center align-items-center">
-                    <label className="btn btn-success btn-sm select-file-btn">
-                      <FontAwesomeIcon icon={faUpload} /> Select file
-                      <input
-                        type="file"
-                        hidden
-                        accept=".xlsx,.csv"
-                        onChange={handleFileChange}
-                      />
-                    </label>
+                <div className="d-flex flex-column justify-content-center align-items-center">
+                  <label className="btn btn-success btn-sm select-file-btn">
+                    <FontAwesomeIcon icon={faUpload} /> Select file
+                    <input
+                      type="file"
+                      hidden
+                      accept=".xlsx,.csv"
+                      onChange={handleFileChange}
+                    />
+                  </label>
 
-                    <button
-                      className="btn btn-success submit-file-btn mt-2"
-                      type="submit"
-                    >
-                      Submit
-                    </button>
+                  <button
+                    className="btn btn-success submit-file-btn mt-2"
+                    type="submit"
+                  >
+                    Submit
+                  </button>
 
-                    <div className="mt-3 text-success fw-bold">
-                      Total Customer Records: {customers}
-                    </div>
+                  <div className="mt-3 text-success-safe fw-bold">
+                    Total Customer Records: {customers}
                   </div>
                 </div>
               </div>
@@ -163,7 +161,8 @@ function BulkUpload() {
 
             <div className="ms-0">
               <div className="fw-semibold mb-1">Required columns</div>
-              <small className="text-muted fw-medium">
+
+              <small className="text-secondary-safe fw-medium">
                 name, phone, city, source (Hajj / Umrah / Ticket / Medical),
                 source. Phone numbers are checked for duplicates across your
                 entire database.
@@ -174,7 +173,7 @@ function BulkUpload() {
       </div>
 
       <ToastContainer position="bottom-right" autoClose={1500} />
-    </div>
+    </main>
   );
 }
 

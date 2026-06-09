@@ -13,6 +13,7 @@ const AdminLogin = () => {
   const API_URL = import.meta.env.VITE_API_URL;
 
   const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
   const navigate = useNavigate();
 
   const [admin, setAdmin] = useState({
@@ -24,17 +25,20 @@ const AdminLogin = () => {
 
   const handleAdminLogin = async (e) => {
     e.preventDefault();
+    setErrorMessage("");
 
     try {
       const response = await axios.post(`${API_URL}/adminlogin`, admin);
+
       const { token, role, id } = response.data;
+
       localStorage.setItem("adminToken", token);
       localStorage.setItem("role", role);
       localStorage.setItem("id", id);
 
       navigate("/admin/dashboard", { replace: true });
     } catch (error) {
-      navigate("/admin/login", { replace: true });
+      setErrorMessage(error.response?.data?.message || "Invalid credentials");
     }
   };
 
@@ -96,7 +100,7 @@ const AdminLogin = () => {
   }, []);
 
   return (
-    <div className="container-fluid">
+    <main className="container-fluid">
       <div className="row min-vh-100 text-start">
         <div className="col-lg-6 col-sm-12 d-lg-flex flex-column justify-content-center convert-metric text-white px-2 px-lg-4 pt-5 pt-lg-0">
           <div className="position-absolute top-0 start-0 p-2 ps-lg-4 d-flex align-items-center">
@@ -194,6 +198,14 @@ const AdminLogin = () => {
                 </span>
               </div>
 
+              {errorMessage && (
+                <>
+                  <div className="text-danger mt-0 mb-3 invalid-message">
+                    {errorMessage}
+                  </div>
+                </>
+              )}
+
               <button type="submit" className="btn sign-in-btn w-100 py-2 mb-2">
                 Log In
               </button>
@@ -205,7 +217,7 @@ const AdminLogin = () => {
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 };
 

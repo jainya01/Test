@@ -14,6 +14,7 @@ const CallerLogin = () => {
 
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
 
   const [admin, setAdmin] = useState({
     email: "",
@@ -24,16 +25,21 @@ const CallerLogin = () => {
 
   const handleCallerLogin = async (e) => {
     e.preventDefault();
+
+    setErrorMessage("");
+
     try {
       const response = await axios.post(`${API_URL}/callerlogin`, admin);
+
       const { token, role, id } = response.data;
+
       localStorage.setItem("callerToken", token);
       localStorage.setItem("role", role);
       localStorage.setItem("id", id);
 
       navigate("/caller/leads", { replace: true });
     } catch (error) {
-      alert(error.response?.data?.message || "Login failed");
+      setErrorMessage(error.response?.data?.message || "Invalid credentials");
     }
   };
 
@@ -96,7 +102,7 @@ const CallerLogin = () => {
   }, [navigate]);
 
   return (
-    <div className="container-fluid">
+    <main className="container-fluid">
       <div className="row min-vh-100 text-start">
         <div className="col-lg-6 col-sm-12 d-lg-flex flex-column justify-content-center convert-metric text-white px-2 px-lg-4 pt-5 pt-lg-0">
           <div className="position-absolute top-0 start-0 p-2 ps-lg-4 d-flex align-items-center">
@@ -194,6 +200,14 @@ const CallerLogin = () => {
                 </span>
               </div>
 
+              {errorMessage && (
+                <>
+                  <div className="text-danger mt-0 mb-3 invalid-message">
+                    {errorMessage}
+                  </div>
+                </>
+              )}
+
               <button type="submit" className="btn sign-in-btn w-100 py-2 mb-2">
                 Log In
               </button>
@@ -205,7 +219,7 @@ const CallerLogin = () => {
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 };
 

@@ -115,7 +115,7 @@ function Reports() {
     .sort((a, b) => b.calls - a.calls);
 
   return (
-    <div className="content-wrapper">
+    <main className="content-wrapper">
       <div className="container-fluid border-bottom bg-light py-2">
         <div className="row align-items-center">
           <div className="col-10 col-md-11">
@@ -424,7 +424,7 @@ function Reports() {
           </div>
         </div>
       </div>
-    </div>
+    </main>
   );
 }
 

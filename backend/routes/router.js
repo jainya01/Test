@@ -45,7 +45,7 @@ router.post(
     );
 
     if (rows.length === 0) {
-      const error = new Error("Invalid email or password");
+      const error = new Error("Invalid credentials");
       error.statusCode = 401;
       throw error;
     }
@@ -55,7 +55,7 @@ router.post(
     const isMatch = await bcrypt.compare(password, admin.password);
 
     if (!isMatch) {
-      const error = new Error("Invalid email or password");
+      const error = new Error("Invalid credentials");
       error.statusCode = 401;
       throw error;
     }
@@ -278,7 +278,7 @@ router.post(
     );
 
     if (rows.length === 0) {
-      const error = new Error("Invalid email or password");
+      const error = new Error("Invalid credentials");
       error.statusCode = 401;
       throw error;
     }
@@ -288,7 +288,7 @@ router.post(
     const isMatch = await bcrypt.compare(password, caller.password);
 
     if (!isMatch) {
-      const error = new Error("Invalid email or password");
+      const error = new Error("Invalid credentials");
       error.statusCode = 401;
       throw error;
     }
