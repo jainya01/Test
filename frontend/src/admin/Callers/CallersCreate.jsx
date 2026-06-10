@@ -60,9 +60,7 @@ function CallersCreate() {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-
     const isValid = validateForm();
-
     if (!isValid) return;
 
     try {
