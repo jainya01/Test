@@ -123,7 +123,7 @@ function CallersCreate() {
                 <div className="row">
                   <div className="col-md-6 mb-3">
                     <label className="form-label" htmlFor="fullname">
-                      Name <span className="text-danger fw-bolder">*</span>
+                      Name <span className="text-danger fw-bold ms-1">*</span>
                     </label>
 
                     <input
@@ -146,7 +146,7 @@ function CallersCreate() {
 
                   <div className="col-md-6 mb-3">
                     <label className="form-label" htmlFor="email">
-                      Email <span className="text-danger fw-bolder">*</span>
+                      Email <span className="text-danger fw-bold ms-1">*</span>
                     </label>
 
                     <input
@@ -170,7 +170,8 @@ function CallersCreate() {
                     style={{ position: "relative" }}
                   >
                     <label className="form-label" htmlFor="password">
-                      Password <span className="text-danger fw-bolder">*</span>
+                      Password{" "}
+                      <span className="text-danger fw-bold ms-1">*</span>
                     </label>
 
                     <input
@@ -204,7 +205,7 @@ function CallersCreate() {
 
                   <div className="col-md-6 mb-3">
                     <label className="form-label" htmlFor="status">
-                      Status <span className="text-danger fw-bolder">*</span>
+                      Status <span className="text-danger fw-bold ms-1">*</span>
                     </label>
 
                     <select

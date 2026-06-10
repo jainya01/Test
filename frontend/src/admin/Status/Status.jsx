@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import "../../App.css";
+import { authHeader } from "../../utils/authHeader";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { authHeader } from "../../utils/authHeader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell, faEdit, faTrash } from "@fortawesome/free-solid-svg-icons";
 import { ToastContainer, toast } from "react-toastify";
@@ -128,7 +128,6 @@ function Services() {
                           <th className="ps-2 py-2">S/N</th>
                           <th>STATUS NAME</th>
                           <th>STATUS CODE</th>
-                          <th>STATUS</th>
                           <th>ACTION</th>
                         </tr>
                       </thead>
@@ -148,10 +147,6 @@ function Services() {
                                     {data?.status_name || "N/A"}
                                   </span>
                                 </Link>
-                              </td>
-
-                              <td className="convert-code">
-                                {data.status_code || "--"}
                               </td>
 
                               <td
@@ -202,7 +197,7 @@ function Services() {
                         ) : (
                           <tr>
                             <td
-                              colSpan="6"
+                              colSpan="4"
                               className="text-center py-3 fw-bold text-muted"
                             >
                               No data available

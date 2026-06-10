@@ -154,7 +154,8 @@ function CustomersEdit() {
                     <div className="row">
                       <div className="col-md-6 mb-3">
                         <label className="form-label" htmlFor="name">
-                          Name <span className="text-danger fw-bolder">*</span>
+                          Name{" "}
+                          <span className="text-danger fw-bold ms-1">*</span>
                         </label>
 
                         <input
@@ -177,7 +178,8 @@ function CustomersEdit() {
 
                       <div className="col-md-6 mb-3">
                         <label className="form-label" htmlFor="phone">
-                          Phone <span className="text-danger fw-bolder">*</span>
+                          Phone{" "}
+                          <span className="text-danger fw-bold ms-1">*</span>
                         </label>
 
                         <input
@@ -200,7 +202,8 @@ function CustomersEdit() {
 
                       <div className="col-md-6 mb-3">
                         <label className="form-label" htmlFor="city">
-                          City <span className="text-danger fw-bolder">*</span>
+                          City{" "}
+                          <span className="text-danger fw-bold ms-1">*</span>
                         </label>
 
                         <input
@@ -224,7 +227,7 @@ function CustomersEdit() {
                       <div className="col-md-6 mb-3">
                         <label className="form-label" htmlFor="service">
                           Service{" "}
-                          <span className="text-danger fw-bolder">*</span>
+                          <span className="text-danger fw-bold ms-1">*</span>
                         </label>
 
                         <select

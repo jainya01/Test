@@ -633,7 +633,7 @@ aside.admin-sidebar.collapsed {
 
 .custom-active {
   width: 6px;
-  height: 6.4px;
+  height: 6.3px;
   background-color: #b42318;
   border-radius: 50%;
 }
@@ -1192,4 +1192,10 @@ aside.admin-sidebar.collapsed {
 
 .text-primary-safe {
   color: #084298;
+}
+
+.form-check-input:checked {
+  background-color: #111827;
+  box-shadow: none;
+  border: none;
 }

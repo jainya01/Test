@@ -21,6 +21,7 @@ function Settings() {
     email: "",
     password: "",
   });
+
   const { name, email, password } = formData;
 
   const validateForm = () => {
@@ -187,6 +188,7 @@ function Settings() {
 
   const handleCancelled1 = (e) => {
     e.preventDefault();
+    setSelectedAdmin("");
     setUpdateForm({
       email: "",
       password: "",

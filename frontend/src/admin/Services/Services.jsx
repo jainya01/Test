@@ -33,7 +33,7 @@ function Services() {
 
     allData();
   }, []);
-  
+
   const keyword = search.toLowerCase();
 
   const filteredServices = services.filter(

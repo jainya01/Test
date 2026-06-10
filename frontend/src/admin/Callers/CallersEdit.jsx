@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import { authHeader } from "../../utils/authHeader";
 import "../../App.css";
+import { authHeader } from "../../utils/authHeader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell, faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -41,7 +41,7 @@ function CallersEdit() {
         headers: authHeader(),
       });
 
-      toast.success("Caller credentials updated successfully");
+      toast.success("Caller updated successfully");
 
       setTimeout(() => {
         navigate("/admin/callers");
@@ -142,7 +142,7 @@ function CallersEdit() {
                 <div className="row">
                   <div className="col-md-6 mb-3">
                     <label className="form-label" htmlFor="fullname">
-                      Name <span className="text-danger fw-bolder">*</span>
+                      Name <span className="text-danger fw-bold ms-1">*</span>
                     </label>
 
                     <input
@@ -159,7 +159,7 @@ function CallersEdit() {
 
                   <div className="col-md-6 mb-3">
                     <label className="form-label" htmlFor="email">
-                      Email <span className="text-danger fw-bolder">*</span>
+                      Email <span className="text-danger fw-bold ms-1">*</span>
                     </label>
 
                     <input
@@ -246,7 +246,7 @@ function CallersEdit() {
 
                   <div className="col-md-6 mb-3">
                     <label className="form-label" htmlFor="status">
-                      Status <span className="text-danger fw-bolder">*</span>
+                      Status <span className="text-danger fw-bold ms-1">*</span>
                     </label>
 
                     <select

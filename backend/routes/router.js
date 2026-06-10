@@ -483,9 +483,9 @@ router.post(
   "/statuspost",
   authenticate,
   asyncHandler(async (req, res) => {
-    const { status_name, status_code, status, notes } = req.body;
+    const { status_name, status, notes } = req.body;
 
-    if (!status_name || !status_code || !status) {
+    if (!status_name || !status) {
       const error = new Error("All fields are required");
       error.statusCode = 400;
       throw error;
@@ -496,15 +496,9 @@ router.post(
       [status_code],
     );
 
-    if (existing.length > 0) {
-      const error = new Error("Service code already exists");
-      error.statusCode = 409;
-      throw error;
-    }
-
     const [result] = await pool.execute(
-      "INSERT INTO status (status_name, status_code, status, notes) VALUES (?, ?, ?, ?)",
-      [status_name, status_code, status, notes],
+      "INSERT INTO status (status_name, status, notes) VALUES (?, ?, ?)",
+      [status_name, status, notes],
     );
 
     return res.status(201).json({
@@ -520,9 +514,9 @@ router.put(
   authenticate,
   asyncHandler(async (req, res) => {
     const { id } = req.params;
-    const { status_name, status_code, status, notes } = req.body;
+    const { status_name, status, notes } = req.body;
 
-    if (!status_name || !status_code || !status) {
+    if (!status_name || !status) {
       const error = new Error("All fields are required");
       error.statusCode = 400;
       throw error;
@@ -530,13 +524,12 @@ router.put(
 
     const query = `
       UPDATE status
-      SET status_name = ?, status_code = ?, status = ?, notes = ?
+      SET status_name = ?, status = ?, notes = ?
       WHERE id = ?
     `;
 
     const [result] = await pool.execute(query, [
       status_name,
-      status_code,
       status,
       notes,
       id,
@@ -583,7 +576,7 @@ router.get(
   authenticate,
   asyncHandler(async (req, res) => {
     const SQL =
-      "SELECT id, status_name, status_code, status, notes FROM status ORDER BY id DESC LIMIT 20";
+      "SELECT id, status_name, status, notes FROM status ORDER BY id DESC LIMIT 20";
     const [result] = await pool.execute(SQL);
 
     if (result.affectedRows <= 0) {
@@ -606,7 +599,7 @@ router.get(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     const SQL =
-      "SELECT id, status_name, status_code, status, notes FROM status WHERE id = ?";
+      "SELECT id, status_name, status, notes FROM status WHERE id = ?";
     const [result] = await pool.execute(SQL, [id]);
 
     if (result.affectedRows <= 0) {

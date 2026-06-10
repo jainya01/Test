@@ -105,7 +105,7 @@ function ServicesEdit() {
                   <div className="col-md-6 mb-3">
                     <label className="form-label" htmlFor="status_name">
                       Status Name
-                      <span className="text-danger fw-bolder">*</span>
+                      <span className="text-danger fw-bold ms-1">*</span>
                     </label>
                     <input
                       type="text"
@@ -122,7 +122,7 @@ function ServicesEdit() {
                   <div className="col-md-6 mb-3">
                     <label className="form-label" htmlFor="status_code">
                       Status Code
-                      <span className="text-danger fw-bolder">*</span>
+                      <span className="text-danger fw-bold ms-1">*</span>
                     </label>
 
                     <input
@@ -140,7 +140,7 @@ function ServicesEdit() {
                   <div className="col-md-6 mb-3">
                     <label className="form-label" htmlFor="status">
                       Status
-                      <span className="text-danger fw-bolder">*</span>
+                      <span className="text-danger fw-bold ms-1">*</span>
                     </label>
 
                     <select
