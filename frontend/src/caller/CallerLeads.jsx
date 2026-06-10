@@ -212,9 +212,10 @@ function Leads() {
             <div className="row align-items-center">
               <div className="col-9 col-md-8 col-lg-4">
                 <input
-                  type="text"
+                  type="search"
                   className="form-control sector-wise"
                   placeholder="Search customers, calls, agents..."
+                  aria-label="Search customers, calls, agents"
                   style={{ height: "40px" }}
                 />
               </div>
@@ -321,7 +322,7 @@ function Leads() {
           <div className="col-12 col-lg-8">
             <form onSubmit={handelFormSubmit}>
               <div className="details-wrapper">
-                <div className="card border-0 shadow-sm rounded-4 mb-3">
+                <div className="card card-safe border-0 shadow-sm rounded-4 mb-3">
                   <div className="card-body">
                     <div className="details-top d-flex justify-content-between align-items-center flex-wrap gap-3 mb-4">
                       <div className="user-info-sec d-flex align-items-center gap-3">

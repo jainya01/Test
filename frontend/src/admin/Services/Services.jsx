@@ -86,6 +86,7 @@ function Services() {
                   type="text"
                   className="form-control sector-wise"
                   placeholder="Search Customers name, phone..."
+                  aria-label="Search Customers, name, phone"
                   style={{ height: "40px" }}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}

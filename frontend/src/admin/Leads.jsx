@@ -141,9 +141,10 @@ function Leads() {
             <div className="row align-items-center">
               <div className="col-9 col-md-8 col-lg-4">
                 <input
-                  type="text"
+                  type="search"
                   className="form-control sector-wise"
                   placeholder="Search customers, calls, agents..."
+                  aria-label="Search customers, calls, agents"
                   style={{ height: "40px" }}
                 />
               </div>
@@ -314,11 +315,18 @@ function Leads() {
                   <form>
                     <div className="row">
                       <div className="col-12 col-sm-6 col-md-6 mb-3">
-                        <label className="form-label custom-label">
+                        <label
+                          className="form-label custom-label"
+                          htmlFor="status"
+                        >
                           Service Status
                         </label>
 
-                        <select className="form-select custom-input" required>
+                        <select
+                          className="form-select custom-input"
+                          id="status"
+                          required
+                        >
                           <option value="">All Status</option>
                           {Array.isArray(status) ? (
                             status
@@ -335,10 +343,18 @@ function Leads() {
                       </div>
 
                       <div className="col-12 col-sm-6 col-md-6 mb-3">
-                        <label className="form-label custom-label">
+                        <label
+                          className="form-label custom-label"
+                          htmlFor="head"
+                        >
                           Service Head
                         </label>
-                        <select className="form-select custom-input" required>
+
+                        <select
+                          className="form-select custom-input"
+                          id="head"
+                          required
+                        >
                           <option value="">All Services</option>
                           {Array.isArray(services) ? (
                             services
@@ -355,20 +371,35 @@ function Leads() {
                       </div>
 
                       <div className="col-12 col-sm-6 col-md-6 mb-3">
-                        <label className="form-label custom-label">
+                        <label
+                          className="form-label custom-label"
+                          htmlFor="sub-category"
+                        >
                           Sub-category
                         </label>
-                        <select className="form-select custom-input" required>
+                        <select
+                          className="form-select custom-input"
+                          id="sub-category"
+                          required
+                        >
                           <option value="Standard">Standard</option>
                           <option value="VIP">VIP</option>
                         </select>
                       </div>
 
                       <div className="col-12 col-sm-6 col-md-6 mb-3">
-                        <label className="form-label custom-label">
+                        <label
+                          className="form-label custom-label"
+                          htmlFor="package"
+                        >
                           Package
                         </label>
-                        <select className="form-select custom-input" required>
+
+                        <select
+                          className="form-select custom-input"
+                          id="package"
+                          required
+                        >
                           <option value="Premium">Premium</option>
                           <option value="Doctor-Engineer">
                             Doctor-Engineer

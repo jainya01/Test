@@ -64,15 +64,6 @@ function ServicesCreate() {
     });
   };
 
-  const arr = ["apple", "banana", "mango", "apple", "mango"];
-  const count = {};
-
-  arr.forEach((item) => {
-    count[item] = (count[item] || 0) + 1;
-  });
-
-  console.log(count);
-
   return (
     <main className="content-wrapper">
       <div className="container-fluid border-bottom bg-light py-2">
@@ -81,9 +72,10 @@ function ServicesCreate() {
             <div className="row align-items-center">
               <div className="col-9 col-md-8 col-lg-4">
                 <input
-                  type="text"
+                  type="search"
                   className="form-control sector-wise"
                   placeholder="Search customers, calls, agents..."
+                  aria-label="Search customers, calls, agents"
                   style={{ height: "40px" }}
                 />
               </div>

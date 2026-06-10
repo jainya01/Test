@@ -72,9 +72,10 @@ function ServicesCreate() {
             <div className="row align-items-center">
               <div className="col-9 col-md-8 col-lg-4">
                 <input
-                  type="text"
+                  type="search"
                   className="form-control sector-wise"
                   placeholder="Search customers, calls, agents..."
+                  aria-label="Search customers, calls, agents"
                   style={{ height: "40px" }}
                 />
               </div>
