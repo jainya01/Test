@@ -143,7 +143,7 @@ function CallerExecutive() {
                   className="form-control sector-wise"
                   placeholder="Search caller name, email..."
                   aria-label="Search caller name, email"
-                  style={{ height: "40px" }}
+                  style={{ height: "37px" }}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
                 />

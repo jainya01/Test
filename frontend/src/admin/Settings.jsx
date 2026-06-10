@@ -207,7 +207,7 @@ function Settings() {
                   className="form-control sector-wise"
                   placeholder="Search customers, calls, agents..."
                   aria-label="Search customers, calls, agents"
-                  style={{ height: "40px" }}
+                  style={{ height: "37px" }}
                 />
               </div>
             </div>

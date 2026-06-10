@@ -102,7 +102,7 @@ function CallersCreate() {
                   className="form-control sector-wise"
                   placeholder="Search customers, calls, agents..."
                   aria-label="Search customers, calls, agents"
-                  style={{ height: "40px" }}
+                  style={{ height: "37px" }}
                 />
               </div>
             </div>
@@ -160,8 +160,7 @@ function CallersCreate() {
 
                   <div className="col-md-6 mb-3">
                     <label className="form-label" htmlFor="phone">
-                      Phone No{" "}
-                      <span className="text-danger fw-bold">*</span>
+                      Phone No <span className="text-danger fw-bold">*</span>
                     </label>
 
                     <input
@@ -206,8 +205,7 @@ function CallersCreate() {
                     style={{ position: "relative" }}
                   >
                     <label className="form-label" htmlFor="password">
-                      Password{" "}
-                      <span className="text-danger fw-bold">*</span>
+                      Password <span className="text-danger fw-bold">*</span>
                     </label>
 
                     <input
