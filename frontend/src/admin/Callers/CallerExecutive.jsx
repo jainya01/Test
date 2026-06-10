@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import "../../App.css";
+import { authHeader } from "../../utils/authHeader";
 import { Link } from "react-router-dom";
 import axios from "axios";
-import { authHeader } from "../../utils/authHeader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBell,
@@ -119,7 +119,7 @@ function CallerExecutive() {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
 
-  const sortedCaller = [...caller].sort(
+  const sortedCaller = [...filteredCaller].sort(
     (a, b) => convertedLeads(b.id) - convertedLeads(a.id),
   );
 
