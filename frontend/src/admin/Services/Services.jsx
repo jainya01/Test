@@ -155,10 +155,10 @@ function Services() {
 
                                 <td>
                                   <Link
-                                    className="text-decoration-none text-dark"
                                     to={`/admin/services/edit/${item.id}`}
+                                    className="text-decoration-none text-dark"
                                   >
-                                    <span className="d-flex flex-row align-items-center fw-bold">
+                                    <span className="short-name fw-bold">
                                       {item.service_name || "--"}
                                     </span>
                                   </Link>

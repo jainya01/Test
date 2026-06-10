@@ -121,7 +121,7 @@ function ServicesEdit() {
 
                   <div className="col-md-6 mb-3">
                     <label className="form-label" htmlFor="status_code">
-                      Service Code
+                      Status Code
                       <span className="text-danger fw-bolder">*</span>
                     </label>
 
@@ -129,7 +129,7 @@ function ServicesEdit() {
                       type="text"
                       id="status_code"
                       className="form-control sector-wise mb-1"
-                      placeholder="Enter service code"
+                      placeholder="Enter status code"
                       name="status_code"
                       value={status_code}
                       onChange={onInputChange}
