@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import "../App.css";
+import "../../App.css";
 import { useParams } from "react-router-dom";
-import { authHeader } from "../utils/authHeader";
+import { authHeader } from "../../utils/authHeader";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell, faList } from "@fortawesome/free-solid-svg-icons";

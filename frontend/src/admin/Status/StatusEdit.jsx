@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
+import "../../App.css";
+import { authHeader } from "../../utils/authHeader";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import "../App.css";
 import axios from "axios";
-import { authHeader } from "../utils/authHeader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBell, faList } from "@fortawesome/free-solid-svg-icons";
 import { ToastContainer, toast } from "react-toastify";

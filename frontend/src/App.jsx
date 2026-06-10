@@ -1,28 +1,38 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { Suspense, lazy } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-toastify/dist/ReactToastify.css";
-import Login from "./components/Login";
-import AdminLogin from "./pages/AdminLogin";
-import CallerLogin from "./pages/CallerLogin";
-import AdminProtected from "./components/AdminProtected";
-import UserProtected from "./components/UserProtected";
+
+const Login = lazy(() => import("./components/Login"));
+const AdminLogin = lazy(() => import("./pages/AdminLogin"));
+const CallerLogin = lazy(() => import("./pages/CallerLogin"));
+
+const AdminProtected = lazy(() => import("./components/AdminProtected"));
+const UserProtected = lazy(() => import("./components/UserProtected"));
 import User from "./User";
-import HomePage from "./admin/HomePage";
-import Reports from "./admin/Reports";
-import CallerExecutive from "./admin/CallerExecutive";
-import Customers from "./admin/Customers";
-import Leads from "./admin/Leads";
-import BulkUpload from "./admin/BulkUpload";
-import Settings from "./admin/Settings";
-import CallerLeads from "./caller/CallerLeads";
-import CallersCreate from "./admin/CallersCreate";
-import CallersEdit from "./admin/CallersEdit";
-import Status from "./admin/Status";
-import StatusCreate from "./admin/StatusCreate";
-import StatusEdit from "./admin/StatusEdit";
-import CustomersCreate from "./admin/CustomersCreate";
-import CustomersEdit from "./admin/CustomersEdit";
-import CallerView from "./admin/CallerView";
+
+const HomePage = lazy(() => import("./admin/HomePage"));
+
+const Customers = lazy(() => import("./admin/Customers/Customers"));
+const CustomersCreate = lazy(() => import("./admin/Customers/CustomersCreate"));
+const CustomersEdit = lazy(() => import("./admin/Customers/CustomersEdit"));
+
+const CallerExecutive = lazy(() => import("./admin/Callers/CallerExecutive"));
+const CallersCreate = lazy(() => import("./admin/Callers/CallersCreate"));
+const CallersEdit = lazy(() => import("./admin/Callers/CallersEdit"));
+const CallerView = lazy(() => import("./admin/Callers/CallerView"));
+
+const Reports = lazy(() => import("./admin/Reports"));
+
+const Status = lazy(() => import("./admin/Status/Status"));
+const StatusCreate = lazy(() => import("./admin/Status/StatusCreate"));
+const StatusEdit = lazy(() => import("./admin/Status/StatusEdit"));
+
+const BulkUpload = lazy(() => import("./admin/BulkUpload"));
+const Settings = lazy(() => import("./admin/Settings"));
+
+// const Leads = lazy(() => import("./admin/Leads"));
+const CallerLeads = lazy(() => import("./caller/CallerLeads"));
 
 function App() {
   return (
@@ -51,7 +61,7 @@ function App() {
             <Route path="status/create" element={<StatusCreate />} />
             <Route path="status/edit/:id" element={<StatusEdit />} />
 
-            <Route path="leads" element={<Leads />} />
+            {/* <Route path="leads" element={<Leads />} /> */}
             <Route path="bulk-upload" element={<BulkUpload />} />
             <Route path="settings" element={<Settings />} />
           </Route>
