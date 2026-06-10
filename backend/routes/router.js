@@ -325,9 +325,9 @@ router.post(
   "/callerspost",
   authenticate,
   asyncHandler(async (req, res) => {
-    const { fullname, email, password, status, notes } = req.body;
+    const { fullname, phone, email, password, status, notes } = req.body;
 
-    if (!fullname || !email || !password || !status) {
+    if (!fullname || !phone || !email || !password || !status) {
       const error = new Error("All fields are required");
       error.statusCode = 400;
       throw error;
@@ -347,8 +347,8 @@ router.post(
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const [result] = await pool.execute(
-      "INSERT INTO caller (fullname, email, password, status, notes) VALUES (?, ?, ?, ?, ?)",
-      [fullname, email, hashedPassword, status, notes],
+      "INSERT INTO caller (fullname, phone, email, password, status, notes) VALUES (?, ?, ?, ?, ?, ?)",
+      [fullname, phone, email, hashedPassword, status, notes],
     );
 
     return res.status(201).json({
@@ -364,17 +364,17 @@ router.put(
   authenticate,
   asyncHandler(async (req, res) => {
     const { id } = req.params;
-    const { fullname, email, status, password, notes } = req.body;
+    const { fullname, phone, email, status, password, notes } = req.body;
 
-    if (!fullname || !email || !status) {
+    if (!fullname || !phone || !email || !status) {
       const error = new Error("All fields are required");
       error.statusCode = 400;
       throw error;
     }
 
     let query =
-      "UPDATE caller SET fullname = ?, email = ?, status = ?, notes = ?";
-    let values = [fullname, email, status, notes];
+      "UPDATE caller SET fullname = ?, phone = ?, email = ?, status = ?, notes = ?";
+    let values = [fullname, phone, email, status, notes];
 
     if (password && password.trim() !== "") {
       const hashedPassword = await bcrypt.hash(password, 10);
@@ -435,7 +435,7 @@ router.get(
   "/allcallers",
   asyncHandler(async (req, res) => {
     const SQL =
-      "SELECT id, fullname, email, role, status, notes FROM caller ORDER BY id DESC LIMIT 20";
+      "SELECT id, fullname, phone, email, role, status, notes FROM caller ORDER BY id DESC LIMIT 20";
 
     const [result] = await pool.execute(SQL);
 
@@ -460,7 +460,7 @@ router.get(
     const { id } = req.params;
 
     const SQL =
-      "SELECT id, fullname, email, role, status, notes FROM caller WHERE id = ?";
+      "SELECT id, fullname, phone, email, role, status, notes FROM caller WHERE id = ?";
 
     const [result] = await pool.execute(SQL, [id]);
 

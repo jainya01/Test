@@ -17,6 +17,7 @@ function CallersEdit() {
 
   const [call, setCall] = useState({
     fullname: "",
+    phone: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -24,7 +25,8 @@ function CallersEdit() {
     notes: "",
   });
 
-  const { fullname, email, password, confirmPassword, status, notes } = call;
+  const { fullname, phone, email, password, confirmPassword, status, notes } =
+    call;
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -88,6 +90,7 @@ function CallersEdit() {
         });
         setCall({
           fullname: res.data?.data?.fullname || "",
+          phone: res.data?.data?.phone || "",
           email: res.data?.data?.email || "",
           password: "",
           confirmPassword: "",
@@ -169,6 +172,23 @@ function CallersEdit() {
                   </div>
 
                   <div className="col-md-6 mb-3">
+                    <label className="form-label" htmlFor="phone">
+                      Phone <span className="text-danger fw-bold ms-1">*</span>
+                    </label>
+
+                    <input
+                      type="tel"
+                      id="phone"
+                      className="form-control sector-wise mb-1"
+                      placeholder="Enter Phone No"
+                      name="phone"
+                      value={phone || ""}
+                      onChange={onInputChange}
+                      required
+                    />
+                  </div>
+
+                  <div className="col-md-6 mb-3">
                     <label className="form-label" htmlFor="email">
                       Email <span className="text-danger fw-bold ms-1">*</span>
                     </label>
@@ -183,6 +203,25 @@ function CallersEdit() {
                       onChange={onInputChange}
                       required
                     />
+                  </div>
+
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label" htmlFor="status">
+                      Status <span className="text-danger fw-bold ms-1">*</span>
+                    </label>
+
+                    <select
+                      id="status"
+                      className="form-select sector-wise mb-1"
+                      name="status"
+                      value={status || ""}
+                      onChange={onInputChange}
+                      required
+                    >
+                      <option value="">Select Status</option>
+                      <option value="Active">Active</option>
+                      <option value="Inactive">Inactive</option>
+                    </select>
                   </div>
 
                   <div
@@ -255,26 +294,7 @@ function CallersEdit() {
                     )}
                   </div>
 
-                  <div className="col-md-6 mb-3">
-                    <label className="form-label" htmlFor="status">
-                      Status <span className="text-danger fw-bold ms-1">*</span>
-                    </label>
-
-                    <select
-                      id="status"
-                      className="form-select sector-wise mb-1"
-                      name="status"
-                      value={status || ""}
-                      onChange={onInputChange}
-                      required
-                    >
-                      <option value="">Select Status</option>
-                      <option value="Active">Active</option>
-                      <option value="Inactive">Inactive</option>
-                    </select>
-                  </div>
-
-                  <div className="col-md-6 mb-3">
+                  <div className="col-12 mb-3">
                     <label className="form-label" htmlFor="notes">
                       Notes (optional)
                     </label>

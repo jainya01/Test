@@ -15,13 +15,14 @@ function CallersCreate() {
 
   const [call, setCall] = useState({
     fullname: "",
+    phone: "",
     email: "",
     password: "",
     status: "",
     notes: "",
   });
 
-  const { fullname, email, password, status, notes } = call;
+  const { fullname, phone, email, password, status, notes } = call;
 
   const [errors, setErrors] = useState({});
 
@@ -30,6 +31,10 @@ function CallersCreate() {
 
     if (!fullname.trim()) {
       newErrors.fullname = "Full name is required";
+    }
+
+    if (!phone.trim()) {
+      newErrors.phone = "Phone No is required";
     }
 
     if (!email.trim()) {
@@ -150,6 +155,28 @@ function CallersCreate() {
                       <small className="text-danger mt-1">
                         {errors.fullname}
                       </small>
+                    )}
+                  </div>
+
+                  <div className="col-md-6 mb-3">
+                    <label className="form-label" htmlFor="phone">
+                      Phone No{" "}
+                      <span className="text-danger fw-bold ms-1">*</span>
+                    </label>
+
+                    <input
+                      type="tel"
+                      id="phone"
+                      className="form-control sector-wise mb-1"
+                      placeholder="Enter Phone No"
+                      name="phone"
+                      value={phone}
+                      onChange={onInputChange}
+                      required
+                    />
+
+                    {errors.phone && (
+                      <small className="text-danger mt-1">{errors.phone}</small>
                     )}
                   </div>
 
