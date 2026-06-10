@@ -169,7 +169,7 @@ function Leads() {
           call_status: "",
           call_duration: "",
           status: "",
-          service: "Hajj",
+          service: "",
           sub_category: "Standard",
           package_name: "Premium",
           notes: "",
