@@ -251,7 +251,7 @@ function CustomersCreate() {
                     )}
                   </div>
 
-                  <div className="col-md-6 mb-3">
+                  <div className="col-12 mb-3">
                     <label className="form-label" htmlFor="notes">
                       Notes (optional)
                     </label>
