@@ -1199,3 +1199,7 @@ aside.admin-sidebar.collapsed {
   box-shadow: none;
   border: none;
 }
+
+.date-days {
+  font-size: 14px;
+}

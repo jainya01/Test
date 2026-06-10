@@ -83,11 +83,21 @@ function ServicesEdit() {
             </div>
           </div>
 
-          <div className="col-2 col-md-1 d-flex justify-content-end">
+          <div className="col-2 col-md-1 d-flex justify-content-end align-items-center">
             <button className="btn border-0 position-relative">
               <FontAwesomeIcon icon={faBell} />
               <span className="notification-corner bg-danger">0</span>
             </button>
+
+            <span className="text-nowrap ms-2 date-days">
+              {new Date()
+                .toLocaleDateString("en-GB", {
+                  weekday: "short",
+                  day: "2-digit",
+                  month: "short",
+                })
+                .replace(",", "")}
+            </span>
           </div>
         </div>
       </div>
