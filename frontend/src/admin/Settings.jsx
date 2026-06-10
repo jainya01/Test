@@ -429,7 +429,7 @@ function Settings() {
         </div>
       </div>
 
-      <div className="row ms-1 me-1 gy-2 mt-2">
+      <div className="row ms-1 gy-2 mt-2">
         <div className="col-12 col-lg-6">
           <div className="d-flex justify-content-between align-items-center mb-2">
             <h6 className="mb-0 fw-semibold">Admin Accounts</h6>
