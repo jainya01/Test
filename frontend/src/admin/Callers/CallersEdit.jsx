@@ -156,7 +156,7 @@ function CallersEdit() {
                 <div className="row">
                   <div className="col-md-6 mb-3">
                     <label className="form-label" htmlFor="fullname">
-                      Name <span className="text-danger fw-bold ms-1">*</span>
+                      Name <span className="text-danger fw-bold">*</span>
                     </label>
 
                     <input
@@ -173,7 +173,7 @@ function CallersEdit() {
 
                   <div className="col-md-6 mb-3">
                     <label className="form-label" htmlFor="phone">
-                      Phone <span className="text-danger fw-bold ms-1">*</span>
+                      Phone <span className="text-danger fw-bold">*</span>
                     </label>
 
                     <input
@@ -190,7 +190,7 @@ function CallersEdit() {
 
                   <div className="col-md-6 mb-3">
                     <label className="form-label" htmlFor="email">
-                      Email <span className="text-danger fw-bold ms-1">*</span>
+                      Email <span className="text-danger fw-bold">*</span>
                     </label>
 
                     <input
@@ -207,7 +207,7 @@ function CallersEdit() {
 
                   <div className="col-md-6 mb-3">
                     <label className="form-label" htmlFor="status">
-                      Status <span className="text-danger fw-bold ms-1">*</span>
+                      Status <span className="text-danger fw-bold">*</span>
                     </label>
 
                     <select

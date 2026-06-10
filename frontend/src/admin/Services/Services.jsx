@@ -83,7 +83,7 @@ function Services() {
             <div className="row align-items-center">
               <div className="col-9 col-md-8 col-lg-4">
                 <input
-                  type="text"
+                  type="search"
                   className="form-control sector-wise"
                   placeholder="Search Customers name, phone..."
                   aria-label="Search Customers, name, phone"
