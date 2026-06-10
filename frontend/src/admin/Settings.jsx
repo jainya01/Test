@@ -388,7 +388,8 @@ function Settings() {
                       top: "50%",
                       transform: "translateY(-50%)",
                       cursor: "pointer",
-                      color: "#111",
+                      color: "#6c757d",
+                      fontSize: "15.5px",
                     }}
                   />
                 </div>
