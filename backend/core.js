@@ -35,7 +35,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 app.use((req, res, next) => {
-  const error = new Error("Route Not Found");
+  const error = new Error("route not found");
   error.statusCode = 404;
   next(error);
 });
