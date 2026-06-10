@@ -15,6 +15,7 @@ import {
   faUpload,
   faListCheck,
   faColumns,
+  faTools,
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 
@@ -28,6 +29,9 @@ const ADMIN_LINKS = [
   { path: "/admin/customers", label: "Customers", icon: faUsers },
   { path: "/admin/callers", label: "Calling Executive", icon: faHeadset },
   { path: "/admin/reports", label: "Reports", icon: faChartColumn },
+
+  { path: "/admin/services", label: "Services", icon: faTools },
+
   { path: "/admin/status", label: "Status", icon: faListCheck },
   // { path: "/admin/leads", label: "My Leads", icon: faPhone },
   { path: "/admin/bulk-upload", label: "Bulk Upload", icon: faUpload },

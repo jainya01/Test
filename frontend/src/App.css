@@ -394,6 +394,7 @@ aside.admin-sidebar.collapsed {
 .sector-wise {
   border-radius: 6px;
   font-size: 14px;
+  height: 38px;
 }
 
 .sector-wise:focus {

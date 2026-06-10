@@ -19,6 +19,7 @@ function Leads() {
   const [statuses, setStatuses] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [caller, setCaller] = useState([]);
+  const [services, setServices] = useState([]);
   const [showPassword, setShowPassword] = useState(false);
 
   const maskPhoneNumber = (phone) => {
@@ -35,27 +36,35 @@ function Leads() {
           role: localStorage.getItem("role"),
         };
 
-        const [statusRes, customerRes, callerRes] = await Promise.allSettled([
-          axios.get(`${API_URL}/allservices`, {
-            headers: authHeader(),
-          }),
+        const [statusRes, serviceRes, customerRes, callerRes] =
+          await Promise.allSettled([
+            axios.get(`${API_URL}/allstatusdata`, {
+              headers: authHeader(),
+            }),
 
-          axios.get(`${API_URL}/allcustomers`, {
-            headers: authHeader(),
-          }),
+            axios.get(`${API_URL}/allservicesdata`, {
+              headers: authHeader(),
+            }),
 
-          axios.get(`${API_URL}/allcallers`, {
-            headers: authHeader(),
-          }),
-        ]);
+            axios.get(`${API_URL}/allcustomers`, {
+              headers: authHeader(),
+            }),
+
+            axios.get(`${API_URL}/allcallers`, {
+              headers: authHeader(),
+            }),
+          ]);
 
         if (statusRes.status === "fulfilled") {
-          setStatuses(statusRes.value.data.result);
+          setStatuses(statusRes.value.data.result || "");
+        }
+
+        if (serviceRes.status === "fulfilled") {
+          setServices(serviceRes.value.data.result || "");
         }
 
         if (customerRes.status === "fulfilled") {
           let data = customerRes.value.data.result;
-
           if (user?.role === "caller") {
             data = data.filter((item) => item.caller_id === user.id);
           }
@@ -64,7 +73,7 @@ function Leads() {
         }
 
         if (callerRes.status === "fulfilled") {
-          setCaller(callerRes.value.data.data);
+          setCaller(callerRes.value.data.data || "");
         }
       } catch (error) {
         console.error(error);
@@ -104,7 +113,7 @@ function Leads() {
     call_status: "",
     call_duration: "",
     status: "",
-    service: "Hajj",
+    service: "",
     sub_category: "Standard",
     package_name: "Premium",
     notes: "",
@@ -411,13 +420,13 @@ function Leads() {
                           onChange={onInputChange}
                           required
                         >
-                          <option value="">All Services</option>
+                          <option value="">All Status</option>
                           {Array.isArray(statuses) ? (
                             statuses
                               .filter((item) => item.status === "Active")
                               .map((item) => (
-                                <option key={item.id} value={item.service_name}>
-                                  {item.service_name}
+                                <option key={item.id} value={item.status_name}>
+                                  {item.status_name}
                                 </option>
                               ))
                           ) : (
@@ -428,8 +437,9 @@ function Leads() {
 
                       <div className="col-12 col-sm-6 col-md-6 mb-3">
                         <label className="form-label custom-label">
-                          Service Head
+                          Services
                         </label>
+
                         <select
                           aria-label="Service Type"
                           id="service"
@@ -439,10 +449,18 @@ function Leads() {
                           onChange={onInputChange}
                           required
                         >
-                          <option value="Hajj">Hajj</option>
-                          <option value="Umrah">Umrah</option>
-                          <option value="Packages">Packages</option>
-                          <option value="Misc">Misc</option>
+                          <option value="">All Services</option>
+                          {Array.isArray(services) ? (
+                            services
+                              .filter((item) => item.status === "Active")
+                              .map((item) => (
+                                <option key={item.id} value={item.service_name}>
+                                  {item.service_name}
+                                </option>
+                              ))
+                          ) : (
+                            <option disabled>No services found</option>
+                          )}
                         </select>
                       </div>
 

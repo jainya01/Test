@@ -14,26 +14,26 @@ function ServicesEdit() {
   const navigate = useNavigate();
 
   const [service, setService] = useState({
-    status_name: "",
-    status_code: "",
+    service_name: "",
     status: "",
     notes: "",
   });
 
-  const { status_name, status_code, status, notes } = service;
+  const { service_name, status, notes } = service;
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.put(`${API_URL}/statusupdate/${id}`, service, {
+      await axios.put(`${API_URL}/servicesupdate/${id}`, service, {
         headers: authHeader(),
       });
-      toast.success("Status updated successfully");
+
+      toast.success("Service updated successfully");
       setTimeout(() => {
-        navigate("/admin/status");
+        navigate("/admin/services");
       }, 1000);
     } catch (error) {
-      toast.error("Failed to update status");
+      toast.error("Failed to update service");
     }
   };
 
@@ -47,12 +47,12 @@ function ServicesEdit() {
   useEffect(() => {
     const fetchServices = async () => {
       try {
-        const res = await axios.get(`${API_URL}/somestatus/${id}`, {
+        const res = await axios.get(`${API_URL}/someservices/${id}`, {
           headers: authHeader(),
         });
+
         setService({
-          status_name: res.data?.result?.[0]?.status_name || "",
-          status_code: res.data?.result?.[0]?.status_code || "",
+          service_name: res.data?.result?.[0]?.service_name || "",
           status: res.data?.result?.[0]?.status || "",
           notes: res.data?.result?.[0]?.notes || "",
         });
@@ -96,42 +96,24 @@ function ServicesEdit() {
         <div className="col-12">
           <div className="card shadow border-0">
             <div className="card-header profile-header">
-              Edit Status: {service.status_name}
+              Edit Service: {service.service_name}
             </div>
 
             <div className="card-body">
               <form onSubmit={handleFormSubmit}>
                 <div className="row">
                   <div className="col-md-6 mb-3">
-                    <label className="form-label" htmlFor="status_name">
-                      Status Name
+                    <label className="form-label" htmlFor="service_name">
+                      Service Name
                       <span className="text-danger fw-bolder">*</span>
                     </label>
                     <input
                       type="text"
-                      id="status_name"
+                      id="service_name"
                       className="form-control sector-wise mb-1"
-                      placeholder="Enter status name"
-                      name="status_name"
-                      value={status_name}
-                      onChange={onInputChange}
-                      required
-                    />
-                  </div>
-
-                  <div className="col-md-6 mb-3">
-                    <label className="form-label" htmlFor="status_code">
-                      Service Code
-                      <span className="text-danger fw-bolder">*</span>
-                    </label>
-
-                    <input
-                      type="text"
-                      id="status_code"
-                      className="form-control sector-wise mb-1"
-                      placeholder="Enter service code"
-                      name="status_code"
-                      value={status_code}
+                      placeholder="Enter Service Name"
+                      name="service_name"
+                      value={service_name}
                       onChange={onInputChange}
                       required
                     />
@@ -157,7 +139,7 @@ function ServicesEdit() {
                     </select>
                   </div>
 
-                  <div className="col-md-6 mb-3">
+                  <div className="col-12 mb-3">
                     <label className="form-label" htmlFor="notes">
                       Description (optional)
                     </label>
@@ -184,7 +166,7 @@ function ServicesEdit() {
                     </button>
                   </div>
 
-                  <Link className="text-success" to="/admin/status">
+                  <Link className="text-success" to="/admin/services">
                     Back
                   </Link>
                 </div>

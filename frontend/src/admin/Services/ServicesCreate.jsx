@@ -13,25 +13,19 @@ function ServicesCreate() {
   const navigate = useNavigate();
 
   const [service, setService] = useState({
-    status_name: "",
-    status_code: "",
+    service_name: "",
     status: "",
     notes: "",
   });
 
-  const { status_name, status_code, status, notes } = service;
-
+  const { service_name, status, notes } = service;
   const [errors, setErrors] = useState({});
 
   const validateForm = () => {
     let newErrors = {};
 
-    if (!status_name.trim()) {
-      newErrors.status_name = "Status name is required";
-    }
-
-    if (!status_code.trim()) {
-      newErrors.status_code = "Service code is required";
+    if (!service_name.trim()) {
+      newErrors.service_name = "Service name is required";
     }
 
     if (!status) {
@@ -49,17 +43,17 @@ function ServicesCreate() {
     if (!isValid) return;
 
     try {
-      await axios.post(`${API_URL}/statuspost`, service, {
+      await axios.post(`${API_URL}/servicespost`, service, {
         headers: authHeader(),
       });
 
-      toast.success("Status created successfully");
+      toast.success("Service created successfully");
 
       setTimeout(() => {
-        navigate("/admin/status");
+        navigate("/admin/services");
       }, 1000);
     } catch (error) {
-      toast.error("Failed to add status");
+      toast.error("Failed to add service");
     }
   };
 
@@ -102,55 +96,32 @@ function ServicesCreate() {
             <div className="col-12">
               <div className="card shadow border-0">
                 <div className="card-header profile-header">
-                  Create New Status
+                  Create New Services
                 </div>
 
                 <div className="card-body">
                   <form onSubmit={handleFormSubmit}>
                     <div className="row">
                       <div className="col-md-6 mb-3">
-                        <label className="form-label" htmlFor="status_name">
-                          Status Name
-                          <span className="text-danger fw-bolder">*</span>
-                        </label>
-                        <input
-                          type="text"
-                          id="status_name"
-                          className="form-control sector-wise mb-1"
-                          placeholder="Enter status name"
-                          name="status_name"
-                          value={status_name}
-                          onChange={onInputChange}
-                          required
-                        />
-
-                        {errors.status_name && (
-                          <small className="text-danger mt-1">
-                            {errors.status_name}
-                          </small>
-                        )}
-                      </div>
-
-                      <div className="col-md-6 mb-3">
-                        <label className="form-label" htmlFor="status_code">
-                          Service Code
+                        <label className="form-label" htmlFor="service_name">
+                          Service Name
                           <span className="text-danger fw-bolder">*</span>
                         </label>
 
                         <input
                           type="text"
-                          id="status_code"
+                          id="service_name"
                           className="form-control sector-wise mb-1"
-                          placeholder="Enter service code"
-                          name="status_code"
-                          value={status_code}
+                          placeholder="Enter Service Name"
+                          name="service_name"
+                          value={service_name}
                           onChange={onInputChange}
                           required
                         />
 
-                        {errors.status_code && (
+                        {errors.service_name && (
                           <small className="text-danger mt-1">
-                            {errors.status_code}
+                            {errors.service_name}
                           </small>
                         )}
                       </div>
@@ -169,7 +140,7 @@ function ServicesCreate() {
                           onChange={onInputChange}
                           required
                         >
-                          <option value="">Select status</option>
+                          <option value="">Select Status</option>
                           <option value="Active">Active</option>
                           <option value="Inactive">Inactive</option>
                         </select>
@@ -181,7 +152,7 @@ function ServicesCreate() {
                         )}
                       </div>
 
-                      <div className="col-md-6 mb-3">
+                      <div className="col-12 mb-3">
                         <label className="form-label" htmlFor="notes">
                           Description (optional)
                         </label>
@@ -208,7 +179,7 @@ function ServicesCreate() {
                         </button>
                       </div>
 
-                      <Link className="text-success" to="/admin/status">
+                      <Link className="text-success" to="/admin/services">
                         Back
                       </Link>
                     </div>

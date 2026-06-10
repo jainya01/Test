@@ -12,7 +12,7 @@ function Services() {
 
   const [search, setSearch] = useState("");
   const [openMenuId, setOpenMenuId] = useState(null);
-  const [service, setService] = useState([]);
+  const [status, setStatus] = useState([]);
 
   useEffect(() => {
     const handleClick = () => setOpenMenuId(null);
@@ -23,10 +23,11 @@ function Services() {
   useEffect(() => {
     const allData = async () => {
       try {
-        const response = await axios.get(`${API_URL}/allservices`, {
+        const response = await axios.get(`${API_URL}/allstatusdata`, {
           headers: authHeader(),
         });
-        setService(response.data.result);
+
+        setStatus(response.data.result);
       } catch (error) {
         console.error("error", error);
       }
@@ -36,25 +37,25 @@ function Services() {
 
   const deleteData = async (id) => {
     const confirmDelete = window.confirm(
-      "Are you sure you want to delete this service?",
+      "Are you sure you want to delete this status?",
     );
 
     if (!confirmDelete) return;
 
     try {
-      await axios.delete(`${API_URL}/servicesdelete/${id}`, {
+      await axios.delete(`${API_URL}/statusdelete/${id}`, {
         headers: authHeader(),
       });
-      setService((prev) => prev.filter((item) => item.id !== id));
+      setStatus((prev) => prev.filter((item) => item.id !== id));
       toast.success("Status deleted successfully");
     } catch (error) {
       toast.error("Failed to delete status");
     }
   };
 
-  const filteredServices = service.filter((item) => {
+  const filteredStatus = status.filter((item) => {
     const keyword = search.toLowerCase();
-    return item.service_name?.toLowerCase().includes(keyword);
+    return item.status_name?.toLowerCase().includes(keyword);
   });
 
   const itemsPerPage = 13;
@@ -62,14 +63,14 @@ function Services() {
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
 
-  const paginatedData = filteredServices.slice(startIndex, endIndex);
-  const totalPages = Math.ceil(filteredServices.length / itemsPerPage);
+  const paginatedData = filteredStatus.slice(startIndex, endIndex);
+  const totalPages = Math.ceil(filteredStatus.length / itemsPerPage);
 
   useEffect(() => {
     if (currentPage > totalPages) {
       setCurrentPage(1);
     }
-  }, [filteredServices]);
+  }, [filteredStatus]);
 
   return (
     <main className="content-wrapper">
@@ -81,7 +82,7 @@ function Services() {
                 <input
                   type="text"
                   className="form-control sector-wise"
-                  placeholder="Search service name..."
+                  placeholder="Search status name..."
                   style={{ height: "40px" }}
                   value={search}
                   onChange={(e) => setSearch(e.target.value)}
@@ -125,10 +126,10 @@ function Services() {
                       <thead className="table-secondary header-table text-nowrap">
                         <tr>
                           <th className="ps-2 py-2">S/N</th>
-                          <th>SERVICE NAME</th>
-                          <th>SERVICE CODE</th>
+                          <th>STATUS NAME</th>
+                          <th>STATUS CODE</th>
                           <th>STATUS</th>
-                          <th>ACT</th>
+                          <th>ACTION</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -144,13 +145,13 @@ function Services() {
                                   className="text-decoration-none text-dark"
                                 >
                                   <span className="short-name fw-bold">
-                                    {data?.service_name || "N/A"}
+                                    {data?.status_name || "N/A"}
                                   </span>
                                 </Link>
                               </td>
 
                               <td className="convert-code">
-                                {data.service_code}
+                                {data.status_code || "--"}
                               </td>
 
                               <td

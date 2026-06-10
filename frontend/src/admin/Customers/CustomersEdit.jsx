@@ -24,13 +24,13 @@ function CustomersEdit() {
   const { name, phone, city, service, notes } = customer;
 
   const [errors, setErrors] = useState({});
-  const [servicesList, setServicesList] = useState([]);
+  const [services, setServices] = useState([]);
 
   useEffect(() => {
     const allData = async () => {
       try {
         const [serviceRes, someRes] = await Promise.allSettled([
-          axios.get(`${API_URL}/allservices`, {
+          axios.get(`${API_URL}/allservicesdata`, {
             headers: authHeader(),
           }),
 
@@ -40,7 +40,7 @@ function CustomersEdit() {
         ]);
 
         if (serviceRes.status === "fulfilled") {
-          setServicesList(serviceRes.value.data.result || []);
+          setServices(serviceRes.value.data.result || []);
         }
 
         if (someRes.status === "fulfilled") {
@@ -236,11 +236,17 @@ function CustomersEdit() {
                           required
                         >
                           <option value="">Select Service</option>
-                          <option value="Hajj">Hajj</option>
-                          <option value="Umrah">Umrah</option>
-                          <option value="Packages">Packages</option>
-                          <option value="Medical">Medical</option>
-                          <option value="Ticket">Ticket</option>
+                          {Array.isArray(services) ? (
+                            services
+                              .filter((item) => item.status === "Active")
+                              .map((item) => (
+                                <option key={item.id} value={item.service_name}>
+                                  {item.service_name}
+                                </option>
+                              ))
+                          ) : (
+                            <option disabled>No services found</option>
+                          )}
                         </select>
 
                         {errors.service && (

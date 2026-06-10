@@ -28,6 +28,10 @@ const Status = lazy(() => import("./admin/Status/Status"));
 const StatusCreate = lazy(() => import("./admin/Status/StatusCreate"));
 const StatusEdit = lazy(() => import("./admin/Status/StatusEdit"));
 
+const Services = lazy(() => import("./admin/Services/Services"));
+const ServicesCreate = lazy(() => import("./admin/Services/ServicesCreate"));
+const ServicesEdit = lazy(() => import("./admin/Services/ServicesEdit"));
+
 const BulkUpload = lazy(() => import("./admin/BulkUpload"));
 const Settings = lazy(() => import("./admin/Settings"));
 
@@ -37,44 +41,50 @@ const CallerLeads = lazy(() => import("./caller/CallerLeads"));
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="admin/login" element={<AdminLogin />} />
-        <Route path="caller/login" element={<CallerLogin />} />
+      <Suspense>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="admin/login" element={<AdminLogin />} />
+          <Route path="caller/login" element={<CallerLogin />} />
 
-        <Route element={<AdminProtected />}>
-          <Route path="/admin" element={<User />}>
-            <Route path="dashboard" element={<HomePage />} />
+          <Route element={<AdminProtected />}>
+            <Route path="/admin" element={<User />}>
+              <Route path="dashboard" element={<HomePage />} />
 
-            <Route path="customers" element={<Customers />} />
-            <Route path="customers/create" element={<CustomersCreate />} />
-            <Route path="customers/edit/:id" element={<CustomersEdit />} />
+              <Route path="customers" element={<Customers />} />
+              <Route path="customers/create" element={<CustomersCreate />} />
+              <Route path="customers/edit/:id" element={<CustomersEdit />} />
 
-            <Route path="callers" element={<CallerExecutive />} />
-            <Route path="callers/create" element={<CallersCreate />} />
-            <Route path="callers/edit/:id" element={<CallersEdit />} />
-            <Route path="callers/view/:id" element={<CallerView />} />
+              <Route path="callers" element={<CallerExecutive />} />
+              <Route path="callers/create" element={<CallersCreate />} />
+              <Route path="callers/edit/:id" element={<CallersEdit />} />
+              <Route path="callers/view/:id" element={<CallerView />} />
 
-            <Route path="reports" element={<Reports />} />
+              <Route path="reports" element={<Reports />} />
 
-            <Route path="status" element={<Status />} />
-            <Route path="status/create" element={<StatusCreate />} />
-            <Route path="status/edit/:id" element={<StatusEdit />} />
+              <Route path="services" element={<Services />} />
+              <Route path="services/create" element={<ServicesCreate />} />
+              <Route path="services/edit/:id" element={<ServicesEdit />} />
 
-            {/* <Route path="leads" element={<Leads />} /> */}
-            <Route path="bulk-upload" element={<BulkUpload />} />
-            <Route path="settings" element={<Settings />} />
+              <Route path="status" element={<Status />} />
+              <Route path="status/create" element={<StatusCreate />} />
+              <Route path="status/edit/:id" element={<StatusEdit />} />
+
+              {/* <Route path="leads" element={<Leads />} /> */}
+              <Route path="bulk-upload" element={<BulkUpload />} />
+              <Route path="settings" element={<Settings />} />
+            </Route>
           </Route>
-        </Route>
 
-        <Route element={<UserProtected />}>
-          <Route path="/caller" element={<User />}>
-            <Route path="leads" element={<CallerLeads />} />
+          <Route element={<UserProtected />}>
+            <Route path="/caller" element={<User />}>
+              <Route path="leads" element={<CallerLeads />} />
+            </Route>
           </Route>
-        </Route>
 
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Suspense>
     </BrowserRouter>
   );
 }

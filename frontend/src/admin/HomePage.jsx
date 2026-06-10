@@ -35,7 +35,7 @@ function HomePage() {
     const allData = async () => {
       try {
         const [serviceRes, reportRes, callerRes] = await Promise.allSettled([
-          axios.get(`${API_URL}/allservices`, {
+          axios.get(`${API_URL}/allstatusdata`, {
             headers: authHeader(),
           }),
 
@@ -243,13 +243,13 @@ function HomePage() {
                 className="form-select sector-wise"
                 aria-label="Service Status"
               >
-                <option value="">All status</option>
+                <option value="">All Status</option>
                 {Array.isArray(service) ? (
                   service
                     .filter((item) => item.status === "Active")
                     .map((item) => (
-                      <option key={item.id} value={item.service_name}>
-                        {item.service_name}
+                      <option key={item.id} value={item.status_name}>
+                        {item.status_name}
                       </option>
                     ))
                 ) : (

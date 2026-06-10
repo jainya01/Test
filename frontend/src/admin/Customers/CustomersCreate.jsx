@@ -23,18 +23,27 @@ function CustomersCreate() {
 
   const [errors, setErrors] = useState({});
   const [callersList, setCallersList] = useState([]);
+  const [services, setServices] = useState([]);
 
   useEffect(() => {
     const allData = async () => {
       try {
-        const [callerRes] = await Promise.allSettled([
+        const [callerRes, serviceRes] = await Promise.allSettled([
           axios.get(`${API_URL}/allCallers`, {
+            headers: authHeader(),
+          }),
+
+          axios.get(`${API_URL}/allservicesdata`, {
             headers: authHeader(),
           }),
         ]);
 
         if (callerRes.status === "fulfilled") {
           setCallersList(callerRes.value.data.data || []);
+        }
+
+        if (serviceRes.status === "fulfilled") {
+          setServices(serviceRes.value.data.result || []);
         }
       } catch (error) {
         console.error(error);
@@ -180,7 +189,6 @@ function CustomersCreate() {
                     <label className="form-label" htmlFor="city">
                       City <span className="text-danger fw-bolder">*</span>
                     </label>
-
                     <input
                       type="text"
                       id="city"
@@ -211,11 +219,17 @@ function CustomersCreate() {
                       required
                     >
                       <option value="">Select Service</option>
-                      <option value="Hajj">Hajj</option>
-                      <option value="Umrah">Umrah</option>
-                      <option value="Packages">Packages</option>
-                      <option value="Medical">Medical</option>
-                      <option value="Ticket">Ticket</option>
+                      {Array.isArray(services) ? (
+                        services
+                          .filter((item) => item.status === "Active")
+                          .map((item) => (
+                            <option key={item.id} value={item.service_name}>
+                              {item.service_name}
+                            </option>
+                          ))
+                      ) : (
+                        <option disabled>No services found</option>
+                      )}
                     </select>
 
                     {errors.service && (

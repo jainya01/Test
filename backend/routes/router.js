@@ -477,23 +477,23 @@ router.get(
   }),
 );
 
-// services
+// status
 
 router.post(
-  "/servicespost",
+  "/statuspost",
   authenticate,
   asyncHandler(async (req, res) => {
-    const { service_name, service_code, status, notes } = req.body;
+    const { status_name, status_code, status, notes } = req.body;
 
-    if (!service_name || !service_code || !status) {
+    if (!status_name || !status_code || !status) {
       const error = new Error("All fields are required");
       error.statusCode = 400;
       throw error;
     }
 
     const [existing] = await pool.execute(
-      "SELECT id FROM services WHERE service_code = ?",
-      [service_code],
+      "SELECT id FROM status WHERE status_code = ?",
+      [status_code],
     );
 
     if (existing.length > 0) {
@@ -503,8 +503,143 @@ router.post(
     }
 
     const [result] = await pool.execute(
-      "INSERT INTO services (service_name, service_code, status, notes) VALUES (?, ?, ?, ?)",
-      [service_name, service_code, status, notes],
+      "INSERT INTO status (status_name, status_code, status, notes) VALUES (?, ?, ?, ?)",
+      [status_name, status_code, status, notes],
+    );
+
+    return res.status(201).json({
+      success: true,
+      message: "Status created successfully",
+      serviceId: result.insertId,
+    });
+  }),
+);
+
+router.put(
+  "/statusupdate/:id",
+  authenticate,
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const { status_name, status_code, status, notes } = req.body;
+
+    if (!status_name || !status_code || !status) {
+      const error = new Error("All fields are required");
+      error.statusCode = 400;
+      throw error;
+    }
+
+    const query = `
+      UPDATE status
+      SET status_name = ?, status_code = ?, status = ?, notes = ?
+      WHERE id = ?
+    `;
+
+    const [result] = await pool.execute(query, [
+      status_name,
+      status_code,
+      status,
+      notes,
+      id,
+    ]);
+
+    if (result.affectedRows === 0) {
+      const error = new Error("Service not found or not updated");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Status updated successfully",
+      result,
+    });
+  }),
+);
+
+router.delete(
+  "/statusdelete/:id",
+  authenticate,
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const SQL = "DELETE FROM status WHERE id = ?";
+    const [result] = await pool.execute(SQL, [id]);
+
+    if (result.affectedRows <= 0) {
+      const error = new Error("Status not deleted");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "data deleted successfully",
+      result,
+    });
+  }),
+);
+
+router.get(
+  "/allstatusdata",
+  authenticate,
+  asyncHandler(async (req, res) => {
+    const SQL =
+      "SELECT id, status_name, status_code, status, notes FROM status ORDER BY id DESC LIMIT 20";
+    const [result] = await pool.execute(SQL);
+
+    if (result.affectedRows <= 0) {
+      const error = new Error("data not found");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "data fetched successfully",
+      result,
+    });
+  }),
+);
+
+router.get(
+  "/somestatus/:id",
+  authenticate,
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const SQL =
+      "SELECT id, status_name, status_code, status, notes FROM status WHERE id = ?";
+    const [result] = await pool.execute(SQL, [id]);
+
+    if (result.affectedRows <= 0) {
+      const error = new Error("data not found");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "data fetched successfully",
+      result,
+    });
+  }),
+);
+
+// services
+
+router.post(
+  "/servicespost",
+  authenticate,
+  asyncHandler(async (req, res) => {
+    const { service_name, status, notes } = req.body;
+
+    if (!service_name || !status) {
+      const error = new Error("All fields are required");
+      error.statusCode = 400;
+      throw error;
+    }
+
+    const [result] = await pool.execute(
+      "INSERT INTO services (service_name, status, notes) VALUES (?, ?, ?)",
+      [service_name, status, notes],
     );
 
     return res.status(201).json({
@@ -516,13 +651,13 @@ router.post(
 );
 
 router.put(
-  "/serviceupdate/:id",
+  "/servicesupdate/:id",
   authenticate,
   asyncHandler(async (req, res) => {
     const { id } = req.params;
-    const { service_name, service_code, status, notes } = req.body;
+    const { service_name, status, notes } = req.body;
 
-    if (!service_name || !service_code || !status) {
+    if (!service_name || !status) {
       const error = new Error("All fields are required");
       error.statusCode = 400;
       throw error;
@@ -530,13 +665,12 @@ router.put(
 
     const query = `
       UPDATE services
-      SET service_name = ?, service_code = ?, status = ?, notes = ?
+      SET service_name = ?, status = ?, notes = ?
       WHERE id = ?
     `;
 
     const [result] = await pool.execute(query, [
       service_name,
-      service_code,
       status,
       notes,
       id,
@@ -557,7 +691,7 @@ router.put(
 );
 
 router.delete(
-  "/servicesdelete/:id",
+  "/servicedelete/:id",
   authenticate,
   asyncHandler(async (req, res) => {
     const { id } = req.params;
@@ -565,7 +699,7 @@ router.delete(
     const [result] = await pool.execute(SQL, [id]);
 
     if (result.affectedRows <= 0) {
-      const error = new Error("service not deleted");
+      const error = new Error("Service not deleted");
       error.statusCode = 404;
       throw error;
     }
@@ -579,11 +713,11 @@ router.delete(
 );
 
 router.get(
-  "/allservices",
+  "/allservicesdata",
   authenticate,
   asyncHandler(async (req, res) => {
     const SQL =
-      "SELECT id, service_name, service_code, status, notes FROM services ORDER BY id DESC LIMIT 20";
+      "SELECT id, service_name, status, notes FROM services ORDER BY id DESC LIMIT 20";
     const [result] = await pool.execute(SQL);
 
     if (result.affectedRows <= 0) {
@@ -606,7 +740,7 @@ router.get(
   asyncHandler(async (req, res) => {
     const { id } = req.params;
     const SQL =
-      "SELECT id, service_name, service_code, status, notes FROM services WHERE id = ?";
+      "SELECT id, service_name, status, notes FROM services WHERE id = ?";
     const [result] = await pool.execute(SQL, [id]);
 
     if (result.affectedRows <= 0) {

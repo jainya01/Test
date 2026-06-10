@@ -102,19 +102,28 @@ function Leads() {
     return `${phoneStr.slice(0, 2)}xxxxxx${phoneStr.slice(-2)}`;
   };
 
-  const [service, setService] = useState([]);
+  const [services, setServices] = useState([]);
+  const [status, setStatus] = useState([]);
 
   useEffect(() => {
     const allData = async () => {
       try {
-        const [serviceRes] = await Promise.allSettled([
-          axios.get(`${API_URL}/allservices`, {
+        const [serviceRes, statusRes] = await Promise.allSettled([
+          axios.get(`${API_URL}/allservicesdata`, {
+            headers: authHeader(),
+          }),
+
+          axios.get(`${API_URL}/allstatusdata`, {
             headers: authHeader(),
           }),
         ]);
 
         if (serviceRes.status === "fulfilled") {
-          setService(serviceRes.value.data.result);
+          setServices(serviceRes.value.data.result || "");
+        }
+
+        if (statusRes.status === "fulfilled") {
+          setStatus(statusRes.value.data.result || "");
         }
       } catch (error) {
         console.error(error);
@@ -300,17 +309,17 @@ function Leads() {
                         </label>
 
                         <select className="form-select custom-input" required>
-                          <option value="">All Services</option>
-                          {Array.isArray(service) ? (
-                            service
+                          <option value="">All Status</option>
+                          {Array.isArray(status) ? (
+                            status
                               .filter((item) => item.status === "Active")
                               .map((item) => (
-                                <option key={item.id} value={item.service_name}>
-                                  {item.service_name}
+                                <option key={item.id} value={item.status_name}>
+                                  {item.status_name}
                                 </option>
                               ))
                           ) : (
-                            <option disabled>No services found</option>
+                            <option disabled>No status found</option>
                           )}
                         </select>
                       </div>
@@ -320,10 +329,18 @@ function Leads() {
                           Service Head
                         </label>
                         <select className="form-select custom-input" required>
-                          <option value="Hajj">Hajj</option>
-                          <option value="Umrah">Umrah</option>
-                          <option value="Packages">Packages</option>
-                          <option value="Misc">Misc</option>
+                          <option value="">All Services</option>
+                          {Array.isArray(services) ? (
+                            services
+                              .filter((item) => item.status === "Active")
+                              .map((item) => (
+                                <option key={item.id} value={item.service_name}>
+                                  {item.service_name}
+                                </option>
+                              ))
+                          ) : (
+                            <option disabled>No status found</option>
+                          )}
                         </select>
                       </div>
 

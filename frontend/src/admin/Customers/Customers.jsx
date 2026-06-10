@@ -24,6 +24,7 @@ function Customers() {
   const [showPassword, setShowPassword] = useState(false);
   const [search, setSearch] = useState("");
   const [customers, setCustomers] = useState([]);
+  const [status, setStatus] = useState([]);
   const [service, setService] = useState([]);
   const [selectedStatus, setSelectedStatus] = useState("");
   const [selectedService, setSelectedService] = useState("");
@@ -38,21 +39,30 @@ function Customers() {
   useEffect(() => {
     const allData = async () => {
       try {
-        const [serviceRes, customersRes] = await Promise.allSettled([
-          axios.get(`${API_URL}/allservices`, {
+        const [statusRes, customersRes, serviceRes] = await Promise.allSettled([
+          axios.get(`${API_URL}/allstatusdata`, {
             headers: authHeader(),
           }),
+
           axios.get(`${API_URL}/allcustomers`, {
+            headers: authHeader(),
+          }),
+
+          axios.get(`${API_URL}/allservicesdata`, {
             headers: authHeader(),
           }),
         ]);
 
-        if (serviceRes.status === "fulfilled") {
-          setService(serviceRes.value.data.result);
+        if (statusRes.status === "fulfilled") {
+          setStatus(statusRes.value.data.result);
         }
 
         if (customersRes.status === "fulfilled") {
           setCustomers(customersRes.value.data.result);
+        }
+
+        if (serviceRes.status === "fulfilled") {
+          setService(serviceRes.value.data.result);
         }
       } catch (error) {
         console.error(error);
@@ -219,11 +229,17 @@ function Customers() {
                         }}
                       >
                         <option value="">All Service</option>
-                        <option value="Hajj">Hajj</option>
-                        <option value="Umrah">Umrah</option>
-                        <option value="Packages">Packages</option>
-                        <option value="Medical">Medical</option>
-                        <option value="Ticket">Ticket</option>
+                        {Array.isArray(service) ? (
+                          service
+                            .filter((item) => item.status === "Active")
+                            .map((item) => (
+                              <option key={item.id} value={item.service_name}>
+                                {item.service_name}
+                              </option>
+                            ))
+                        ) : (
+                          <option disabled>No services found</option>
+                        )}
                       </select>
                     </div>
 
@@ -238,16 +254,16 @@ function Customers() {
                         }}
                       >
                         <option value="">All Status</option>
-                        {Array.isArray(service) ? (
-                          service
+                        {Array.isArray(status) ? (
+                          status
                             .filter((item) => item.status === "Active")
                             .map((item) => (
-                              <option key={item.id} value={item.service_name}>
-                                {item.service_name}
+                              <option key={item.id} value={item.status_name}>
+                                {item.status_name}
                               </option>
                             ))
                         ) : (
-                          <option disabled>No services found</option>
+                          <option disabled>No status found</option>
                         )}
                       </select>
                     </div>
@@ -278,7 +294,7 @@ function Customers() {
                           <th>SERVICE</th>
                           <th>STATUS</th>
                           <th>CALLER</th>
-                          <th>ACT</th>
+                          <th>ACTION</th>
                           {/* <th></th> */}
                         </tr>
                       </thead>
