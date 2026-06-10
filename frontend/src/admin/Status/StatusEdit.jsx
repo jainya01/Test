@@ -15,12 +15,11 @@ function ServicesEdit() {
 
   const [service, setService] = useState({
     status_name: "",
-    status_code: "",
     status: "",
     notes: "",
   });
 
-  const { status_name, status_code, status, notes } = service;
+  const { status_name, status, notes } = service;
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
@@ -52,7 +51,6 @@ function ServicesEdit() {
         });
         setService({
           status_name: res.data?.result?.[0]?.status_name || "",
-          status_code: res.data?.result?.[0]?.status_code || "",
           status: res.data?.result?.[0]?.status || "",
           notes: res.data?.result?.[0]?.notes || "",
         });
@@ -121,27 +119,9 @@ function ServicesEdit() {
                       type="text"
                       id="status_name"
                       className="form-control sector-wise mb-1"
-                      placeholder="Enter status name"
+                      placeholder="Enter Status Name"
                       name="status_name"
                       value={status_name}
-                      onChange={onInputChange}
-                      required
-                    />
-                  </div>
-
-                  <div className="col-md-6 mb-3">
-                    <label className="form-label" htmlFor="status_code">
-                      Status Code
-                      <span className="text-danger fw-bold ms-1">*</span>
-                    </label>
-
-                    <input
-                      type="text"
-                      id="status_code"
-                      className="form-control sector-wise mb-1"
-                      placeholder="Enter status code"
-                      name="status_code"
-                      value={status_code}
                       onChange={onInputChange}
                       required
                     />
@@ -161,13 +141,13 @@ function ServicesEdit() {
                       onChange={onInputChange}
                       required
                     >
-                      <option value="">Select status</option>
+                      <option value="">Select Status</option>
                       <option value="Active">Active</option>
                       <option value="Inactive">Inactive</option>
                     </select>
                   </div>
 
-                  <div className="col-md-6 mb-3">
+                  <div className="col-12 mb-3">
                     <label className="form-label" htmlFor="notes">
                       Description (optional)
                     </label>
@@ -175,7 +155,7 @@ function ServicesEdit() {
                     <textarea
                       id="notes"
                       className="form-control py-2 sector-wise"
-                      placeholder="Description..."
+                      placeholder="Add a short note..."
                       name="notes"
                       value={notes}
                       onChange={onInputChange}

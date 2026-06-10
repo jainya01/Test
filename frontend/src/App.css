@@ -398,7 +398,7 @@ aside.admin-sidebar.collapsed {
 }
 
 .sector-wise:focus {
-  border: 2.7px solid #4163b1;
+  border: 1.5px solid #4163b1;
   border-color: #4163b1;
   box-shadow: none;
   border-radius: 8px;
@@ -944,12 +944,12 @@ aside.admin-sidebar.collapsed {
 }
 
 .custom-text {
-  height: 40px;
+  height: 38px;
   font-size: 15px;
 }
 
 .custom-text:focus {
-  border: 2.7px solid #4163b1;
+  border: 1.5px solid #4163b1;
   border-color: #4163b1;
   box-shadow: none;
 }

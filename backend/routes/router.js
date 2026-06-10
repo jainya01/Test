@@ -492,11 +492,6 @@ router.post(
       throw error;
     }
 
-    const [existing] = await pool.execute(
-      "SELECT id FROM status WHERE status_code = ?",
-      [status_code],
-    );
-
     const [result] = await pool.execute(
       "INSERT INTO status (status_name, status, notes) VALUES (?, ?, ?)",
       [status_name, status, notes],

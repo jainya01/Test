@@ -14,13 +14,11 @@ function ServicesCreate() {
 
   const [service, setService] = useState({
     status_name: "",
-    status_code: "",
     status: "",
     notes: "",
   });
 
-  const { status_name, status_code, status, notes } = service;
-
+  const { status_name, status, notes } = service;
   const [errors, setErrors] = useState({});
 
   const validateForm = () => {
@@ -28,10 +26,6 @@ function ServicesCreate() {
 
     if (!status_name.trim()) {
       newErrors.status_name = "Status name is required";
-    }
-
-    if (!status_code.trim()) {
-      newErrors.status_code = "Service code is required";
     }
 
     if (!status) {
@@ -127,7 +121,7 @@ function ServicesCreate() {
                           type="text"
                           id="status_name"
                           className="form-control sector-wise mb-1"
-                          placeholder="Enter status name"
+                          placeholder="Enter Status Name"
                           name="status_name"
                           value={status_name}
                           onChange={onInputChange}
@@ -137,30 +131,6 @@ function ServicesCreate() {
                         {errors.status_name && (
                           <small className="text-danger mt-1">
                             {errors.status_name}
-                          </small>
-                        )}
-                      </div>
-
-                      <div className="col-md-6 mb-3">
-                        <label className="form-label" htmlFor="status_code">
-                          Status Code
-                          <span className="text-danger fw-bold ms-1">*</span>
-                        </label>
-
-                        <input
-                          type="text"
-                          id="status_code"
-                          className="form-control sector-wise mb-1"
-                          placeholder="Enter status code"
-                          name="status_code"
-                          value={status_code}
-                          onChange={onInputChange}
-                          required
-                        />
-
-                        {errors.status_code && (
-                          <small className="text-danger mt-1">
-                            {errors.status_code}
                           </small>
                         )}
                       </div>
@@ -179,7 +149,7 @@ function ServicesCreate() {
                           onChange={onInputChange}
                           required
                         >
-                          <option value="">Select status</option>
+                          <option value="">Select Status</option>
                           <option value="Active">Active</option>
                           <option value="Inactive">Inactive</option>
                         </select>
@@ -191,7 +161,7 @@ function ServicesCreate() {
                         )}
                       </div>
 
-                      <div className="col-md-6 mb-3">
+                      <div className="col-12 mb-3">
                         <label className="form-label" htmlFor="notes">
                           Description (optional)
                         </label>
@@ -199,7 +169,7 @@ function ServicesCreate() {
                         <textarea
                           id="notes"
                           className="form-control py-2 sector-wise"
-                          placeholder="Description..."
+                          placeholder="Add a short note..."
                           name="notes"
                           value={notes}
                           onChange={onInputChange}

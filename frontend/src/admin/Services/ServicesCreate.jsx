@@ -64,6 +64,15 @@ function ServicesCreate() {
     });
   };
 
+  const arr = ["apple", "banana", "mango", "apple", "mango"];
+  const count = {};
+
+  arr.forEach((item) => {
+    count[item] = (count[item] || 0) + 1;
+  });
+
+  console.log(count);
+
   return (
     <main className="content-wrapper">
       <div className="container-fluid border-bottom bg-light py-2">
@@ -170,7 +179,7 @@ function ServicesCreate() {
                         <textarea
                           id="notes"
                           className="form-control py-2 sector-wise"
-                          placeholder="Description..."
+                          placeholder="Add a short note..."
                           name="notes"
                           value={notes}
                           onChange={onInputChange}

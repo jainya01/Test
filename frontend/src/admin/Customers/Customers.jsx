@@ -305,7 +305,6 @@ function Customers() {
                           <th>STATUS</th>
                           <th>CALLER</th>
                           <th>ACTION</th>
-                          {/* <th></th> */}
                         </tr>
                       </thead>
                       <tbody className="body-table">
@@ -385,16 +384,6 @@ function Customers() {
                                     </span>
                                   </span>
                                 </td>
-
-                                {/* <td className="view-right">
-                                <span className="d-flex flex-row align-items-center">
-                                  View
-                                  <FontAwesomeIcon
-                                    icon={faArrowRight}
-                                    className="ms-1"
-                                  />
-                                </span>
-                              </td> */}
                               </tr>
                             ))
                         ) : (

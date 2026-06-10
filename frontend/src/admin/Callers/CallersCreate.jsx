@@ -226,7 +226,7 @@ function CallersCreate() {
                       onChange={onInputChange}
                       required
                     >
-                      <option value="">Select status</option>
+                      <option value="">Select Status</option>
                       <option value="Active">Active</option>
                       <option value="Inactive">Inactive</option>
                     </select>
@@ -246,7 +246,7 @@ function CallersCreate() {
                     <textarea
                       id="notes"
                       className="form-control py-2 sector-wise"
-                      placeholder="Description..."
+                      placeholder="Add a short note..."
                       name="notes"
                       value={notes}
                       onChange={onInputChange}

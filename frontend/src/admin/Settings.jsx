@@ -13,7 +13,6 @@ import { ToastContainer, toast } from "react-toastify";
 function Settings() {
   const API_URL = import.meta.env.VITE_API_URL;
 
-  const token = localStorage.getItem("adminToken");
   const [errors, setErrors] = useState({});
 
   const [formData, setFormData] = useState({
