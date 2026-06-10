@@ -173,7 +173,7 @@ function CustomersEdit() {
                           type="text"
                           id="name"
                           className="form-control sector-wise mb-1"
-                          placeholder="Enter full name"
+                          placeholder="Enter Full Name"
                           name="name"
                           value={name}
                           onChange={onInputChange}
@@ -197,7 +197,7 @@ function CustomersEdit() {
                           type="text"
                           id="phone"
                           className="form-control sector-wise mb-1"
-                          placeholder="Enter phone no"
+                          placeholder="Enter Phone No"
                           name="phone"
                           value={phone}
                           onChange={onInputChange}

@@ -160,7 +160,7 @@ function CallersEdit() {
                       type="text"
                       id="fullname"
                       className="form-control sector-wise mb-1"
-                      placeholder="Enter full name"
+                      placeholder="Enter Full Name"
                       name="fullname"
                       value={fullname || ""}
                       onChange={onInputChange}
@@ -177,7 +177,7 @@ function CallersEdit() {
                       type="email"
                       id="email"
                       className="form-control sector-wise mb-1"
-                      placeholder="Enter email"
+                      placeholder="Enter Email"
                       name="email"
                       value={email || ""}
                       onChange={onInputChange}
