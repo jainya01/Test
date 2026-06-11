@@ -136,12 +136,6 @@ function Services() {
           <div className="col-12">
             <div className="card shadow-sm border rounded-3 h-100">
               <div className="card-body p-0">
-                <div className="mb-2 mt-3 ms-2 d-flex flex-wrap gap-2 justify-content-between align-items-center">
-                  <div>
-                    <h5 className="fw-bold mb-0 daily-performance">Services</h5>
-                  </div>
-                </div>
-
                 <div className="table-wrapper">
                   <div className="table-responsive custom-scrollbar">
                     <table className="table table-striped mb-0">

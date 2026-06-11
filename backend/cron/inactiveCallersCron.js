@@ -1,7 +1,7 @@
 import cron from "node-cron";
 import pool from "../config/db.js";
 
-cron.schedule("0 * * * *", async () => {
+cron.schedule("0 */2 * * *", async () => {
   try {
     await pool.execute(`
       UPDATE caller c
