@@ -129,8 +129,7 @@ router.get(
   "/alladmindata",
   authenticate,
   asyncHandler(async (req, res) => {
-    const SQL =
-      "SELECT id, name, email, role FROM admin ORDER BY id DESC LIMIT 50";
+    const SQL = "SELECT id, name, email, role FROM admin LIMIT 50";
 
     const [result] = await pool.execute(SQL);
 
