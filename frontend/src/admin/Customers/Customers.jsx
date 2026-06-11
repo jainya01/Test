@@ -219,7 +219,7 @@ function Customers() {
 
         <div className="row g-2">
           <div className="col-12">
-            <div className="card shadow-sm border-0 rounded-3 h-100">
+            <div className="card shadow-sm border rounded-3 h-100">
               <div className="card-body p-0">
                 <div className="mb-2 mt-3 ms-2 d-flex flex-wrap gap-2 justify-content-between align-items-center">
                   <div>

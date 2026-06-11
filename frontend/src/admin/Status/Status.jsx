@@ -129,7 +129,7 @@ function Services() {
 
         <div className="row g-2 mt-3">
           <div className="col-12">
-            <div className="card shadow-sm border-0 rounded-3 h-100">
+            <div className="card shadow-sm border rounded-3 h-100">
               <div className="card-body p-0">
                 <div className="table-wrapper">
                   <div className="table-responsive custom-scrollbar custom-scrollbar1">

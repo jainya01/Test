@@ -39,7 +39,6 @@ axios.interceptors.response.use(
       localStorage.removeItem("callerToken");
       localStorage.removeItem("role");
       localStorage.removeItem("id");
-
       window.location.replace("/");
     }
 

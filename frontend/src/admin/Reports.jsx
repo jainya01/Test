@@ -180,7 +180,7 @@ function Reports() {
 
         <div className="row g-2">
           <div className="col-12 col-lg-8">
-            <div className="card custom-card shadow-sm border-0 h-100 rounded-3">
+            <div className="card custom-card shadow-sm border h-100 rounded-3">
               <div className="card-body">
                 <div className="d-flex justify-content-between mb-3">
                   <h4 className="daily-performance fw-semibold mb-0">
@@ -255,7 +255,7 @@ function Reports() {
           </div>
 
           <div className="col-12 col-lg-4">
-            <div className="card custom-card shadow-sm border-0 h-100 rounded-3">
+            <div className="card custom-card shadow-sm border h-100 rounded-3">
               <div className="card-body d-flex flex-column p-3">
                 <div className="mb-1">
                   <h4 className="daily-performance fw-semibold mb-0">
@@ -327,7 +327,7 @@ function Reports() {
 
         <div className="row g-2 mt-3">
           <div className="col-12">
-            <div className="card shadow-sm border-0 rounded-3 h-100">
+            <div className="card shadow-sm border rounded-3 h-100">
               <div className="card-body p-0">
                 <div className="mb-3 mt-3 ms-2">
                   <h5 className="fw-bold mb-0 daily-performance">

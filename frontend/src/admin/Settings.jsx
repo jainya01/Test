@@ -437,7 +437,7 @@ function Settings() {
 
           {Array.isArray(adminEmail) && adminEmail.length > 0 ? (
             adminEmail.map((data, index) => (
-              <div key={index} className="card mb-2 border-0 shadow-sm">
+              <div key={index} className="card mb-2 border shadow-sm">
                 <div className="card-body py-3 px-3 d-flex justify-content-between align-items-center">
                   <div className="text-truncate me-3">
                     <span className="fw-medium accounts-email">
