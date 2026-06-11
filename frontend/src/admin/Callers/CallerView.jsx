@@ -32,7 +32,6 @@ function CallerView() {
 
         if (customerRes.status === "fulfilled") {
           setCustomer(customerRes.value.data.result);
-          console.log(customerRes.value.data.result);
         }
       } catch (error) {
         console.error(error);
@@ -177,55 +176,55 @@ function CallerView() {
 
           <div className="row g-2">
             <div className="col-6 col-sm-6 col-md-4 col-lg">
-              <div className="card custom-card shadow-sm border-0 h-100 rounded-3">
+              <div className="card custom-card-daily shadow-sm border-0 h-100 rounded-3">
                 <div className="card-body d-flex justify-content-between">
                   <div>
                     <p className="card-title-text">Daily Calls</p>
-                    <h4 className="card-value">{dailyCalls}</h4>
+                    <h4 className="card-value mt-3">{dailyCalls}</h4>
                   </div>
                 </div>
               </div>
             </div>
 
             <div className="col-6 col-sm-6 col-md-4 col-lg">
-              <div className="card custom-card shadow-sm border-0 h-100 rounded-3">
+              <div className="card custom-card-week shadow-sm border-0 h-100 rounded-3">
                 <div className="card-body d-flex justify-content-between">
                   <div>
                     <p className="card-title-text">Weekly Calls</p>
-                    <h4 className="card-value">{weeklyCalls}</h4>
+                    <h4 className="card-value mt-3">{weeklyCalls}</h4>
                   </div>
                 </div>
               </div>
             </div>
 
             <div className="col-6 col-sm-6 col-md-4 col-lg">
-              <div className="card custom-card shadow-sm border-0 h-100 rounded-3">
+              <div className="card custom-card-monthly shadow-sm border-0 h-100 rounded-3">
                 <div className="card-body d-flex justify-content-between">
                   <div>
                     <p className="card-title-text">Monthly Calls</p>
-                    <h4 className="card-value">{monthlyCalls}</h4>
+                    <h4 className="card-value mt-3">{monthlyCalls}</h4>
                   </div>
                 </div>
               </div>
             </div>
 
             <div className="col-6 col-sm-6 col-md-6 col-lg">
-              <div className="card custom-card shadow-sm border-0 h-100 rounded-3">
+              <div className="card custom-card-average shadow-sm border-0 h-100 rounded-3">
                 <div className="card-body d-flex justify-content-between">
                   <div>
                     <p className="card-title-text">Average Calls</p>
-                    <h3 className="card-value">{averageCalls}</h3>
+                    <h3 className="card-value mt-3">{averageCalls}</h3>
                   </div>
                 </div>
               </div>
             </div>
 
             <div className="col-12 col-sm-6 col-md-6 col-lg col-xl">
-              <div className="card custom-card shadow-sm border-0 h-100 rounded-3">
+              <div className="card custom-card-lead shadow-sm border-0 h-100 rounded-3">
                 <div className="card-body d-flex justify-content-between">
                   <div>
                     <p className="card-title-text">Converted Leads</p>
-                    <h4 className="card-value">{convertedLeads}%</h4>
+                    <h4 className="card-value mt-3">{convertedLeads}%</h4>
                   </div>
                 </div>
               </div>
@@ -234,44 +233,44 @@ function CallerView() {
 
           <div className="row g-2 mt-2">
             <div className="col-6 col-sm-6 col-md-4 col-lg">
-              <div className="card custom-card shadow-sm border-0 h-100 rounded-3">
+              <div className="card custom-card-pending shadow-sm border-0 h-100 rounded-3">
                 <div className="card-body d-flex justify-content-between">
                   <div>
                     <p className="card-title-text">Pending Leads</p>
-                    <h4 className="card-value">{pendingLeads}</h4>
+                    <h4 className="card-value mt-3">{pendingLeads}</h4>
                   </div>
                 </div>
               </div>
             </div>
 
             <div className="col-6 col-sm-6 col-md-4 col-lg">
-              <div className="card custom-card shadow-sm border-0 h-100 rounded-3">
+              <div className="card custom-card-follow shadow-sm border-0 h-100 rounded-3">
                 <div className="card-body d-flex justify-content-between">
                   <div>
                     <p className="card-title-text">Followups</p>
-                    <h4 className="card-value">{followups}</h4>
+                    <h4 className="card-value mt-3">{followups}</h4>
                   </div>
                 </div>
               </div>
             </div>
 
             <div className="col-6 col-sm-6 col-md-4 col-lg">
-              <div className="card custom-card shadow-sm border-0 h-100 rounded-3">
+              <div className="card custom-card-dura shadow-sm border-0 h-100 rounded-3">
                 <div className="card-body d-flex justify-content-between">
                   <div>
                     <p className="card-title-text">Avg Call Duration</p>
-                    <h4 className="card-value">{avgCallDuration}</h4>
+                    <h4 className="card-value mt-3">{avgCallDuration}</h4>
                   </div>
                 </div>
               </div>
             </div>
 
             <div className="col-6 col-sm-6 col-md-4 col-lg">
-              <div className="card custom-card shadow-sm border-0 h-100 rounded-3">
+              <div className="card custom-card-last shadow-sm border-0 h-100 rounded-3">
                 <div className="card-body d-flex justify-content-between">
                   <div>
                     <p className="card-title-text">Last Active</p>
-                    <span className="card-value">{formattedLastActive}</span>
+                    <h4 className="card-value mt-3">{formattedLastActive}</h4>
                   </div>
                 </div>
               </div>

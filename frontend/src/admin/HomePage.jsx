@@ -289,12 +289,12 @@ function HomePage() {
 
           <div className="row g-2">
             <div className="col-6 col-sm-6 col-md-4 col-lg">
-              <div className="card custom-card shadow-sm border-0 h-100 rounded-3">
+              <div className="card custom-card1 shadow-sm border-0 h-100 rounded-3">
                 <div className="card-body d-flex justify-content-between">
                   <div>
                     <p className="card-title-text">TOTAL CALLS</p>
                     <h4 className="card-value">{totalCalls}</h4>
-                    <small className="card-subtext">
+                    <small className="card-subtext text-light">
                       +{growthPercentage}% vs last week
                     </small>
                   </div>
@@ -307,12 +307,14 @@ function HomePage() {
             </div>
 
             <div className="col-6 col-sm-6 col-md-4 col-lg">
-              <div className="card custom-card shadow-sm border-0 h-100 rounded-3">
+              <div className="card custom-card2 shadow-sm border-0 h-100 rounded-3">
                 <div className="card-body d-flex justify-content-between">
                   <div>
                     <p className="card-title-text">ANSWERED</p>
                     <h4 className="card-value">{answeredCalls}</h4>
-                    <small className="card-subtext">69% answer rate</small>
+                    <small className="card-subtext text-light">
+                      69% answer rate
+                    </small>
                   </div>
                   <div className="icon-wrapper icon-success-bg">
                     <FontAwesomeIcon
@@ -325,7 +327,7 @@ function HomePage() {
             </div>
 
             <div className="col-6 col-sm-6 col-md-4 col-lg">
-              <div className="card custom-card shadow-sm border-0 h-100 rounded-3">
+              <div className="card custom-card3 shadow-sm border-0 h-100 rounded-3">
                 <div className="card-body d-flex justify-content-between">
                   <div>
                     <p className="card-title-text">REJECTED</p>
@@ -342,7 +344,7 @@ function HomePage() {
             </div>
 
             <div className="col-6 col-sm-6 col-md-4 col-lg">
-              <div className="card custom-card shadow-sm border-0 h-100 rounded-3">
+              <div className="card custom-card4 shadow-sm border-0 h-100 rounded-3">
                 <div className="card-body d-flex justify-content-between">
                   <div>
                     <p className="card-title-text">UNANSWERED</p>
@@ -367,12 +369,14 @@ function HomePage() {
             </div>
 
             <div className="col-6 col-sm-6 col-md-4 col-lg-3 col-xl">
-              <div className="card custom-card shadow-sm border-0 h-100 rounded-3">
+              <div className="card custom-card5 shadow-sm border-0 h-100 rounded-3">
                 <div className="card-body d-flex justify-content-between">
                   <div>
                     <p className="card-title-text">CONVERSION</p>
                     <h4 className="card-value">{convertedPercentage}%</h4>
-                    <small className="card-subtext fw-bold">6 converted</small>
+                    <small className="card-subtext text-light fw-bold">
+                      6 converted
+                    </small>
                   </div>
                   <div className="icon-wrapper icon-convert-bg">
                     <FontAwesomeIcon
@@ -387,7 +391,7 @@ function HomePage() {
 
           <div className="row g-2 mt-3">
             <div className="col-12 col-lg-6">
-              <div className="card custom-card shadow-sm border-0 h-100 rounded-3">
+              <div className="card custom-card shadow-sm border h-100 rounded-3">
                 <div className="card-body">
                   <div className="d-flex justify-content-between mb-3">
                     <div>
@@ -426,7 +430,7 @@ function HomePage() {
             </div>
 
             <div className="col-12 col-lg-6">
-              <div className="card custom-card shadow-sm border-0 h-100 rounded-3">
+              <div className="card custom-card shadow-sm border h-100 rounded-3">
                 <div className="card-body">
                   <div className="d-flex justify-content-between mb-3">
                     <div>
@@ -469,7 +473,7 @@ function HomePage() {
 
           <div className="row g-2 mt-2">
             <div className="col-12 col-lg-8">
-              <div className="card shadow-sm border-0 rounded-3 h-100">
+              <div className="card shadow-sm border rounded-3 h-100">
                 <div className="card-body">
                   <div className="mb-3">
                     <h5 className="fw-bold mb-0 daily-performance">
@@ -528,7 +532,7 @@ function HomePage() {
             </div>
 
             <div className="col-12 col-sm-12 col-md-12 col-lg-4">
-              <div className="card custom-card shadow-sm h-100 border-0 rounded-3">
+              <div className="card custom-card shadow-sm h-100 border rounded-3">
                 <div className="card-body">
                   <div className="d-flex flex-row gap-2 mb-3 align-items-center">
                     <span className="users-awesome">
