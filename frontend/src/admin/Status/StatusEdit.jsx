@@ -27,11 +27,14 @@ function ServicesEdit() {
       await axios.put(`${API_URL}/statusupdate/${id}`, service, {
         headers: authHeader(),
       });
+
       toast.success("Status updated successfully");
+
       setTimeout(() => {
         navigate("/admin/status");
       }, 1000);
     } catch (error) {
+      console.error("error", error);
       toast.error("Failed to update status");
     }
   };
