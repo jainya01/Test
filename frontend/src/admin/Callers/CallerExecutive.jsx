@@ -327,7 +327,7 @@ function CallerExecutive() {
                                     to={`/admin/callers/view/${data.id}`}
                                     title="View"
                                     aria-label="View caller details"
-                                    className="action-icon icons-color2"
+                                    className="icons-color2"
                                   >
                                     <FontAwesomeIcon icon={faEye} />
                                   </Link>
@@ -336,7 +336,7 @@ function CallerExecutive() {
                                     to={`/admin/callers/edit/${data.id}`}
                                     title="Edit"
                                     aria-label="Edit caller"
-                                    className="action-icon icons-color"
+                                    className="icons-color"
                                   >
                                     <FontAwesomeIcon icon={faEdit} />
                                   </Link>
@@ -344,7 +344,7 @@ function CallerExecutive() {
                                   <span
                                     role="button"
                                     title="Delete"
-                                    className="action-icon icons-color1"
+                                    className="icons-color1"
                                     onClick={() => deleteData(data.id)}
                                   >
                                     <FontAwesomeIcon icon={faTrash} />
