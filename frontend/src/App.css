@@ -328,13 +328,6 @@ aside.admin-sidebar.collapsed {
   color: #fff;
 }
 
-.card-title-text {
-  font-size: 15px;
-  font-weight: 600;
-  color: #fff;
-  margin-bottom: 4px;
-}
-
 .card-value {
   font-weight: 700;
   margin-bottom: 4px;
@@ -490,8 +483,15 @@ aside.admin-sidebar.collapsed {
 
 .badge {
   padding: 6px 10px;
-  font-size: 12px;
+  font-size: 11px;
   border-radius: 12px;
+}
+
+.card-title-text {
+  font-size: 14px;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 4px;
 }
 
 @media (max-width: 576px) {

@@ -20,9 +20,29 @@ function ServicesEdit() {
   });
 
   const { service_name, status, notes } = service;
+  const [errors, setErrors] = useState({});
+
+  const validateForm = () => {
+    let newErrors = {};
+
+    if (!service_name.trim()) {
+      newErrors.service_name = "Service name is required";
+    }
+
+    if (!status) {
+      newErrors.status = "Status is required";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
+
+    const isValid = validateForm();
+    if (!isValid) return;
+
     try {
       await axios.put(`${API_URL}/servicesupdate/${id}`, service, {
         headers: authHeader(),
@@ -128,6 +148,11 @@ function ServicesEdit() {
                       onChange={onInputChange}
                       required
                     />
+                    {errors.service_name && (
+                      <small className="text-danger mt-1">
+                        {errors.service_name}
+                      </small>
+                    )}
                   </div>
 
                   <div className="col-md-6 mb-3">
@@ -148,6 +173,12 @@ function ServicesEdit() {
                       <option value="Active">Active</option>
                       <option value="Inactive">Inactive</option>
                     </select>
+
+                    {errors.status && (
+                      <small className="text-danger mt-1">
+                        {errors.status}
+                      </small>
+                    )}
                   </div>
 
                   <div className="col-12 mb-3">
