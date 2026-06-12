@@ -112,7 +112,8 @@ function Reports() {
           .length,
       };
     })
-    .sort((a, b) => b.calls - a.calls);
+    .sort((a, b) => b.calls - a.calls)
+    .slice(0, 5);
 
   return (
     <main className="content-wrapper">
@@ -184,7 +185,7 @@ function Reports() {
               <div className="card-body">
                 <div className="d-flex justify-content-between mb-3">
                   <h4 className="daily-performance fw-semibold mb-0">
-                    Calls per Agent
+                    Calls Per Agent
                   </h4>
                 </div>
 
@@ -194,13 +195,14 @@ function Reports() {
                       data={chartData}
                       layout="vertical"
                       margin={{
-                        top: 10,
+                        top: 5,
                         right: 0,
-                        left: 20,
-                        bottom: 30,
+                        left: 0,
+                        bottom: 10,
                       }}
                       barGap={8}
-                      barCategoryGap="35%"
+                      barCategoryGap="30%"
+                      maxBarSize={10}
                     >
                       <CartesianGrid
                         strokeDasharray="0"
@@ -214,7 +216,7 @@ function Reports() {
                         type="category"
                         dataKey="agent"
                         tick={{ fontSize: 12 }}
-                        width={50}
+                        width={60}
                       />
 
                       <Tooltip cursor={false} />
@@ -231,21 +233,21 @@ function Reports() {
                         dataKey="calls"
                         fill="#3366ff"
                         radius={[0, 8, 8, 0]}
-                        barSize={12}
+                        barSize={8}
                       />
 
                       <Bar
                         dataKey="conversions"
                         fill="#00a86b"
                         radius={[0, 8, 8, 0]}
-                        barSize={12}
+                        barSize={8}
                       />
 
                       <Bar
                         dataKey="followups"
                         fill="#f4a300"
                         radius={[0, 8, 8, 0]}
-                        barSize={12}
+                        barSize={8}
                       />
                     </BarChart>
                   </ResponsiveContainer>

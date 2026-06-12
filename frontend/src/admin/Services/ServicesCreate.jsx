@@ -19,6 +19,7 @@ function ServicesCreate() {
   });
 
   const { service_name, status, notes } = service;
+
   const [errors, setErrors] = useState({});
 
   const validateForm = () => {

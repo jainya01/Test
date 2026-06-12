@@ -142,6 +142,7 @@ router.get(
     return res.status(200).json({
       success: true,
       message: "Data fetched successfully",
+      count: result.length,
       result,
     });
   }),
@@ -1106,6 +1107,7 @@ router.get(
     return res.status(200).json({
       success: true,
       message: "data fetched successfully",
+      count: result.length,
       result,
     });
   }),
