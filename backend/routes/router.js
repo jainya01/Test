@@ -177,7 +177,7 @@ router.post(
       [name, email, hashedPassword],
     );
 
-    await redisClient.del("admindata:all");
+    await redisClient.del("crm1:admindata:all");
 
     return res.status(201).json({
       success: true,
@@ -191,7 +191,8 @@ router.get(
   "/alladmindata",
   authenticate,
   asyncHandler(async (req, res) => {
-    const cache = await redisClient.get("admindata:all");
+    const cacheKey = "crm1:admindata:all";
+    const cache = await redisClient.get(cacheKey);
     if (cache) {
       return res.status(200).json(JSON.parse(cache));
     }
@@ -212,7 +213,7 @@ router.get(
       result,
     };
 
-    await redisClient.set("admindata:all", JSON.stringify(response));
+    await redisClient.set(cacheKey, JSON.stringify(response));
     return res.status(200).json(response);
   }),
 );
@@ -231,7 +232,7 @@ router.delete(
       throw error;
     }
 
-    await redisClient.del("admindata:all");
+    await redisClient.del("crm1:admindata:all");
 
     return res.status(200).json({
       success: true,
@@ -264,7 +265,7 @@ router.put(
       throw error;
     }
 
-    await redisClient.del("admindata:all");
+    await redisClient.del("crm1:admindata:all");
 
     return res.status(200).json({
       success: true,
@@ -278,7 +279,8 @@ router.get(
   "/allcustomers",
   authenticate,
   asyncHandler(async (req, res) => {
-    const cache = await redisClient.get("allcustomers:all");
+    const cacheKey = "crm1:allcustomers:all";
+    const cache = await redisClient.get(cacheKey);
     if (cache) {
       return res.status(200).json(JSON.parse(cache));
     }
@@ -318,7 +320,7 @@ router.get(
       result,
     };
 
-    await redisClient.set("allcustomers:all", JSON.stringify(response));
+    await redisClient.set(cacheKey, JSON.stringify(response));
     return res.status(200).json(response);
   }),
 );
@@ -327,7 +329,8 @@ router.get(
   "/allcustomersdata",
   authenticate,
   asyncHandler(async (req, res) => {
-    const cache = await redisClient.get("bulkcustomers:all");
+    const cacheKey = `crm1:bulkcustomers:all`;
+    const cache = await redisClient.get(cacheKey);
     if (cache) {
       return res.status(200).json(JSON.parse(cache));
     }
@@ -348,7 +351,7 @@ router.get(
       result,
     };
 
-    await redisClient.set("bulkcustomers:all", JSON.stringify(response));
+    await redisClient.set(cacheKey, JSON.stringify(response));
     return res.status(200).json(response);
   }),
 );
@@ -385,7 +388,7 @@ router.post(
       [fullname, phone, email, hashedPassword, status, notes],
     );
 
-    await redisClient.del("allcallers:all");
+    await redisClient.del("crm1:allcallers:all");
 
     return res.status(201).json({
       success: true,
@@ -429,7 +432,7 @@ router.put(
       throw error;
     }
 
-    await redisClient.del("allcallers:all");
+    await redisClient.del("crm1:allcallers:all");
 
     return res.status(200).json({
       success: true,
@@ -462,7 +465,7 @@ router.delete(
       throw error;
     }
 
-    await redisClient.del("allcallers:all");
+    await redisClient.del("crm1:allcallers:all");
 
     return res.status(200).json({
       success: true,
@@ -474,7 +477,8 @@ router.delete(
 router.get(
   "/allcallers",
   asyncHandler(async (req, res) => {
-    const cache = await redisClient.get("allcallers:all");
+    const cacheKey = `crm1:allcallers:all`;
+    const cache = await redisClient.get(cacheKey);
     if (cache) {
       return res.status(200).json(JSON.parse(cache));
     }
@@ -494,10 +498,10 @@ router.get(
       success: true,
       message: "Data fetched successfully",
       data: result,
-      count: data.length,
+      count: result.length,
     };
 
-    await redisClient.set("allcallers:all", JSON.stringify(response));
+    await redisClient.set(cacheKey, JSON.stringify(response));
     return res.status(200).json(response);
   }),
 );
@@ -546,7 +550,7 @@ router.post(
       [status_name, status, notes],
     );
 
-    await redisClient.del("allstatusdata:all");
+    await redisClient.del("crm1:allstatusdata:all");
 
     return res.status(201).json({
       success: true,
@@ -588,7 +592,7 @@ router.put(
       throw error;
     }
 
-    await redisClient.del("allstatusdata:all");
+    await redisClient.del("crm1:allstatusdata:all");
 
     return res.status(200).json({
       success: true,
@@ -612,7 +616,7 @@ router.delete(
       throw error;
     }
 
-    await redisClient.del("allstatusdata:all");
+    await redisClient.del("crm1:allstatusdata:all");
 
     return res.status(200).json({
       success: true,
@@ -626,7 +630,8 @@ router.get(
   "/allstatusdata",
   authenticate,
   asyncHandler(async (req, res) => {
-    const cache = await redisClient.get("allstatusdata:all");
+    const cacheKey = `crm1:allstatusdata:all`;
+    const cache = await redisClient.get(cacheKey);
     if (cache) {
       return res.status(200).json(JSON.parse(cache));
     }
@@ -648,7 +653,7 @@ router.get(
       result,
     };
 
-    return redisClient.set("allstatusdata:all", JSON.stringify(response));
+    return redisClient.set(cacheKey, JSON.stringify(response));
     return res.status(200).json(response);
   }),
 );
@@ -695,7 +700,7 @@ router.post(
       [service_name, status, notes],
     );
 
-    await redisClient.del("allservicesdata:all");
+    await redisClient.del("crm1:allservicesdata:all");
 
     return res.status(201).json({
       success: true,
@@ -737,7 +742,7 @@ router.put(
       throw error;
     }
 
-    await redisClient.del("allservicesdata:all");
+    await redisClient.del("crm1:allservicesdata:all");
 
     return res.status(200).json({
       success: true,
@@ -761,7 +766,7 @@ router.delete(
       throw error;
     }
 
-    await redisClient.del("allservicesdata:all");
+    await redisClient.del("crm1:allservicesdata:all");
 
     return res.status(200).json({
       success: true,
@@ -775,7 +780,8 @@ router.get(
   "/allservicesdata",
   authenticate,
   asyncHandler(async (req, res) => {
-    const cache = await redisClient.get("allservicesdata:all");
+    const cacheKey = `crm1:allservicesdata:all`;
+    const cache = await redisClient.get(cacheKey);
     if (cache) {
       return res.status(200).json(JSON.parse(cache));
     }
@@ -797,7 +803,7 @@ router.get(
       result,
     };
 
-    await redisClient.set("allservicesdata:all", JSON.stringify(response));
+    await redisClient.set(cacheKey, JSON.stringify(response));
     return res.status(200).json(response);
   }),
 );
@@ -912,8 +918,8 @@ router.post(
         [values],
       );
 
-      await redisClient.del("allcustomers:all");
-      await redisClient.del("bulkcustomers:all");
+      await redisClient.del("crm1:allcustomers:all");
+      await redisClient.del("crm1:bulkcustomers:all");
 
       return res.json({
         success: true,
@@ -953,7 +959,7 @@ router.post(
       throw error;
     }
 
-    await redisClient.del("allcustomers:all");
+    await redisClient.del("crm1:allcustomers:all");
 
     return res.status(200).json({
       success: true,
@@ -977,7 +983,7 @@ router.delete(
       throw error;
     }
 
-    await redisClient.del("allcustomers:all");
+    await redisClient.del("crm1:allcustomers:all");
 
     return res.status(200).json({
       success: true,
@@ -1013,7 +1019,7 @@ router.put(
       });
     }
 
-    await redisClient.del("allcustomers:all");
+    await redisClient.del("crm1:allcustomers:all");
 
     return res.status(200).json({
       success: true,
@@ -1149,7 +1155,7 @@ router.post(
       }
     }
 
-    await redisClient.get("allcustomers:all");
+    await redisClient.del("crm1:allcustomers:all");
 
     return res.status(201).json({
       success: true,
