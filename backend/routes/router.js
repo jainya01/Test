@@ -12,6 +12,7 @@ import pool from "../config/db.js";
 import authenticate from "../middleware/auth.js";
 import asyncHandler from "../config/asyncHandler.js";
 import assignCustomerLeads from "../controllers/customerController.js";
+import redisClient from "../config/redisClient.js";
 
 dotenv.config();
 const router = express.Router();
@@ -89,181 +90,6 @@ router.post(
 );
 
 router.post(
-  "/adminpost",
-  asyncHandler(async (req, res) => {
-    const { name, email, password } = req.body;
-
-    if (!name || !email || !password) {
-      const error = new Error("All fields are required");
-      error.statusCode = 400;
-      throw error;
-    }
-
-    const [existingAdmin] = await pool.execute(
-      "SELECT id FROM admin WHERE email = ?",
-      [email],
-    );
-
-    if (existingAdmin.length > 0) {
-      const error = new Error("Email already exists");
-      error.statusCode = 409;
-      throw error;
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const [result] = await pool.execute(
-      "INSERT INTO admin (name, email, password) VALUES (?, ?, ?)",
-      [name, email, hashedPassword],
-    );
-
-    return res.status(201).json({
-      success: true,
-      message: "Admin added successfully",
-      insertedId: result.insertId,
-    });
-  }),
-);
-
-router.get(
-  "/alladmindata",
-  authenticate,
-  asyncHandler(async (req, res) => {
-    const SQL = "SELECT id, name, email, role FROM admin LIMIT 50";
-
-    const [result] = await pool.execute(SQL);
-
-    if (!result || result.length === 0) {
-      const error = new Error("No admin data found");
-      error.statusCode = 404;
-      throw error;
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: "Data fetched successfully",
-      count: result.length,
-      result,
-    });
-  }),
-);
-
-router.delete(
-  "/admindelete/:id",
-  authenticate,
-  asyncHandler(async (req, res) => {
-    const { id } = req.params;
-    const SQL = "DELETE FROM admin WHERE id = ?";
-    const [result] = await pool.execute(SQL, [id]);
-
-    if (result.affectedRows <= 0) {
-      const error = new Error("Data delete failed or not found");
-      error.statusCode = 404;
-      throw error;
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: "data deleted successfully",
-      result,
-    });
-  }),
-);
-
-router.put(
-  "/adminupdate/:id",
-  authenticate,
-  asyncHandler(async (req, res) => {
-    const { id } = req.params;
-    const { email, password } = req.body;
-
-    const hashedPassword = password ? await bcrypt.hash(password, 10) : null;
-
-    const SQL = password
-      ? "UPDATE admin SET email = ?, password = ? WHERE id = ?"
-      : "UPDATE admin SET email = ? WHERE id = ?";
-
-    const params = password ? [email, hashedPassword, id] : [email, id];
-
-    const [result] = await pool.execute(SQL, params);
-
-    if (result.affectedRows === 0) {
-      const error = new Error("Admin not found or not updated");
-      error.statusCode = 404;
-      throw error;
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: "Updated successfully",
-      result,
-    });
-  }),
-);
-
-router.get(
-  "/allcustomers",
-  authenticate,
-  asyncHandler(async (req, res) => {
-    const SQL = `
-      SELECT 
-        customers.id,
-        customers.name,
-        customers.phone,
-        customers.city,
-        customers.service,
-        customers.status,
-        customers.current_status,
-        customers.caller_id,
-        customers.created_at,
-        customers.updated_at,
-        caller.fullname,
-        customers.notes
-      FROM customers
-      LEFT JOIN caller
-      ON customers.caller_id = caller.id
-      ORDER BY customers.id DESC
-    `;
-
-    const [result] = await pool.execute(SQL);
-
-    if (result.length <= 0) {
-      const error = new Error("data not found");
-      error.statusCode = 404;
-      throw error;
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: "data fetched successfully",
-      result,
-    });
-  }),
-);
-
-router.get(
-  "/allcustomersdata",
-  authenticate,
-  asyncHandler(async (req, res) => {
-    const SQL = "SELECT name, phone, city, service, status FROM  customers";
-    const [result] = await pool.execute(SQL);
-
-    if (result.length <= 0) {
-      const error = new Error("data not found");
-      error.statusCode = 404;
-      throw error;
-    }
-
-    return res.status(200).json({
-      success: true,
-      message: "data fetched successfully",
-      count: result.length,
-      result,
-    });
-  }),
-);
-
-router.post(
   "/callerlogin",
   asyncHandler(async (req, res) => {
     const { email, password } = req.body;
@@ -323,6 +149,213 @@ router.post(
 );
 
 router.post(
+  "/adminpost",
+  asyncHandler(async (req, res) => {
+    const { name, email, password } = req.body;
+
+    if (!name || !email || !password) {
+      const error = new Error("All fields are required");
+      error.statusCode = 400;
+      throw error;
+    }
+
+    const [existingAdmin] = await pool.execute(
+      "SELECT id FROM admin WHERE email = ?",
+      [email],
+    );
+
+    if (existingAdmin.length > 0) {
+      const error = new Error("Email already exists");
+      error.statusCode = 409;
+      throw error;
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const [result] = await pool.execute(
+      "INSERT INTO admin (name, email, password) VALUES (?, ?, ?)",
+      [name, email, hashedPassword],
+    );
+
+    await redisClient.del("admindata:all");
+
+    return res.status(201).json({
+      success: true,
+      message: "Admin added successfully",
+      insertedId: result.insertId,
+    });
+  }),
+);
+
+router.get(
+  "/alladmindata",
+  authenticate,
+  asyncHandler(async (req, res) => {
+    const cache = await redisClient.get("admindata:all");
+    if (cache) {
+      return res.status(200).json(JSON.parse(cache));
+    }
+
+    const SQL = "SELECT id, name, email, role FROM admin LIMIT 50";
+    const [result] = await pool.execute(SQL);
+
+    if (!result || result.length === 0) {
+      const error = new Error("No admin data found");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const response = {
+      success: true,
+      message: "Data fetched successfully",
+      count: result.length,
+      result,
+    };
+
+    await redisClient.set("admindata:all", JSON.stringify(response));
+    return res.status(200).json(response);
+  }),
+);
+
+router.delete(
+  "/admindelete/:id",
+  authenticate,
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const SQL = "DELETE FROM admin WHERE id = ?";
+    const [result] = await pool.execute(SQL, [id]);
+
+    if (result.affectedRows <= 0) {
+      const error = new Error("Data delete failed or not found");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    await redisClient.del("admindata:all");
+
+    return res.status(200).json({
+      success: true,
+      message: "data deleted successfully",
+      result,
+    });
+  }),
+);
+
+router.put(
+  "/adminupdate/:id",
+  authenticate,
+  asyncHandler(async (req, res) => {
+    const { id } = req.params;
+    const { email, password } = req.body;
+
+    const hashedPassword = password ? await bcrypt.hash(password, 10) : null;
+
+    const SQL = password
+      ? "UPDATE admin SET email = ?, password = ? WHERE id = ?"
+      : "UPDATE admin SET email = ? WHERE id = ?";
+
+    const params = password ? [email, hashedPassword, id] : [email, id];
+
+    const [result] = await pool.execute(SQL, params);
+
+    if (result.affectedRows === 0) {
+      const error = new Error("Admin not found or not updated");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    await redisClient.del("admindata:all");
+
+    return res.status(200).json({
+      success: true,
+      message: "Updated successfully",
+      result,
+    });
+  }),
+);
+
+router.get(
+  "/allcustomers",
+  authenticate,
+  asyncHandler(async (req, res) => {
+    const cache = await redisClient.get("allcustomers:all");
+    if (cache) {
+      return res.status(200).json(JSON.parse(cache));
+    }
+
+    const SQL = `
+      SELECT 
+        customers.id,
+        customers.name,
+        customers.phone,
+        customers.city,
+        customers.service,
+        customers.status,
+        customers.current_status,
+        customers.caller_id,
+        customers.created_at,
+        customers.updated_at,
+        caller.fullname,
+        customers.notes
+      FROM customers
+      LEFT JOIN caller
+      ON customers.caller_id = caller.id
+      ORDER BY customers.id DESC
+    `;
+
+    const [result] = await pool.execute(SQL);
+
+    if (result.length <= 0) {
+      const error = new Error("data not found");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const response = {
+      success: true,
+      message: "data fetched successfully",
+      count: result.length,
+      result,
+    };
+
+    await redisClient.set("allcustomers:all", JSON.stringify(response));
+    return res.status(200).json(response);
+  }),
+);
+
+router.get(
+  "/allcustomersdata",
+  authenticate,
+  asyncHandler(async (req, res) => {
+    const cache = await redisClient.get("bulkcustomers:all");
+    if (cache) {
+      return res.status(200).json(JSON.parse(cache));
+    }
+
+    const SQL = "SELECT name, phone, city, service, status FROM  customers";
+    const [result] = await pool.execute(SQL);
+
+    if (result.length <= 0) {
+      const error = new Error("data not found");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const response = {
+      success: true,
+      message: "data fetched successfully",
+      count: result.length,
+      result,
+    };
+
+    await redisClient.set("bulkcustomers:all", JSON.stringify(response));
+    return res.status(200).json(response);
+  }),
+);
+
+// callers
+
+router.post(
   "/callerspost",
   authenticate,
   asyncHandler(async (req, res) => {
@@ -351,6 +384,8 @@ router.post(
       "INSERT INTO caller (fullname, phone, email, password, status, notes) VALUES (?, ?, ?, ?, ?, ?)",
       [fullname, phone, email, hashedPassword, status, notes],
     );
+
+    await redisClient.del("allcallers:all");
 
     return res.status(201).json({
       success: true,
@@ -394,6 +429,8 @@ router.put(
       throw error;
     }
 
+    await redisClient.del("allcallers:all");
+
     return res.status(200).json({
       success: true,
       message: "Caller updated successfully",
@@ -425,6 +462,8 @@ router.delete(
       throw error;
     }
 
+    await redisClient.del("allcallers:all");
+
     return res.status(200).json({
       success: true,
       message: "Caller deleted successfully",
@@ -435,6 +474,11 @@ router.delete(
 router.get(
   "/allcallers",
   asyncHandler(async (req, res) => {
+    const cache = await redisClient.get("allcallers:all");
+    if (cache) {
+      return res.status(200).json(JSON.parse(cache));
+    }
+
     const SQL =
       "SELECT id, fullname, phone, email, role, status, notes FROM caller ORDER BY id DESC LIMIT 20";
 
@@ -446,11 +490,15 @@ router.get(
       throw error;
     }
 
-    return res.status(200).json({
+    const response = {
       success: true,
       message: "Data fetched successfully",
       data: result,
-    });
+      count: data.length,
+    };
+
+    await redisClient.set("allcallers:all", JSON.stringify(response));
+    return res.status(200).json(response);
   }),
 );
 
@@ -498,6 +546,8 @@ router.post(
       [status_name, status, notes],
     );
 
+    await redisClient.del("allstatusdata:all");
+
     return res.status(201).json({
       success: true,
       message: "Status created successfully",
@@ -538,6 +588,8 @@ router.put(
       throw error;
     }
 
+    await redisClient.del("allstatusdata:all");
+
     return res.status(200).json({
       success: true,
       message: "Status updated successfully",
@@ -560,6 +612,8 @@ router.delete(
       throw error;
     }
 
+    await redisClient.del("allstatusdata:all");
+
     return res.status(200).json({
       success: true,
       message: "data deleted successfully",
@@ -572,6 +626,11 @@ router.get(
   "/allstatusdata",
   authenticate,
   asyncHandler(async (req, res) => {
+    const cache = await redisClient.get("allstatusdata:all");
+    if (cache) {
+      return res.status(200).json(JSON.parse(cache));
+    }
+
     const SQL =
       "SELECT id, status_name, status, notes FROM status ORDER BY id DESC LIMIT 20";
     const [result] = await pool.execute(SQL);
@@ -582,12 +641,15 @@ router.get(
       throw error;
     }
 
-    return res.status(200).json({
+    const response = {
       success: true,
       message: "data fetched successfully",
       count: result.length,
       result,
-    });
+    };
+
+    return redisClient.set("allstatusdata:all", JSON.stringify(response));
+    return res.status(200).json(response);
   }),
 );
 
@@ -633,6 +695,8 @@ router.post(
       [service_name, status, notes],
     );
 
+    await redisClient.del("allservicesdata:all");
+
     return res.status(201).json({
       success: true,
       message: "Service created successfully",
@@ -673,6 +737,8 @@ router.put(
       throw error;
     }
 
+    await redisClient.del("allservicesdata:all");
+
     return res.status(200).json({
       success: true,
       message: "Service updated successfully",
@@ -695,6 +761,8 @@ router.delete(
       throw error;
     }
 
+    await redisClient.del("allservicesdata:all");
+
     return res.status(200).json({
       success: true,
       message: "data deleted successfully",
@@ -707,6 +775,11 @@ router.get(
   "/allservicesdata",
   authenticate,
   asyncHandler(async (req, res) => {
+    const cache = await redisClient.get("allservicesdata:all");
+    if (cache) {
+      return res.status(200).json(JSON.parse(cache));
+    }
+
     const SQL =
       "SELECT id, service_name, status, notes FROM services ORDER BY id DESC LIMIT 20";
     const [result] = await pool.execute(SQL);
@@ -717,12 +790,15 @@ router.get(
       throw error;
     }
 
-    return res.status(200).json({
+    const response = {
       success: true,
       message: "data fetched successfully",
       count: result.length,
       result,
-    });
+    };
+
+    await redisClient.set("allservicesdata:all", JSON.stringify(response));
+    return res.status(200).json(response);
   }),
 );
 
@@ -836,6 +912,9 @@ router.post(
         [values],
       );
 
+      await redisClient.del("allcustomers:all");
+      await redisClient.del("bulkcustomers:all");
+
       return res.json({
         success: true,
         message: "Bulk upload successfully",
@@ -874,6 +953,8 @@ router.post(
       throw error;
     }
 
+    await redisClient.del("allcustomers:all");
+
     return res.status(200).json({
       success: true,
       message: "data post successfully",
@@ -895,6 +976,8 @@ router.delete(
       error.statusCode = 404;
       throw error;
     }
+
+    await redisClient.del("allcustomers:all");
 
     return res.status(200).json({
       success: true,
@@ -929,6 +1012,8 @@ router.put(
         message: "Data not found or not updated",
       });
     }
+
+    await redisClient.del("allcustomers:all");
 
     return res.status(200).json({
       success: true,
@@ -1063,6 +1148,8 @@ router.post(
         );
       }
     }
+
+    await redisClient.get("allcustomers:all");
 
     return res.status(201).json({
       success: true,
