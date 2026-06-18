@@ -205,7 +205,7 @@ function Customers() {
           <div className="d-flex flex-wrap gap-2 flex-wrap">
             {filteredCustomers.length > 0 && (
               <div onClick={downloadCSV}>
-                <Link className="btn user-added-btn">Download CSV</Link>
+                <div className="btn user-added-btn">Download CSV</div>
               </div>
             )}
 
@@ -320,21 +320,16 @@ function Customers() {
                                 </td>
 
                                 <td>
-                                  <Link
-                                    className="text-decoration-none text-dark"
-                                    to={`/admin/customers/edit/${item.id}`}
-                                  >
-                                    <span className="d-flex flex-row align-items-center fw-bold">
-                                      <div className="avatar avatar1 me-2 border">
-                                        {item.name
-                                          .split(" ")
-                                          .map((word) => word[0])
-                                          .join("")
-                                          .toUpperCase()}
-                                      </div>
-                                      {item.name || "--"}
-                                    </span>
-                                  </Link>
+                                  <span className="d-flex flex-row align-items-center fw-bold">
+                                    <div className="avatar avatar1 me-2 border">
+                                      {item.name
+                                        .split(" ")
+                                        .map((word) => word[0])
+                                        .join("")
+                                        .toUpperCase()}
+                                    </div>
+                                    {item.name || "--"}
+                                  </span>
                                 </td>
 
                                 <td>

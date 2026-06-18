@@ -533,6 +533,38 @@ router.get(
 
 // status
 
+router.get(
+  "/allstatusdata",
+  authenticate,
+  asyncHandler(async (req, res) => {
+    const cacheKey = `crm1:allstatusdata:all`;
+    const cache = await redisClient.get(cacheKey);
+    if (cache) {
+      return res.status(200).json(JSON.parse(cache));
+    }
+
+    const SQL =
+      "SELECT id, status_name, status, notes FROM status ORDER BY id DESC LIMIT 20";
+    const [result] = await pool.execute(SQL);
+
+    if (result.affectedRows <= 0) {
+      const error = new Error("data not found");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const response = {
+      success: true,
+      message: "data fetched successfully",
+      count: result.length,
+      result,
+    };
+
+    await redisClient.set(cacheKey, JSON.stringify(response));
+    return res.status(200).json(response);
+  }),
+);
+
 router.post(
   "/statuspost",
   authenticate,
@@ -623,38 +655,6 @@ router.delete(
       message: "data deleted successfully",
       result,
     });
-  }),
-);
-
-router.get(
-  "/allstatusdata",
-  authenticate,
-  asyncHandler(async (req, res) => {
-    const cacheKey = `crm1:allstatusdata:all`;
-    const cache = await redisClient.get(cacheKey);
-    if (cache) {
-      return res.status(200).json(JSON.parse(cache));
-    }
-
-    const SQL =
-      "SELECT id, status_name, status, notes FROM status ORDER BY id DESC LIMIT 20";
-    const [result] = await pool.execute(SQL);
-
-    if (result.affectedRows <= 0) {
-      const error = new Error("data not found");
-      error.statusCode = 404;
-      throw error;
-    }
-
-    const response = {
-      success: true,
-      message: "data fetched successfully",
-      count: result.length,
-      result,
-    };
-
-    return redisClient.set(cacheKey, JSON.stringify(response));
-    return res.status(200).json(response);
   }),
 );
 
