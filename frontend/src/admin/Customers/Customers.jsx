@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "../../App.css";
 import { authHeader } from "../../utils/authHeader";
 import { Link } from "react-router-dom";
@@ -72,26 +72,29 @@ function Customers() {
     allData();
   }, []);
 
-  const filteredCustomers = [...customers]
-    .sort((a, b) => {
-      return new Date(b.updated_at) - new Date(a.updated_at);
-    })
+  const filteredCustomers = useMemo(() => {
+    return [...customers]
+      .sort((a, b) => {
+        return new Date(b.updated_at) - new Date(a.updated_at);
+      })
+      .filter((item) => {
+        const keyword = search.toLowerCase();
+        const name = item.name ? item.name.toLowerCase() : "";
+        const phone = item.phone ? item.phone.toString() : "";
 
-    .filter((item) => {
-      const keyword = search.toLowerCase();
-      const name = item.name ? item.name.toLowerCase() : "";
-      const phone = item.phone ? item.phone.toString() : "";
-      const matchesSearch = name.includes(keyword) || phone.includes(keyword);
+        const matchesSearch = name.includes(keyword) || phone.includes(keyword);
 
-      const matchesStatus =
-        selectedStatus === ""
-          ? item.status && item.status.trim() !== "" && item.status !== "null"
-          : item.status === selectedStatus;
+        const matchesStatus =
+          selectedStatus === ""
+            ? item.status && item.status.trim() !== "" && item.status !== "null"
+            : item.status === selectedStatus;
 
-      const matchesService =
-        selectedService === "" ? true : item.service === selectedService;
-      return matchesSearch && matchesStatus && matchesService;
-    });
+        const matchesService =
+          selectedService === "" ? true : item.service === selectedService;
+
+        return matchesSearch && matchesStatus && matchesService;
+      });
+  }, [customers, search, selectedStatus, selectedService]);
 
   const itemsPerPage = 14;
   const totalPages = Math.ceil(filteredCustomers.length / itemsPerPage);

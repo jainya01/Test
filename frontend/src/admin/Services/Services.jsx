@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "../../App.css";
 import { authHeader } from "../../utils/authHeader";
 import { Link } from "react-router-dom";
@@ -36,11 +36,14 @@ function Services() {
 
   const keyword = search.toLowerCase();
 
-  const filteredServices = services.filter(
-    (item) =>
-      item.service_name?.toLowerCase().includes(keyword) ||
-      item.status?.toLowerCase().includes(keyword),
-  );
+  const filteredServices = useMemo(() => {
+    return services.filter((item) => {
+      return (
+        item.service_name?.toLowerCase().includes(keyword) ||
+        item.status?.toLowerCase().includes(keyword)
+      );
+    });
+  }, [services, keyword]);
 
   const itemsPerPage = 14;
   const totalPages = Math.ceil(filteredServices.length / itemsPerPage);

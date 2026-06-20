@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "../../App.css";
 import { authHeader } from "../../utils/authHeader";
 import { Link } from "react-router-dom";
@@ -63,13 +63,16 @@ function CallerExecutive() {
     }
   };
 
-  const filteredCaller = caller.filter((item) => {
+  const filteredCaller = useMemo(() => {
     const keyword = search.toLowerCase();
-    return (
-      item.fullname?.toLowerCase().includes(keyword) ||
-      item.email?.toLowerCase().includes(keyword)
-    );
-  });
+
+    return caller.filter((item) => {
+      return (
+        item.fullname?.toLowerCase().includes(keyword) ||
+        item.email?.toLowerCase().includes(keyword)
+      );
+    });
+  }, [caller, search]);
 
   const itemsPerPage = 11;
   const [currentPage, setCurrentPage] = useState(1);

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "../../App.css";
 import { authHeader } from "../../utils/authHeader";
 import { Link } from "react-router-dom";
@@ -53,10 +53,13 @@ function Services() {
     }
   };
 
-  const filteredStatus = status.filter((item) => {
+  const filteredStatus = useMemo(() => {
     const keyword = search.toLowerCase();
-    return item.status_name?.toLowerCase().includes(keyword);
-  });
+
+    return status.filter((item) =>
+      item.status_name?.toLowerCase().includes(keyword),
+    );
+  }, [status, search]);
 
   const itemsPerPage = 13;
   const [currentPage, setCurrentPage] = useState(1);
