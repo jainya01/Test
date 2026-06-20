@@ -6,12 +6,8 @@ import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faBell,
-  faCalendar,
-  faDownload,
   faEdit,
-  faEllipsis,
   faEye,
-  faFile,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { ToastContainer, toast } from "react-toastify";
@@ -43,7 +39,7 @@ function CallerExecutive() {
       }
     };
     allData();
-  }, []);
+  }, [API_URL]);
 
   const deleteData = async (id) => {
     const confirmDelete = window.confirm(
@@ -59,6 +55,7 @@ function CallerExecutive() {
       setCaller((prev) => prev.filter((item) => item.id !== id));
       toast.success("Caller deleted successfully");
     } catch (error) {
+      console.error("error", error);
       toast.error("Failed to delete caller");
     }
   };
@@ -76,12 +73,13 @@ function CallerExecutive() {
 
   const itemsPerPage = 11;
   const [currentPage, setCurrentPage] = useState(1);
+  const totalPages = Math.ceil(filteredCaller.length / itemsPerPage);
 
   useEffect(() => {
     if (currentPage > totalPages) {
       setCurrentPage(1);
     }
-  }, [filteredCaller]);
+  }, [currentPage, totalPages]);
 
   const allocateNumbers = async (e) => {
     e.preventDefault();
@@ -101,7 +99,7 @@ function CallerExecutive() {
       toast.success("numbers allotted successfully");
     } catch (error) {
       toast.error("failed to allot numbers");
-      console.error(error.response?.data || error.message);
+      console.error(error.response?.data || error.message, error);
     }
   };
 
@@ -127,7 +125,6 @@ function CallerExecutive() {
   );
 
   const paginatedData = sortedCaller.slice(startIndex, endIndex);
-  const totalPages = Math.ceil(filteredCaller.length / itemsPerPage);
   const [selected, setSelected] = useState([]);
   const allChecked = paginatedData.length === selected.length;
 

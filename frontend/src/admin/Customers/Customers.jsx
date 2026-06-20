@@ -5,14 +5,10 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faArrowRight,
   faBell,
-  faCalendar,
-  faDownload,
   faEdit,
   faEye,
   faEyeSlash,
-  faFile,
   faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { ToastContainer, toast } from "react-toastify";
@@ -20,7 +16,6 @@ import { ToastContainer, toast } from "react-toastify";
 function Customers() {
   const API_URL = import.meta.env.VITE_API_URL;
 
-  const token = localStorage.getItem("adminToken");
   const [showPassword, setShowPassword] = useState(false);
   const [search, setSearch] = useState("");
   const [customers, setCustomers] = useState([]);
@@ -70,7 +65,7 @@ function Customers() {
     };
 
     allData();
-  }, []);
+  }, [API_URL]);
 
   const filteredCustomers = useMemo(() => {
     return [...customers]
@@ -106,7 +101,7 @@ function Customers() {
     if (currentPage > totalPages) {
       setCurrentPage(1);
     }
-  }, [filteredCustomers]);
+  }, [currentPage, totalPages]);
 
   const deleteData = async (id) => {
     const confirmDelete = window.confirm(

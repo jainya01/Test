@@ -104,7 +104,7 @@ function Settings() {
     };
 
     allData();
-  }, []);
+  }, [API_URL]);
 
   const deleteData = async (id) => {
     const confirmDelete = window.confirm(

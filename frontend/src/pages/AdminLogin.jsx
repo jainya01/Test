@@ -74,7 +74,7 @@ const AdminLogin = () => {
     };
 
     allData();
-  }, []);
+  }, [API_URL]);
 
   const totalCalls = logs.filter((item) => item.call_status !== null).length;
 
@@ -84,8 +84,6 @@ const AdminLogin = () => {
 
   const convertedPercentage =
     totalCalls > 0 ? ((convertedCalls / totalCalls) * 100).toFixed(1) : 0;
-
-  const callerId = logs?.id;
 
   const dailyCalls = logs.filter(
     (item) =>
@@ -98,7 +96,7 @@ const AdminLogin = () => {
     if (token) {
       navigate("/admin/dashboard", { replace: true });
     }
-  }, []);
+  }, [navigate]);
 
   return (
     <main className="container-fluid">

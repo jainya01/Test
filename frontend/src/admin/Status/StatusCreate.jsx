@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "../../App.css";
 import { authHeader } from "../../utils/authHeader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBell, faList } from "@fortawesome/free-solid-svg-icons";
+import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
@@ -53,6 +53,7 @@ function ServicesCreate() {
         navigate("/admin/status");
       }, 1000);
     } catch (error) {
+      console.error("error", error);
       toast.error("Failed to add status");
     }
   };

@@ -32,7 +32,7 @@ function Services() {
     };
 
     allData();
-  }, []);
+  }, [API_URL]);
 
   const keyword = search.toLowerCase();
 
@@ -55,7 +55,7 @@ function Services() {
     if (currentPage > totalPages) {
       setCurrentPage(1);
     }
-  }, [filteredServices, totalPages]);
+  }, [currentPage, totalPages]);
 
   const deleteData = async (id) => {
     const confirmDelete = window.confirm(

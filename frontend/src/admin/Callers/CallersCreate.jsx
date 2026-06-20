@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import "../../App.css";
 import { authHeader } from "../../utils/authHeader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -79,6 +79,7 @@ function CallersCreate() {
         navigate("/admin/callers");
       }, 1000);
     } catch (error) {
+      console.error("error", error);
       toast.error("Failed to add caller");
     }
   };

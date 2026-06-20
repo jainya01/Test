@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "../App.css";
 import { authHeader } from "../utils/authHeader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -20,7 +20,7 @@ function Leads() {
   const [customers, setCustomers] = useState([]);
   const [caller, setCaller] = useState([]);
   const [services, setServices] = useState([]);
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword] = useState(false);
 
   const maskPhoneNumber = (phone) => {
     if (!phone) return "";
@@ -81,11 +81,13 @@ function Leads() {
     };
 
     allData();
-  }, []);
+  }, [API_URL]);
 
-  const pendingCustomers = Array.isArray(customers)
-    ? customers.filter((item) => item.status === null)
-    : [];
+  const pendingCustomers = useMemo(() => {
+    return Array.isArray(customers)
+      ? customers.filter((item) => item.status === null)
+      : [];
+  }, [customers]);
 
   const [selectedUser, setSelectedUser] = useState(
     pendingCustomers.length > 0 ? pendingCustomers[0] : null,
@@ -105,7 +107,7 @@ function Leads() {
     } else {
       setSelectedUser(null);
     }
-  }, [customers]);
+  }, [pendingCustomers, selectedUser?.phone]);
 
   const [leads, setLeads] = useState({
     customer_id: "",
@@ -195,8 +197,6 @@ function Leads() {
       call_status: statusValue,
     }));
   };
-
-  const pendingLeads = customers.filter((item) => item.status === null).length;
 
   const getCallerName = () => {
     const callerId = Number(localStorage.getItem("id"));

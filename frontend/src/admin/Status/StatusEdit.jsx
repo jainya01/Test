@@ -4,7 +4,7 @@ import { authHeader } from "../../utils/authHeader";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBell, faList } from "@fortawesome/free-solid-svg-icons";
+import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { ToastContainer, toast } from "react-toastify";
 
 function ServicesEdit() {
@@ -65,7 +65,7 @@ function ServicesEdit() {
     if (id) {
       fetchServices();
     }
-  }, [id]);
+  }, [API_URL, id]);
 
   return (
     <main className="content-wrapper">

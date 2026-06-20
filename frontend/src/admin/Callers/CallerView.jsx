@@ -4,7 +4,7 @@ import { authHeader } from "../../utils/authHeader";
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBell, faList } from "@fortawesome/free-solid-svg-icons";
+import { faBell } from "@fortawesome/free-solid-svg-icons";
 
 function CallerView() {
   const API_URL = import.meta.env.VITE_API_URL;
@@ -39,7 +39,7 @@ function CallerView() {
     };
 
     someCallerData();
-  }, []);
+  }, [API_URL, id]);
 
   const dailyCalls = customer.filter(
     (item) =>

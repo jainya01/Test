@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import "../App.css";
 import { authHeader } from "../utils/authHeader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -15,27 +15,28 @@ import { ToastContainer, toast } from "react-toastify";
 function BulkUpload() {
   const API_URL = import.meta.env.VITE_API_URL;
 
-  const [bulk, setBulk] = useState([]);
   const [file, setFile] = useState(null);
   const [customers, setCustomers] = useState(0);
 
-  const fetchCustomers = async () => {
+  const fetchCustomers = useCallback(async () => {
     try {
       const [customerRes] = await Promise.allSettled([
-        axios.get(`${API_URL}/allcustomersdata`, { headers: authHeader() }),
+        axios.get(`${API_URL}/allcustomersdata`, {
+          headers: authHeader(),
+        }),
       ]);
 
       if (customerRes.status === "fulfilled") {
         setCustomers(customerRes.value.data.result.length);
       }
     } catch (error) {
-      console.error("error", error);
+      console.error(error);
     }
-  };
+  }, [API_URL]);
 
   useEffect(() => {
     fetchCustomers();
-  }, []);
+  }, [fetchCustomers]);
 
   const handleBulkSubmit = async (e) => {
     e.preventDefault();
@@ -47,7 +48,6 @@ function BulkUpload() {
 
     const formData = new FormData();
     formData.append("file", file);
-    const token = localStorage.getItem("adminToken");
 
     try {
       await axios.post(`${API_URL}/upload-stock`, formData, {

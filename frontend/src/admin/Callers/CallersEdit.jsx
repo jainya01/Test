@@ -105,7 +105,7 @@ function CallersEdit() {
     if (id) {
       fetchCaller();
     }
-  }, [id]);
+  }, [API_URL, id]);
 
   return (
     <main className="content-wrapper">

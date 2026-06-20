@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import "../App.css";
 import { authHeader } from "../utils/authHeader";
 import { Link, NavLink, useNavigate } from "react-router-dom";
@@ -14,7 +14,6 @@ import {
   faCog,
   faUpload,
   faListCheck,
-  faColumns,
   faTools,
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
@@ -94,9 +93,9 @@ export default function Sidebar() {
     };
 
     allData();
-  }, []);
+  }, [API_URL]);
 
-  const handleLoggedUser = () => {
+  const handleLoggedUser = useCallback(() => {
     const role = localStorage.getItem("role");
     const id = Number(localStorage.getItem("id"));
 
@@ -121,13 +120,13 @@ export default function Sidebar() {
         });
       }
     }
-  };
+  }, [admin, caller]);
 
   useEffect(() => {
     if (admin.length > 0 || caller.length > 0) {
       handleLoggedUser();
     }
-  }, [admin, caller]);
+  }, [handleLoggedUser, admin, caller]);
 
   const [collapsed, setCollapsed] = useState(false);
 

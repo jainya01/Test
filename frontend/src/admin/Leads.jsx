@@ -94,7 +94,7 @@ function Leads() {
   );
 
   const hasUserData = selectedUser?.name && selectedUser?.phone;
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword] = useState(false);
 
   const maskPhoneNumber = (phone) => {
     if (!phone) return "";
@@ -131,7 +131,7 @@ function Leads() {
     };
 
     allData();
-  }, []);
+  }, [API_URL]);
 
   return (
     <main className="content-wrapper">
@@ -204,9 +204,9 @@ function Leads() {
                           <h5 className="queue-name mb-1">{item.name}</h5>
 
                           <p className="queue-phone mb-1">
-                            {showPassword
+                            {/* {showPassword
                               ? item.phone
-                              : maskPhoneNumber(item.phone)}
+                              : maskPhoneNumber(item.phone)} */}
                           </p>
 
                           <p className="queue-service mb-0">{item.service}</p>

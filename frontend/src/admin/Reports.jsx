@@ -50,7 +50,7 @@ function Reports() {
       }
     };
     allData();
-  }, []);
+  }, [API_URL]);
 
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 7;

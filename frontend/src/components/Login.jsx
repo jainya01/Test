@@ -38,7 +38,7 @@ const Login = () => {
     };
 
     allData();
-  }, []);
+  }, [API_URL]);
 
   const totalCalls = logs.filter((item) => item.call_status !== null).length;
 
@@ -48,8 +48,6 @@ const Login = () => {
 
   const convertedPercentage =
     totalCalls > 0 ? ((convertedCalls / totalCalls) * 100).toFixed(1) : 0;
-
-  const callerId = logs?.id;
 
   const dailyCalls = logs.filter(
     (item) =>
@@ -66,7 +64,7 @@ const Login = () => {
     } else if (callerToken) {
       navigate("/caller/leads", { replace: true });
     }
-  }, []);
+  }, [navigate]);
 
   return (
     <main className="container-fluid">

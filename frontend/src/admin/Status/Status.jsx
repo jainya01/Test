@@ -11,14 +11,7 @@ function Services() {
   const API_URL = import.meta.env.VITE_API_URL;
 
   const [search, setSearch] = useState("");
-  const [openMenuId, setOpenMenuId] = useState(null);
   const [status, setStatus] = useState([]);
-
-  useEffect(() => {
-    const handleClick = () => setOpenMenuId(null);
-    window.addEventListener("click", handleClick);
-    return () => window.removeEventListener("click", handleClick);
-  }, []);
 
   useEffect(() => {
     const allData = async () => {
@@ -33,7 +26,7 @@ function Services() {
       }
     };
     allData();
-  }, []);
+  }, [API_URL]);
 
   const deleteData = async (id) => {
     const confirmDelete = window.confirm(
@@ -49,6 +42,7 @@ function Services() {
       setStatus((prev) => prev.filter((item) => item.id !== id));
       toast.success("Status deleted successfully");
     } catch (error) {
+      console.error("error", error);
       toast.error("Failed to delete status");
     }
   };
@@ -65,7 +59,6 @@ function Services() {
   const [currentPage, setCurrentPage] = useState(1);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-
   const paginatedData = filteredStatus.slice(startIndex, endIndex);
   const totalPages = Math.ceil(filteredStatus.length / itemsPerPage);
 
@@ -73,7 +66,7 @@ function Services() {
     if (currentPage > totalPages) {
       setCurrentPage(1);
     }
-  }, [filteredStatus]);
+  }, [currentPage, totalPages]);
 
   return (
     <main className="content-wrapper">

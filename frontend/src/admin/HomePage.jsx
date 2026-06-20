@@ -65,7 +65,7 @@ function HomePage() {
     };
 
     allData();
-  }, []);
+  }, [API_URL]);
 
   const totalCalls = report.filter((item) => item.call_status !== null).length;
 

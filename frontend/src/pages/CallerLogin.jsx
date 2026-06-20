@@ -75,7 +75,7 @@ const CallerLogin = () => {
     };
 
     allData();
-  }, []);
+  }, [API_URL]);
 
   const totalCalls = logs.filter((item) => item.call_status !== null).length;
 
@@ -85,8 +85,6 @@ const CallerLogin = () => {
 
   const convertedPercentage =
     totalCalls > 0 ? ((convertedCalls / totalCalls) * 100).toFixed(1) : 0;
-
-  const callerId = logs?.id;
 
   const dailyCalls = logs.filter(
     (item) =>

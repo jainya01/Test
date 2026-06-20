@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import "../../App.css";
 import { authHeader } from "../../utils/authHeader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBell, faList } from "@fortawesome/free-solid-svg-icons";
+import { faBell } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
@@ -59,7 +59,7 @@ function CustomersEdit() {
     };
 
     allData();
-  }, []);
+  }, [API_URL, id]);
 
   const onInputChange = (e) => {
     setCustomer({
@@ -110,6 +110,7 @@ function CustomersEdit() {
         navigate("/admin/customers");
       }, 1000);
     } catch (error) {
+      console.error("error", error);
       toast.error("Failed to update customer");
     }
   };
