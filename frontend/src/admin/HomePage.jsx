@@ -192,6 +192,12 @@ function HomePage() {
 
   return (
     <>
+      <title>Admin Dashboard | Signal CRM</title>
+      <meta
+        name="description"
+        content="Monitor call performance, track lead conversions, analyze caller activity, review trends, and manage customer interactions from one dashboard."
+      />
+
       <main className="content-wrapper">
         <div className="container-fluid border-bottom bg-light pb-2 pt-md-2 pb-lg-1">
           <div className="row align-items-center">

@@ -129,6 +129,12 @@ function CallerView() {
 
   return (
     <>
+      <title>Caller View | Signal CRM</title>
+      <meta
+        name="description"
+        content="View caller performance details including daily, weekly, and monthly calls, conversion rate, follow-ups, and last active status in Signal CRM dashboard"
+      />
+
       <main className="content-wrapper">
         <div className="container-fluid border-bottom bg-light pb-2 pt-md-2 pb-lg-1">
           <div className="row align-items-center">

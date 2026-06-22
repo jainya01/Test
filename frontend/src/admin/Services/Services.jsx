@@ -79,204 +79,217 @@ function Services() {
   };
 
   return (
-    <main className="content-wrapper">
-      <div className="container-fluid border-bottom bg-light py-2">
-        <div className="row align-items-center">
-          <div className="col-10 col-md-11">
-            <div className="row align-items-center">
-              <div className="col-9 col-md-8 col-lg-4">
-                <input
-                  type="search"
-                  className="form-control sector-wise"
-                  placeholder="Search Customers name, phone..."
-                  aria-label="Search Customers, name, phone"
-                  style={{ height: "37px" }}
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                />
+    <>
+      <title>Services Management | Signal CRM</title>
+      <meta
+        name="description"
+        content="Manage services in Signal CRM including Hajj, Umrah, Packages, Medical, and Ticket services. View status, activate or update service settings."
+      />
+
+      <main className="content-wrapper">
+        <div className="container-fluid border-bottom bg-light py-2">
+          <div className="row align-items-center">
+            <div className="col-10 col-md-11">
+              <div className="row align-items-center">
+                <div className="col-9 col-md-8 col-lg-4">
+                  <input
+                    type="search"
+                    className="form-control sector-wise"
+                    placeholder="Search Customers name, phone..."
+                    aria-label="Search Customers, name, phone"
+                    style={{ height: "37px" }}
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="col-2 col-md-1 d-flex justify-content-end align-items-center">
+              <button className="btn border-0 position-relative">
+                <FontAwesomeIcon icon={faBell} />
+                <span className="notification-corner bg-danger">0</span>
+              </button>
+
+              <span className="text-nowrap ms-2 date-days">
+                {new Date()
+                  .toLocaleDateString("en-GB", {
+                    weekday: "short",
+                    day: "2-digit",
+                    month: "short",
+                  })
+                  .replace(",", "")}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-2 p-lg-3">
+          <div className="d-flex flex-wrap flex-row justify-content-between align-items-md-center mb-4">
+            <div>
+              <h5 className="fw-bold overview-dashboard">Services</h5>
+              <p className="text-muted mb-md-0 overview-lead">
+                {filteredServices.length} of {services.length} services
+              </p>
+            </div>
+
+            <div className="d-flex flex-wrap gap-2 flex-wrap">
+              <div>
+                <Link
+                  className="btn user-added-btn"
+                  to="/admin/services/create"
+                >
+                  + Add Service
+                </Link>
               </div>
             </div>
           </div>
 
-          <div className="col-2 col-md-1 d-flex justify-content-end align-items-center">
-            <button className="btn border-0 position-relative">
-              <FontAwesomeIcon icon={faBell} />
-              <span className="notification-corner bg-danger">0</span>
-            </button>
+          <div className="row g-2">
+            <div className="col-12">
+              <div className="card shadow-sm border rounded-3 h-100">
+                <div className="card-body p-0">
+                  <div className="table-wrapper">
+                    <div className="table-responsive custom-scrollbar">
+                      <table className="table table-striped mb-0">
+                        <thead className="table-secondary header-table text-nowrap">
+                          <tr>
+                            <th className="ps-2">S/N</th>
+                            <th>SERVICE NAME</th>
+                            <th>STATUS</th>
+                            <th>ACTION</th>
+                          </tr>
+                        </thead>
+                        <tbody className="body-table">
+                          {Array.isArray(paginatedData) &&
+                          paginatedData.length > 0 ? (
+                            paginatedData
+                              .sort((item) => item.updated_at)
+                              .map((item, index) => (
+                                <tr key={index}>
+                                  <td>
+                                    {(currentPage - 1) * itemsPerPage +
+                                      index +
+                                      1}
+                                  </td>
 
-            <span className="text-nowrap ms-2 date-days">
-              {new Date()
-                .toLocaleDateString("en-GB", {
-                  weekday: "short",
-                  day: "2-digit",
-                  month: "short",
-                })
-                .replace(",", "")}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <div className="p-2 p-lg-3">
-        <div className="d-flex flex-wrap flex-row justify-content-between align-items-md-center mb-4">
-          <div>
-            <h5 className="fw-bold overview-dashboard">Services</h5>
-            <p className="text-muted mb-md-0 overview-lead">
-              {filteredServices.length} of {services.length} services
-            </p>
-          </div>
-
-          <div className="d-flex flex-wrap gap-2 flex-wrap">
-            <div>
-              <Link className="btn user-added-btn" to="/admin/services/create">
-                + Add Service
-              </Link>
-            </div>
-          </div>
-        </div>
-
-        <div className="row g-2">
-          <div className="col-12">
-            <div className="card shadow-sm border rounded-3 h-100">
-              <div className="card-body p-0">
-                <div className="table-wrapper">
-                  <div className="table-responsive custom-scrollbar">
-                    <table className="table table-striped mb-0">
-                      <thead className="table-secondary header-table text-nowrap">
-                        <tr>
-                          <th className="ps-2">S/N</th>
-                          <th>SERVICE NAME</th>
-                          <th>STATUS</th>
-                          <th>ACTION</th>
-                        </tr>
-                      </thead>
-                      <tbody className="body-table">
-                        {Array.isArray(paginatedData) &&
-                        paginatedData.length > 0 ? (
-                          paginatedData
-                            .sort((item) => item.updated_at)
-                            .map((item, index) => (
-                              <tr key={index}>
-                                <td>
-                                  {(currentPage - 1) * itemsPerPage + index + 1}
-                                </td>
-
-                                <td>
-                                  <Link
-                                    to={`/admin/services/edit/${item.id}`}
-                                    className="text-decoration-none text-dark"
-                                  >
-                                    <span className="short-name fw-bold">
-                                      {item.service_name || "--"}
-                                    </span>
-                                  </Link>
-                                </td>
-
-                                <td
-                                  className={
-                                    item.status === "Active"
-                                      ? "convert-no"
-                                      : "convert-call"
-                                  }
-                                >
-                                  <div className="d-flex align-items-center">
-                                    <div
-                                      className={`me-1 ${
-                                        item.status === "Active"
-                                          ? "custom-success"
-                                          : "custom-active"
-                                      }`}
-                                    ></div>
-
-                                    <span className="action-state">
-                                      {item.status || "N/A"}
-                                    </span>
-                                  </div>
-                                </td>
-
-                                <td className="text-start">
-                                  <span className="d-flex flex-row flex-nowrap">
+                                  <td>
                                     <Link
                                       to={`/admin/services/edit/${item.id}`}
-                                      title="Edit"
+                                      className="text-decoration-none text-dark"
                                     >
-                                      <FontAwesomeIcon
-                                        icon={faEdit}
-                                        className="icons-color"
-                                      />
+                                      <span className="short-name fw-bold">
+                                        {item.service_name || "--"}
+                                      </span>
                                     </Link>
+                                  </td>
 
-                                    <span title="Delete">
-                                      <FontAwesomeIcon
-                                        icon={faTrash}
-                                        className="icons-color1 ps-2"
-                                        onClick={() => deleteData(item.id)}
-                                      />
+                                  <td
+                                    className={
+                                      item.status === "Active"
+                                        ? "convert-no"
+                                        : "convert-call"
+                                    }
+                                  >
+                                    <div className="d-flex align-items-center">
+                                      <div
+                                        className={`me-1 ${
+                                          item.status === "Active"
+                                            ? "custom-success"
+                                            : "custom-active"
+                                        }`}
+                                      ></div>
+
+                                      <span className="action-state">
+                                        {item.status || "N/A"}
+                                      </span>
+                                    </div>
+                                  </td>
+
+                                  <td className="text-start">
+                                    <span className="d-flex flex-row flex-nowrap">
+                                      <Link
+                                        to={`/admin/services/edit/${item.id}`}
+                                        title="Edit"
+                                      >
+                                        <FontAwesomeIcon
+                                          icon={faEdit}
+                                          className="icons-color"
+                                        />
+                                      </Link>
+
+                                      <span title="Delete">
+                                        <FontAwesomeIcon
+                                          icon={faTrash}
+                                          className="icons-color1 ps-2"
+                                          onClick={() => deleteData(item.id)}
+                                        />
+                                      </span>
                                     </span>
-                                  </span>
-                                </td>
-                              </tr>
-                            ))
-                        ) : (
-                          <tr>
-                            <td
-                              colSpan="4"
-                              className="text-center py-3 fw-bold text-muted"
-                            >
-                              No data available
-                            </td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
+                                  </td>
+                                </tr>
+                              ))
+                          ) : (
+                            <tr>
+                              <td
+                                colSpan="4"
+                                className="text-center py-3 fw-bold text-muted"
+                              >
+                                No data available
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
 
-                    {filteredServices.length > itemsPerPage && (
-                      <div className="d-flex justify-content-center align-items-center flex-wrap mt-3 mb-3 gap-2">
-                        <button
-                          className={`btn rounded-pill px-3 py-1 shadow-sm ${
-                            currentPage <= 1
-                              ? "btn-light border text-muted"
-                              : "btn-success border-0"
-                          }`}
-                          disabled={currentPage <= 1}
-                          onClick={() =>
-                            setCurrentPage((prev) => Math.max(prev - 1, 1))
-                          }
-                        >
-                          ← Prev
-                        </button>
+                      {filteredServices.length > itemsPerPage && (
+                        <div className="d-flex justify-content-center align-items-center flex-wrap mt-3 mb-3 gap-2">
+                          <button
+                            className={`btn rounded-pill px-3 py-1 shadow-sm ${
+                              currentPage <= 1
+                                ? "btn-light border text-muted"
+                                : "btn-success border-0"
+                            }`}
+                            disabled={currentPage <= 1}
+                            onClick={() =>
+                              setCurrentPage((prev) => Math.max(prev - 1, 1))
+                            }
+                          >
+                            ← Prev
+                          </button>
 
-                        <span className="fw-semibold px-2">
-                          Page {currentPage} of {totalPages}
-                        </span>
+                          <span className="fw-semibold px-2">
+                            Page {currentPage} of {totalPages}
+                          </span>
 
-                        <button
-                          className={`btn rounded-pill px-3 py-1 shadow-sm ${
-                            currentPage >= totalPages
-                              ? "btn-light border text-muted"
-                              : "btn-success border-0"
-                          }`}
-                          disabled={currentPage >= totalPages}
-                          onClick={() =>
-                            setCurrentPage((prev) =>
-                              Math.min(prev + 1, totalPages),
-                            )
-                          }
-                        >
-                          Next →
-                        </button>
-                      </div>
-                    )}
+                          <button
+                            className={`btn rounded-pill px-3 py-1 shadow-sm ${
+                              currentPage >= totalPages
+                                ? "btn-light border text-muted"
+                                : "btn-success border-0"
+                            }`}
+                            disabled={currentPage >= totalPages}
+                            onClick={() =>
+                              setCurrentPage((prev) =>
+                                Math.min(prev + 1, totalPages),
+                              )
+                            }
+                          >
+                            Next →
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
 
-      <ToastContainer position="bottom-right" autoClose={1500} />
-    </main>
+        <ToastContainer position="bottom-right" autoClose={1500} />
+      </main>
+    </>
   );
 }
 

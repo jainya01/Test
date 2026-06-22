@@ -116,328 +116,346 @@ function Reports() {
     .slice(0, 5);
 
   return (
-    <main className="content-wrapper">
-      <div className="container-fluid border-bottom bg-light py-2">
-        <div className="row align-items-center">
-          <div className="col-10 col-md-11">
-            <div className="row align-items-center">
-              <div className="col-9 col-md-8 col-lg-4">
-                <input
-                  type="search"
-                  className="form-control sector-wise"
-                  placeholder="Search customers, calls, agents..."
-                  aria-label="Search customers, calls, agents"
-                  style={{ height: "37px" }}
-                />
+    <>
+      <title>Reports & Analytics | Signal CRM</title>
+      <meta
+        name="description"
+        content="View reports and analytics for your calling team. Track agent performance, call outcomes, conversions, follow-ups, and overall CRM insights dashboard overview"
+      />
+
+      <main className="content-wrapper">
+        <div className="container-fluid border-bottom bg-light py-2">
+          <div className="row align-items-center">
+            <div className="col-10 col-md-11">
+              <div className="row align-items-center">
+                <div className="col-9 col-md-8 col-lg-4">
+                  <input
+                    type="search"
+                    className="form-control sector-wise"
+                    placeholder="Search customers, calls, agents..."
+                    aria-label="Search customers, calls, agents"
+                    style={{ height: "37px" }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="col-2 col-md-1 d-flex justify-content-end align-items-center">
+              <button className="btn border-0 position-relative">
+                <FontAwesomeIcon icon={faBell} />
+                <span className="notification-corner bg-danger">0</span>
+              </button>
+
+              <span className="text-nowrap ms-2 date-days">
+                {new Date()
+                  .toLocaleDateString("en-GB", {
+                    weekday: "short",
+                    day: "2-digit",
+                    month: "short",
+                  })
+                  .replace(",", "")}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="p-2 p-lg-3 mt-2">
+          <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
+            <div>
+              <h5 className="fw-bold overview-dashboard">
+                Reports & Analytics
+              </h5>
+              <p className="text-muted mb-md-0 overview-lead">
+                Performance insight across your team
+              </p>
+            </div>
+
+            <div className="d-flex flex-nowrap gap-2">
+              <div className="d-flex flex-row align-items-center border rounded-3 bg-white w-100 download-csv text-nowrap">
+                <FontAwesomeIcon icon={faCalendar} className="me-1" />
+                <span>Last 7 days</span>
+              </div>
+
+              <div className="d-flex flex-row align-items-center border rounded-3 bg-white w-100 download-csv">
+                <FontAwesomeIcon icon={faDownload} className="me-1" />
+                <span>CSV</span>
+              </div>
+
+              <div className="d-flex flex-row align-items-center border rounded-3 bg-white w-100 download-csv text-nowrap">
+                <FontAwesomeIcon icon={faFile} className="me-1" />
+                <span>PDF</span>
               </div>
             </div>
           </div>
 
-          <div className="col-2 col-md-1 d-flex justify-content-end align-items-center">
-            <button className="btn border-0 position-relative">
-              <FontAwesomeIcon icon={faBell} />
-              <span className="notification-corner bg-danger">0</span>
-            </button>
+          <div className="row g-2">
+            <div className="col-12 col-lg-8">
+              <div className="card custom-card shadow-sm border h-100 rounded-3">
+                <div className="card-body">
+                  <div className="d-flex justify-content-between mb-3">
+                    <h4 className="daily-performance fw-semibold mb-0">
+                      Calls Per Agent
+                    </h4>
+                  </div>
 
-            <span className="text-nowrap ms-2 date-days">
-              {new Date()
-                .toLocaleDateString("en-GB", {
-                  weekday: "short",
-                  day: "2-digit",
-                  month: "short",
-                })
-                .replace(",", "")}
-            </span>
-          </div>
-        </div>
-      </div>
-
-      <div className="p-2 p-lg-3 mt-2">
-        <div className="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4">
-          <div>
-            <h5 className="fw-bold overview-dashboard">Reports & Analytics</h5>
-            <p className="text-muted mb-md-0 overview-lead">
-              Performance insight across your team
-            </p>
-          </div>
-
-          <div className="d-flex flex-nowrap gap-2">
-            <div className="d-flex flex-row align-items-center border rounded-3 bg-white w-100 download-csv text-nowrap">
-              <FontAwesomeIcon icon={faCalendar} className="me-1" />
-              <span>Last 7 days</span>
-            </div>
-
-            <div className="d-flex flex-row align-items-center border rounded-3 bg-white w-100 download-csv">
-              <FontAwesomeIcon icon={faDownload} className="me-1" />
-              <span>CSV</span>
-            </div>
-
-            <div className="d-flex flex-row align-items-center border rounded-3 bg-white w-100 download-csv text-nowrap">
-              <FontAwesomeIcon icon={faFile} className="me-1" />
-              <span>PDF</span>
-            </div>
-          </div>
-        </div>
-
-        <div className="row g-2">
-          <div className="col-12 col-lg-8">
-            <div className="card custom-card shadow-sm border h-100 rounded-3">
-              <div className="card-body">
-                <div className="d-flex justify-content-between mb-3">
-                  <h4 className="daily-performance fw-semibold mb-0">
-                    Calls Per Agent
-                  </h4>
-                </div>
-
-                <div style={{ width: "100%", height: 350 }}>
-                  <ResponsiveContainer width="100%" height="100%" minWidth={0}>
-                    <BarChart
-                      data={chartData}
-                      layout="vertical"
-                      margin={{
-                        top: 5,
-                        right: 0,
-                        left: 0,
-                        bottom: 10,
-                      }}
-                      barGap={8}
-                      barCategoryGap="30%"
-                      maxBarSize={10}
+                  <div style={{ width: "100%", height: 350 }}>
+                    <ResponsiveContainer
+                      width="100%"
+                      height="100%"
+                      minWidth={0}
                     >
-                      <CartesianGrid
-                        strokeDasharray="0"
-                        horizontal={false}
-                        stroke="#f1f5f9"
-                      />
-
-                      <XAxis type="number" tick={{ fontSize: 12 }} />
-
-                      <YAxis
-                        type="category"
-                        dataKey="agent"
-                        tick={{ fontSize: 12 }}
-                        width={60}
-                      />
-
-                      <Tooltip cursor={false} />
-
-                      <Legend
-                        iconType="square"
-                        wrapperStyle={{
-                          fontSize: "12px",
-                          paddingTop: "10px",
+                      <BarChart
+                        data={chartData}
+                        layout="vertical"
+                        margin={{
+                          top: 5,
+                          right: 0,
+                          left: 0,
+                          bottom: 10,
                         }}
-                      />
-
-                      <Bar
-                        dataKey="calls"
-                        fill="#3366ff"
-                        radius={[0, 8, 8, 0]}
-                        barSize={8}
-                      />
-
-                      <Bar
-                        dataKey="conversions"
-                        fill="#00a86b"
-                        radius={[0, 8, 8, 0]}
-                        barSize={8}
-                      />
-
-                      <Bar
-                        dataKey="followups"
-                        fill="#f4a300"
-                        radius={[0, 8, 8, 0]}
-                        barSize={8}
-                      />
-                    </BarChart>
-                  </ResponsiveContainer>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="col-12 col-lg-4">
-            <div className="card custom-card shadow-sm border h-100 rounded-3">
-              <div className="card-body d-flex flex-column p-3">
-                <div className="mb-1">
-                  <h4 className="daily-performance fw-semibold mb-0">
-                    Call Outcome
-                  </h4>
-                </div>
-
-                <div
-                  className="call-outcome-style"
-                  style={{
-                    width: "100%",
-                    height: "200px",
-                    marginBottom: "40px",
-                  }}
-                >
-                  <ResponsiveContainer width="100%" height="100%" minWidth={0}>
-                    <PieChart>
-                      <Pie
-                        data={outcomeData.map((item) => ({
-                          ...item,
-                          value: totalByStatus(item.value),
-                        }))}
-                        dataKey="value"
-                        nameKey="name"
-                        cx="50%"
-                        cy="50%"
-                        innerRadius={55}
-                        outerRadius={85}
-                        paddingAngle={2}
-                        stroke="none"
-                        isAnimationActive={true}
+                        barGap={8}
+                        barCategoryGap="30%"
+                        maxBarSize={10}
                       >
-                        {outcomeData.map((entry, index) => (
-                          <Cell
-                            key={`cell-${index}`}
-                            fill={entry.color}
-                            stroke="none"
-                          />
-                        ))}
-                      </Pie>
-                    </PieChart>
-                  </ResponsiveContainer>
-                </div>
-
-                <div className="mt-0 pt-0">
-                  {outcomeData.map((item, index) => (
-                    <div
-                      key={index}
-                      className="d-flex justify-content-between align-items-center mb-2"
-                    >
-                      <div className="d-flex align-items-center gap-2">
-                        <span
-                          className="outcome-data"
-                          style={{ backgroundColor: item.color }}
+                        <CartesianGrid
+                          strokeDasharray="0"
+                          horizontal={false}
+                          stroke="#f1f5f9"
                         />
-                        <span className="outcome-data1">{item.name}</span>
-                      </div>
 
-                      <span className="outcome-data2">
-                        {totalByStatus(item.value) || 0}
-                      </span>
-                    </div>
-                  ))}
+                        <XAxis type="number" tick={{ fontSize: 12 }} />
+
+                        <YAxis
+                          type="category"
+                          dataKey="agent"
+                          tick={{ fontSize: 12 }}
+                          width={60}
+                        />
+
+                        <Tooltip cursor={false} />
+
+                        <Legend
+                          iconType="square"
+                          wrapperStyle={{
+                            fontSize: "12px",
+                            paddingTop: "10px",
+                          }}
+                        />
+
+                        <Bar
+                          dataKey="calls"
+                          fill="#3366ff"
+                          radius={[0, 8, 8, 0]}
+                          barSize={8}
+                        />
+
+                        <Bar
+                          dataKey="conversions"
+                          fill="#00a86b"
+                          radius={[0, 8, 8, 0]}
+                          barSize={8}
+                        />
+
+                        <Bar
+                          dataKey="followups"
+                          fill="#f4a300"
+                          radius={[0, 8, 8, 0]}
+                          barSize={8}
+                        />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="col-12 col-lg-4">
+              <div className="card custom-card shadow-sm border h-100 rounded-3">
+                <div className="card-body d-flex flex-column p-3">
+                  <div className="mb-1">
+                    <h4 className="daily-performance fw-semibold mb-0">
+                      Call Outcome
+                    </h4>
+                  </div>
+
+                  <div
+                    className="call-outcome-style"
+                    style={{
+                      width: "100%",
+                      height: "200px",
+                      marginBottom: "40px",
+                    }}
+                  >
+                    <ResponsiveContainer
+                      width="100%"
+                      height="100%"
+                      minWidth={0}
+                    >
+                      <PieChart>
+                        <Pie
+                          data={outcomeData.map((item) => ({
+                            ...item,
+                            value: totalByStatus(item.value),
+                          }))}
+                          dataKey="value"
+                          nameKey="name"
+                          cx="50%"
+                          cy="50%"
+                          innerRadius={55}
+                          outerRadius={85}
+                          paddingAngle={2}
+                          stroke="none"
+                          isAnimationActive={true}
+                        >
+                          {outcomeData.map((entry, index) => (
+                            <Cell
+                              key={`cell-${index}`}
+                              fill={entry.color}
+                              stroke="none"
+                            />
+                          ))}
+                        </Pie>
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+
+                  <div className="mt-0 pt-0">
+                    {outcomeData.map((item, index) => (
+                      <div
+                        key={index}
+                        className="d-flex justify-content-between align-items-center mb-2"
+                      >
+                        <div className="d-flex align-items-center gap-2">
+                          <span
+                            className="outcome-data"
+                            style={{ backgroundColor: item.color }}
+                          />
+                          <span className="outcome-data1">{item.name}</span>
+                        </div>
+
+                        <span className="outcome-data2">
+                          {totalByStatus(item.value) || 0}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
             </div>
           </div>
-        </div>
 
-        <div className="row g-2 mt-3">
-          <div className="col-12">
-            <div className="card shadow-sm border rounded-3 h-100">
-              <div className="card-body p-0">
-                <div className="mb-3 mt-3 ms-2">
-                  <h5 className="fw-bold mb-0 daily-performance">
-                    Agent Performance Breakdown
-                  </h5>
-                </div>
+          <div className="row g-2 mt-3">
+            <div className="col-12">
+              <div className="card shadow-sm border rounded-3 h-100">
+                <div className="card-body p-0">
+                  <div className="mb-3 mt-3 ms-2">
+                    <h5 className="fw-bold mb-0 daily-performance">
+                      Agent Performance Breakdown
+                    </h5>
+                  </div>
 
-                <div className="table-wrapper">
-                  <div className="table-responsive custom-scrollbar">
-                    <table className="table table-striped mb-0">
-                      <thead className="table-secondary header-table text-nowrap">
-                        <tr>
-                          <th className="ps-2">S/N</th>
-                          <th>AGENT</th>
-                          <th>TOTAL CALLS</th>
-                          <th>CONVERSIONS</th>
-                          <th>FOLLOW-UPS</th>
-                          <th>CONV. RATE</th>
-                        </tr>
-                      </thead>
-                      <tbody className="body-table">
-                        {Array.isArray(paginatedData) &&
-                        paginatedData.length > 0 ? (
-                          paginatedData.map((data, idx) => (
-                            <tr key={idx}>
-                              <td className="ps-2">{startIndex + idx + 1}</td>
+                  <div className="table-wrapper">
+                    <div className="table-responsive custom-scrollbar">
+                      <table className="table table-striped mb-0">
+                        <thead className="table-secondary header-table text-nowrap">
+                          <tr>
+                            <th className="ps-2">S/N</th>
+                            <th>AGENT</th>
+                            <th>TOTAL CALLS</th>
+                            <th>CONVERSIONS</th>
+                            <th>FOLLOW-UPS</th>
+                            <th>CONV. RATE</th>
+                          </tr>
+                        </thead>
+                        <tbody className="body-table">
+                          {Array.isArray(paginatedData) &&
+                          paginatedData.length > 0 ? (
+                            paginatedData.map((data, idx) => (
+                              <tr key={idx}>
+                                <td className="ps-2">{startIndex + idx + 1}</td>
 
-                              <td className="convert-rate">
-                                <Link
-                                  to={`/admin/callers/view/${data.id}`}
-                                  className="text-dark text-decoration-none"
-                                >
-                                  {data.fullname}
-                                </Link>
-                              </td>
+                                <td className="convert-rate">
+                                  <Link
+                                    to={`/admin/callers/view/${data.id}`}
+                                    className="text-dark text-decoration-none"
+                                  >
+                                    {data.fullname}
+                                  </Link>
+                                </td>
 
-                              <td className="convert-code">
-                                {totalCalls(data.id) || 0}
-                              </td>
+                                <td className="convert-code">
+                                  {totalCalls(data.id) || 0}
+                                </td>
 
-                              <td className="convert-no">
-                                {totalConversions(data.id) || 0}
-                              </td>
+                                <td className="convert-no">
+                                  {totalConversions(data.id) || 0}
+                                </td>
 
-                              <td className="convert-code">
-                                {totalFollowUps(data.id) || 0}
-                              </td>
+                                <td className="convert-code">
+                                  {totalFollowUps(data.id) || 0}
+                                </td>
 
-                              <td className="convert-rate">
-                                {conversionRate(data.id)}
+                                <td className="convert-rate">
+                                  {conversionRate(data.id)}
+                                </td>
+                              </tr>
+                            ))
+                          ) : (
+                            <tr>
+                              <td colSpan="6" className="text-center py-3">
+                                no data available
                               </td>
                             </tr>
-                          ))
-                        ) : (
-                          <tr>
-                            <td colSpan="6" className="text-center py-3">
-                              no data available
-                            </td>
-                          </tr>
-                        )}
-                      </tbody>
-                    </table>
+                          )}
+                        </tbody>
+                      </table>
 
-                    {sortedCaller.length > itemsPerPage && (
-                      <div className="d-flex justify-content-center align-items-center flex-wrap mt-3 mb-3 gap-2">
-                        <button
-                          className={`btn rounded-pill px-3 py-1 shadow-sm ${
-                            currentPage <= 1
-                              ? "btn-light border text-muted"
-                              : "btn-success border-0"
-                          }`}
-                          disabled={currentPage <= 1}
-                          onClick={() =>
-                            setCurrentPage((prev) => Math.max(prev - 1, 1))
-                          }
-                        >
-                          ← Prev
-                        </button>
+                      {sortedCaller.length > itemsPerPage && (
+                        <div className="d-flex justify-content-center align-items-center flex-wrap mt-3 mb-3 gap-2">
+                          <button
+                            className={`btn rounded-pill px-3 py-1 shadow-sm ${
+                              currentPage <= 1
+                                ? "btn-light border text-muted"
+                                : "btn-success border-0"
+                            }`}
+                            disabled={currentPage <= 1}
+                            onClick={() =>
+                              setCurrentPage((prev) => Math.max(prev - 1, 1))
+                            }
+                          >
+                            ← Prev
+                          </button>
 
-                        <span className="fw-semibold px-2">
-                          Page {currentPage} of {totalPages}
-                        </span>
+                          <span className="fw-semibold px-2">
+                            Page {currentPage} of {totalPages}
+                          </span>
 
-                        <button
-                          className={`btn rounded-pill px-3 py-1 shadow-sm ${
-                            currentPage >= totalPages
-                              ? "btn-light border text-muted"
-                              : "btn-success border-0"
-                          }`}
-                          disabled={currentPage >= totalPages}
-                          onClick={() =>
-                            setCurrentPage((prev) =>
-                              Math.min(prev + 1, totalPages),
-                            )
-                          }
-                        >
-                          Next →
-                        </button>
-                      </div>
-                    )}
+                          <button
+                            className={`btn rounded-pill px-3 py-1 shadow-sm ${
+                              currentPage >= totalPages
+                                ? "btn-light border text-muted"
+                                : "btn-success border-0"
+                            }`}
+                            disabled={currentPage >= totalPages}
+                            onClick={() =>
+                              setCurrentPage((prev) =>
+                                Math.min(prev + 1, totalPages),
+                              )
+                            }
+                          >
+                            Next →
+                          </button>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </main>
+      </main>
+    </>
   );
 }
 
