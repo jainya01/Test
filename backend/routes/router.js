@@ -432,6 +432,7 @@ router.put(
       throw error;
     }
 
+    await redisClient.del(`crm1:somecallers:${id}`);
     await redisClient.del("crm1:allcallers:all");
 
     return res.status(200).json({
@@ -465,6 +466,7 @@ router.delete(
       throw error;
     }
 
+    await redisClient.del(`crm1:somecallers:${id}`);
     await redisClient.del("crm1:allcallers:all");
 
     return res.status(200).json({
@@ -511,6 +513,11 @@ router.get(
   authenticate,
   asyncHandler(async (req, res) => {
     const { id } = req.params;
+    const cacheKey = `crm1:somecallers:${id}`;
+    const cache = await redisClient.get(cacheKey);
+    if (cache) {
+      return res.status(200).json(JSON.parse(cache));
+    }
 
     const SQL =
       "SELECT id, fullname, phone, email, role, status, notes FROM caller WHERE id = ?";
@@ -523,11 +530,14 @@ router.get(
       throw error;
     }
 
-    return res.status(200).json({
+    const response = {
       success: true,
       message: "Data fetched successfully",
       data: result[0],
-    });
+    };
+
+    await redisClient.set(cacheKey, JSON.stringify(response));
+    return res.status(200).json(response);
   }),
 );
 
@@ -624,6 +634,7 @@ router.put(
       throw error;
     }
 
+    await redisClient.del(`crm1:somestatus:${id}`);
     await redisClient.del("crm1:allstatusdata:all");
 
     return res.status(200).json({
@@ -648,6 +659,7 @@ router.delete(
       throw error;
     }
 
+    await redisClient.del(`crm1:somestatus:${id}`);
     await redisClient.del("crm1:allstatusdata:all");
 
     return res.status(200).json({
@@ -663,6 +675,12 @@ router.get(
   authenticate,
   asyncHandler(async (req, res) => {
     const { id } = req.params;
+    const cacheKey = `crm1:somestatus:${id}`;
+    const cache = await redisClient.get(cacheKey);
+    if (cache) {
+      return res.status(200).json(JSON.parse(cache));
+    }
+
     const SQL =
       "SELECT id, status_name, status, notes FROM status WHERE id = ?";
     const [result] = await pool.execute(SQL, [id]);
@@ -673,11 +691,14 @@ router.get(
       throw error;
     }
 
-    return res.status(200).json({
+    const response = {
       success: true,
       message: "data fetched successfully",
       result,
-    });
+    };
+
+    await redisClient.set(cacheKey, JSON.stringify(response));
+    return res.status(200).json(response);
   }),
 );
 
@@ -742,6 +763,7 @@ router.put(
       throw error;
     }
 
+    await redisClient.del(`crm1:someservices:${id}`);
     await redisClient.del("crm1:allservicesdata:all");
 
     return res.status(200).json({
@@ -766,6 +788,7 @@ router.delete(
       throw error;
     }
 
+    await redisClient.del(`crm1:someservices:${id}`);
     await redisClient.del("crm1:allservicesdata:all");
 
     return res.status(200).json({
@@ -813,6 +836,12 @@ router.get(
   authenticate,
   asyncHandler(async (req, res) => {
     const { id } = req.params;
+    const cacheKey = `crm1:someservices:${id}`;
+    const cache = await redisClient.get(cacheKey);
+    if (cache) {
+      return res.status(200).json(JSON.parse(cache));
+    }
+
     const SQL =
       "SELECT id, service_name, status, notes FROM services WHERE id = ?";
     const [result] = await pool.execute(SQL, [id]);
@@ -823,11 +852,14 @@ router.get(
       throw error;
     }
 
-    return res.status(200).json({
+    const response = {
       success: true,
       message: "data fetched successfully",
       result,
-    });
+    };
+
+    await redisClient.set(cacheKey, JSON.stringify(response));
+    return res.status(200).json(response);
   }),
 );
 
@@ -983,6 +1015,7 @@ router.delete(
       throw error;
     }
 
+    await redisClient.del(`crm1:somecustomers:${id}`);
     await redisClient.del("crm1:allcustomers:all");
 
     return res.status(200).json({
@@ -1019,6 +1052,7 @@ router.put(
       });
     }
 
+    await redisClient.del(`crm1:somecustomers:${id}`);
     await redisClient.del("crm1:allcustomers:all");
 
     return res.status(200).json({
@@ -1034,6 +1068,12 @@ router.get(
   authenticate,
   asyncHandler(async (req, res) => {
     const { id } = req.params;
+    const cacheKey = `crm1:somecustomers:${id}`;
+    const cache = await redisClient.get(cacheKey);
+    if (cache) {
+      return res.status(200).json(JSON.parse(cache));
+    }
+
     const SQL =
       "SELECT id, name, phone, city, service, status, notes FROM customers WHERE id = ?";
     const [result] = await pool.execute(SQL, [id]);
@@ -1044,11 +1084,14 @@ router.get(
       throw error;
     }
 
-    return res.status(200).json({
+    const response = {
       success: true,
       message: "data fetch successfully",
       result,
-    });
+    };
+
+    await redisClient.set(cacheKey, JSON.stringify(response));
+    return res.status(200).json(response);
   }),
 );
 
