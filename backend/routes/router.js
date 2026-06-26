@@ -4,7 +4,6 @@ import fs from "fs";
 import multer from "multer";
 import path from "path";
 import jwt from "jsonwebtoken";
-import cron from "node-cron";
 import ExcelJS from "exceljs";
 import csvParser from "csv-parser";
 import bcrypt from "bcrypt";
@@ -447,6 +446,7 @@ router.delete(
   "/callerdelete/:id",
   authenticate,
   asyncHandler(async (req, res) => {
+    const { id } = req.params;
     const callerId = Number(req.params.id);
 
     await pool.execute(
