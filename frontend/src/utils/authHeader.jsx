@@ -1,4 +1,5 @@
 import axios from "axios";
+const APP_URL = import.meta.env.VITE_BASE_URL;
 
 const getToken = () => {
   return (
@@ -39,7 +40,7 @@ axios.interceptors.response.use(
       localStorage.removeItem("callerToken");
       localStorage.removeItem("role");
       localStorage.removeItem("id");
-      window.location.replace("/");
+      window.location.replace = APP_URL;
     }
 
     return Promise.reject(error);
