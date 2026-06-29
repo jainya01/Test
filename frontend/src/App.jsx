@@ -39,8 +39,8 @@ const Settings = lazy(() => import("./admin/Settings"));
 const CallerLeads = lazy(() => import("./caller/CallerLeads"));
 
 function App() {
-  return (
-    <BrowserRouter basename="/test">
+  return ( 
+    <BrowserRouter>
       <Suspense>
         <Routes>
           <Route path="/" element={<Login />} />
