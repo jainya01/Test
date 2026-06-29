@@ -174,7 +174,7 @@ const CallerLogin = () => {
                     <input
                       type="email"
                       className="form-control"
-                      placeholder="you@company.com"
+                      placeholder="caller@example.com"
                       name="email"
                       value={email}
                       onChange={handleChange}

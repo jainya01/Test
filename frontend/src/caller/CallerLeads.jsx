@@ -434,7 +434,8 @@ function Leads() {
                       <div className="row">
                         <div className="col-12 col-sm-6 col-md-6 mb-3">
                           <label className="form-label custom-label">
-                            Service Status
+                            Service Status{" "}
+                            <span className="text-danger fw-bold">*</span>
                           </label>
 
                           <select
@@ -466,7 +467,8 @@ function Leads() {
 
                         <div className="col-12 col-sm-6 col-md-6 mb-3">
                           <label className="form-label custom-label">
-                            Services
+                            Services{" "}
+                            <span className="text-danger fw-bold">*</span>
                           </label>
 
                           <select
@@ -498,7 +500,8 @@ function Leads() {
 
                         <div className="col-12 col-sm-6 col-md-6 mb-3">
                           <label className="form-label custom-label">
-                            Sub-category
+                            Sub-category{" "}
+                            <span className="text-danger fw-bold">*</span>
                           </label>
                           <select
                             aria-label="Sub Category"
@@ -516,7 +519,8 @@ function Leads() {
 
                         <div className="col-12 col-sm-6 col-md-6 mb-3">
                           <label className="form-label custom-label">
-                            Package
+                            Package{" "}
+                            <span className="text-danger fw-bold">*</span>
                           </label>
                           <select
                             aria-label="Package Name"
@@ -537,7 +541,7 @@ function Leads() {
 
                         <div className="col-12 mb-3">
                           <label className="form-label custom-label">
-                            Call notes
+                            Call notes (optional)
                           </label>
 
                           <textarea

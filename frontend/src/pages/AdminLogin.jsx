@@ -172,7 +172,7 @@ const AdminLogin = () => {
                     <input
                       type="email"
                       className="form-control"
-                      placeholder="you@company.com"
+                      placeholder="admin@example.com"
                       name="email"
                       value={email}
                       onChange={handleChange}

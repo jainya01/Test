@@ -3,9 +3,9 @@ import "../App.css";
 import { authHeader } from "../utils/authHeader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
-  faCircleNotch,
   faHeadphones,
-  faPhone,
+  faPhoneVolume,
+  faUserShield,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -139,7 +139,7 @@ const Login = () => {
                   >
                     <div className="d-flex align-items-center">
                       <div className="phone-awesome me-2">
-                        <FontAwesomeIcon icon={faCircleNotch} />
+                        <FontAwesomeIcon icon={faUserShield} />
                       </div>
 
                       <div>
@@ -159,7 +159,7 @@ const Login = () => {
                   >
                     <div className="d-flex align-items-center">
                       <div className="phone-awesome me-2">
-                        <FontAwesomeIcon icon={faPhone} />
+                        <FontAwesomeIcon icon={faPhoneVolume} />
                       </div>
 
                       <div>

@@ -250,7 +250,7 @@ function Settings() {
                       htmlFor="name-input"
                       className="form-label small fw-medium mb-1"
                     >
-                      Admin Name
+                      Admin Name <span className="text-danger fw-bold">*</span>
                     </label>
                     <input
                       id="name-input"
@@ -276,7 +276,7 @@ function Settings() {
                       htmlFor="email-input"
                       className="form-label small fw-medium mb-1"
                     >
-                      Admin email
+                      Admin email <span className="text-danger fw-bold">*</span>
                     </label>
 
                     <input
@@ -303,7 +303,7 @@ function Settings() {
                       htmlFor="password"
                       className="form-label small fw-medium mt-2 mb-1"
                     >
-                      Password
+                      Password <span className="text-danger fw-bold">*</span>
                     </label>
 
                     <input
