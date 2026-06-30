@@ -292,6 +292,7 @@ router.get(
         customers.city,
         customers.service,
         customers.status,
+        customers.customer_type,
         customers.current_status,
         customers.caller_id,
         customers.created_at,
@@ -1097,6 +1098,8 @@ router.get(
 
 router.post("/assign-custom-leads", authenticate, assignCustomerLeads);
 
+
+
 router.post(
   "/caller-lead-post",
   authenticate,
@@ -1106,6 +1109,7 @@ router.post(
       caller_id,
       call_status,
       call_duration,
+      customer_type,
       status,
       service,
       sub_category,
@@ -1153,10 +1157,11 @@ router.post(
       `UPDATE customers
        SET status = ?, 
        notes = ?, 
+       customer_type = ?,
        current_status = 'Completed'
        WHERE id = ? 
        AND caller_id = ?`,
-      [status || null, notes || null, customerId, callerId],
+      [status || null, notes || null, customer_type || null, customerId, callerId],
     );
 
     await pool.execute(
@@ -1175,7 +1180,7 @@ router.post(
     );
 
     if (remainingLeads[0].total <= 0) {
-      const limitPerCaller = 5;
+      const limitPerCaller = 100;
 
       const [newCustomers] = await pool.query(
         `SELECT id
@@ -1206,6 +1211,9 @@ router.post(
     });
   }),
 );
+
+
+
 
 router.get(
   "/allcalllogs",

@@ -309,6 +309,7 @@ function Customers() {
                           <tr>
                             <th className="ps-2">S/N</th>
                             <th>NAME</th>
+                            <th>TYPE</th>
                             <th>PHONE</th>
                             <th>SERVICE</th>
                             <th>STATUS</th>
@@ -341,6 +342,8 @@ function Customers() {
                                       {item.name || "--"}
                                     </span>
                                   </td>
+
+                                  <td>{item.customer_type || "--"}</td>
 
                                   <td>
                                     {showPassword

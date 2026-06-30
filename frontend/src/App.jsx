@@ -3,15 +3,15 @@ import { Suspense, lazy } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "react-toastify/dist/ReactToastify.css";
 
-const Login = lazy(() => import("./components/Login"));
-const AdminLogin = lazy(() => import("./pages/AdminLogin"));
-const CallerLogin = lazy(() => import("./pages/CallerLogin"));
+import Login from "./components/Login";
+import AdminLogin from "./pages/AdminLogin";
+import CallerLogin from "./pages/CallerLogin";
 
 const AdminProtected = lazy(() => import("./components/AdminProtected"));
 const UserProtected = lazy(() => import("./components/UserProtected"));
 import User from "./User";
 
-const HomePage = lazy(() => import("./admin/HomePage"));
+import HomePage from "./admin/HomePage";
 
 const Customers = lazy(() => import("./admin/Customers/Customers"));
 const CustomersCreate = lazy(() => import("./admin/Customers/CustomersCreate"));
@@ -36,10 +36,10 @@ const BulkUpload = lazy(() => import("./admin/BulkUpload"));
 const Settings = lazy(() => import("./admin/Settings"));
 
 // const Leads = lazy(() => import("./admin/Leads"));
-const CallerLeads = lazy(() => import("./caller/CallerLeads"));
+import CallerLeads from "./caller/CallerLeads";
 
 function App() {
-  return ( 
+  return (
     <BrowserRouter>
       <Suspense>
         <Routes>

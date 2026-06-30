@@ -2,7 +2,7 @@ import asyncHandler from "../config/asyncHandler.js";
 import pool from "../config/db.js";
 
 const assignCustomLeads = asyncHandler(async (req, res) => {
-  const limitPerCaller = 5;
+  const limitPerCaller = 100;
   const { callerIds } = req.body;
   let callers;
 

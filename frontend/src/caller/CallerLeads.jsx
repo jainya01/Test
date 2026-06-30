@@ -109,11 +109,19 @@ function Leads() {
     }
   }, [pendingCustomers, selectedUser?.phone]);
 
+
+
+
+
+
+
+
   const [leads, setLeads] = useState({
     customer_id: "",
     caller_id: "",
     call_status: "",
     call_duration: "",
+    customer_type:"",
     status: "",
     service: "",
     sub_category: "Standard",
@@ -121,7 +129,7 @@ function Leads() {
     notes: "",
   });
 
-  const { call_status, status, service, sub_category, package_name, notes } =
+  const { call_status, customer_type, status, service, sub_category, package_name, notes } =
     leads;
 
   useEffect(() => {
@@ -170,6 +178,7 @@ function Leads() {
           caller_id: "",
           call_status: "",
           call_duration: "",
+          customer_type: "",
           status: "",
           service: "",
           sub_category: "Standard",
@@ -182,6 +191,11 @@ function Leads() {
       toast.error(error?.response?.data?.message || "leads post failed");
     }
   };
+
+
+
+
+
 
   const onInputChange = (e) => {
     const { name, value } = e.target;
@@ -203,6 +217,16 @@ function Leads() {
     const matchedCaller = caller.find((item) => Number(item.id) === callerId);
     return matchedCaller?.fullname || "Caller";
   };
+
+
+
+
+
+
+
+
+
+
 
   return (
     <>
@@ -432,6 +456,43 @@ function Leads() {
                       <h4 className="update-title">Update Service</h4>
 
                       <div className="row">
+
+
+
+
+
+
+
+
+
+
+                        <div className="col-12 col-sm-6 col-md-6 mb-3">
+                          <label className="form-label custom-label">
+                            Type{" "}
+                            <span className="text-danger fw-bold">*</span>
+                          </label>
+
+                          <select
+                            aria-label="Customer Type"
+                            id="customer_type"
+                            className="form-select custom-input"
+                            name="customer_type"
+                            value={customer_type}
+                            onChange={onInputChange}
+                            required
+                          >
+                            <option value="">Select Type</option>
+                            <option value="B2B">B2B</option>
+                            <option value="B2C">B2C</option>
+                          </select>
+                        </div>
+
+
+
+
+
+
+
                         <div className="col-12 col-sm-6 col-md-6 mb-3">
                           <label className="form-label custom-label">
                             Service Status{" "}
