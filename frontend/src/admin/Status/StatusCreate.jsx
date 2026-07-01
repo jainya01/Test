@@ -82,8 +82,8 @@ function ServicesCreate() {
                   <input
                     type="search"
                     className="form-control sector-wise"
-                    placeholder="Search customers, calls, agents..."
-                    aria-label="Search customers, calls, agents"
+                    placeholder="Search by status name"
+                    aria-label="Search by status name"
                     style={{ height: "37px" }}
                   />
                 </div>

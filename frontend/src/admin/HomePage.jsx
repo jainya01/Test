@@ -207,8 +207,8 @@ function HomePage() {
                   <input
                     type="search"
                     className="form-control sector-wise"
-                    placeholder="Search customers, calls, agents..."
-                    aria-label="Search customers, calls, agents"
+                    placeholder="Search by caller name"
+                    aria-label="Search by caller name"
                     style={{ height: "37px" }}
                   />
                 </div>

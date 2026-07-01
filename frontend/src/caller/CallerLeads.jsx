@@ -16,6 +16,7 @@ import { ToastContainer, toast } from "react-toastify";
 function Leads() {
   const API_URL = import.meta.env.VITE_API_URL;
 
+  const [search, setSearch] = useState("");
   const [statuses, setStatuses] = useState([]);
   const [customers, setCustomers] = useState([]);
   const [caller, setCaller] = useState([]);
@@ -109,19 +110,27 @@ function Leads() {
     }
   }, [pendingCustomers, selectedUser?.phone]);
 
+  const filteredCallers = useMemo(() => {
+    const filtered = customers.filter((item) =>
+      item.name?.toLowerCase().includes(search.toLowerCase()),
+    );
 
+    if (selectedUser && search) {
+      const exists = filtered.find((u) => u.id === selectedUser.id);
+      if (!exists) {
+        setSelectedUser(filtered[0] || null);
+      }
+    }
 
-
-
-
-
+    return filtered;
+  }, [customers, search]);
 
   const [leads, setLeads] = useState({
     customer_id: "",
     caller_id: "",
     call_status: "",
     call_duration: "",
-    customer_type:"",
+    customer_type: "",
     status: "",
     service: "",
     sub_category: "Standard",
@@ -129,8 +138,15 @@ function Leads() {
     notes: "",
   });
 
-  const { call_status, customer_type, status, service, sub_category, package_name, notes } =
-    leads;
+  const {
+    call_status,
+    customer_type,
+    status,
+    service,
+    sub_category,
+    package_name,
+    notes,
+  } = leads;
 
   useEffect(() => {
     if (selectedUser) {
@@ -192,11 +208,6 @@ function Leads() {
     }
   };
 
-
-
-
-
-
   const onInputChange = (e) => {
     const { name, value } = e.target;
     setLeads((prev) => ({
@@ -218,16 +229,6 @@ function Leads() {
     return matchedCaller?.fullname || "Caller";
   };
 
-
-
-
-
-
-
-
-
-
-
   return (
     <>
       <title>Caller Dashboard | Signal CRM</title>
@@ -245,9 +246,18 @@ function Leads() {
                   <input
                     type="search"
                     className="form-control sector-wise"
-                    placeholder="Search customers, calls, agents..."
-                    aria-label="Search customers, calls, agents"
+                    placeholder="Search by customer name"
+                    aria-label="Search by customer name"
                     style={{ height: "37px" }}
+                    value={search}
+                    onChange={(e) => {
+                      const v = e.target.value;
+                      setSearch(v);
+                      !v &&
+                        setSelectedUser(
+                          pendingCustomers[0] || customers[0] || null,
+                        );
+                    }}
                   />
                 </div>
               </div>
@@ -295,10 +305,10 @@ function Leads() {
                   </div>
 
                   <div className="queue-scroll pointer-cursor">
-                    {Array.isArray(customers) &&
-                    customers.filter((item) => item.status === null).length >
-                      0 ? (
-                      customers
+                    {Array.isArray(filteredCallers) &&
+                    filteredCallers.filter((item) => item.status === null)
+                      .length > 0 ? (
+                      filteredCallers
                         .filter((item) => item.status === null)
                         .map((item, index) => (
                           <div
@@ -456,19 +466,9 @@ function Leads() {
                       <h4 className="update-title">Update Service</h4>
 
                       <div className="row">
-
-
-
-
-
-
-
-
-
-
                         <div className="col-12 col-sm-6 col-md-6 mb-3">
                           <label className="form-label custom-label">
-                            Type{" "}
+                            Customer Type{" "}
                             <span className="text-danger fw-bold">*</span>
                           </label>
 
@@ -486,12 +486,6 @@ function Leads() {
                             <option value="B2C">B2C</option>
                           </select>
                         </div>
-
-
-
-
-
-
 
                         <div className="col-12 col-sm-6 col-md-6 mb-3">
                           <label className="form-label custom-label">
@@ -600,7 +594,7 @@ function Leads() {
                           </select>
                         </div>
 
-                        <div className="col-12 mb-3">
+                        <div className="col-6 mb-3">
                           <label className="form-label custom-label">
                             Call notes (optional)
                           </label>
@@ -609,7 +603,7 @@ function Leads() {
                             className="form-control py-2 custom-input"
                             rows="4"
                             placeholder="Add notes from this call..."
-                            style={{ height: "84px" }}
+                            style={{ height: "64px" }}
                             name="notes"
                             value={notes}
                             onChange={onInputChange}

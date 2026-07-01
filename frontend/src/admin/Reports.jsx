@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "../App.css";
 import { authHeader } from "../utils/authHeader";
 import axios from "axios";
@@ -29,6 +29,7 @@ function Reports() {
 
   const [report, setReport] = useState([]);
   const [caller, setCaller] = useState([]);
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     const allData = async () => {
@@ -95,10 +96,17 @@ function Reports() {
     (a, b) => totalCalls(b.id) - totalCalls(a.id),
   );
 
-  const totalPages = Math.ceil(sortedCaller.length / itemsPerPage);
+  const filteredCaller = useMemo(() => {
+    const keyword = search.toLowerCase();
+    return caller.filter((item) => {
+      return item.fullname?.toLowerCase().includes(keyword);
+    });
+  }, [caller, search]);
+
+  const totalPages = Math.ceil(filteredCaller.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
-  const paginatedData = sortedCaller.slice(startIndex, endIndex);
+  const paginatedData = filteredCaller.slice(startIndex, endIndex);
 
   const chartData = [...caller]
     .map((agent) => {
@@ -132,9 +140,11 @@ function Reports() {
                   <input
                     type="search"
                     className="form-control sector-wise"
-                    placeholder="Search customers, calls, agents..."
-                    aria-label="Search customers, calls, agents"
+                    placeholder="Search by caller name"
+                    aria-label="Search by caller name"
                     style={{ height: "37px" }}
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
                   />
                 </div>
               </div>
@@ -350,7 +360,7 @@ function Reports() {
                 <div className="card-body p-0">
                   <div className="mb-3 mt-3 ms-2">
                     <h5 className="fw-bold mb-0 daily-performance">
-                      Agent Performance Breakdown
+                      Callers Performance Breakdown
                     </h5>
                   </div>
 
@@ -360,11 +370,11 @@ function Reports() {
                         <thead className="table-secondary header-table text-nowrap">
                           <tr>
                             <th className="ps-2">S/N</th>
-                            <th>AGENT</th>
+                            <th>CALLER NAME</th>
                             <th>TOTAL CALLS</th>
-                            <th>CONVERSIONS</th>
+                            <th>CONVERTED</th>
                             <th>FOLLOW-UPS</th>
-                            <th>CONV. RATE</th>
+                            <th>CONVERSION RATE</th>
                           </tr>
                         </thead>
                         <tbody className="body-table">

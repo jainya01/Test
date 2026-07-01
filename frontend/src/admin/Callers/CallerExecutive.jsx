@@ -148,7 +148,7 @@ function CallerExecutive() {
                   <input
                     type="search"
                     className="form-control sector-wise"
-                    placeholder="Search caller name, email..."
+                    placeholder="Search by caller name"
                     aria-label="Search caller name, email"
                     style={{ height: "37px" }}
                     value={search}

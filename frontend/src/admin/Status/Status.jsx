@@ -85,7 +85,7 @@ function Services() {
                   <input
                     type="search"
                     className="form-control sector-wise"
-                    placeholder="Search status name..."
+                    placeholder="Search by status name"
                     aria-label="Search status, name..."
                     style={{ height: "37px" }}
                     value={search}

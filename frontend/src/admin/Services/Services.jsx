@@ -95,8 +95,8 @@ function Services() {
                   <input
                     type="search"
                     className="form-control sector-wise"
-                    placeholder="Search Customers name, phone..."
-                    aria-label="Search Customers, name, phone"
+                    placeholder="Search by service name"
+                    aria-label="Search by service name"
                     style={{ height: "37px" }}
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}

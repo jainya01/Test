@@ -212,8 +212,8 @@ function Settings() {
                   <input
                     type="search"
                     className="form-control sector-wise"
-                    placeholder="Search customers, calls, agents..."
-                    aria-label="Search customers, calls, agents"
+                    placeholder="Search by admin email"
+                    aria-label="Search by admin email"
                     style={{ height: "37px" }}
                   />
                 </div>
