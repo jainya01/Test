@@ -133,7 +133,11 @@ function CustomersEdit() {
                     type="search"
                     className="form-control sector-wise"
                     placeholder="Search by customer name, phone"
+<<<<<<< HEAD
                     aria-label="Search by customers, name, phone"
+=======
+                    aria-label="Search by customer name, phone"
+>>>>>>> 4b4da9f8bb5c9dc9cdc3d51c12cb1f44135dc314
                     style={{ height: "37px" }}
                   />
                 </div>
