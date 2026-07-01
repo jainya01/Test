@@ -235,7 +235,7 @@ function Services() {
                                 colSpan="4"
                                 className="text-center py-3 fw-bold text-muted"
                               >
-                                No data available
+                                No services available
                               </td>
                             </tr>
                           )}

@@ -1,5 +1,6 @@
 import cron from "node-cron";
 import pool from "../config/db.js";
+import redisClient from "../config/redisClient.js";
 
 cron.schedule("*/10 * * * *", async () => {
   try {
@@ -13,6 +14,8 @@ cron.schedule("*/10 * * * *", async () => {
           AND cl.created_at >= NOW() - INTERVAL 10 MINUTE
       )
     `);
+
+    await redisClient.del("crm1:allcallers:all");
 
     console.log("Inactive callers updated successfully");
   } catch (error) {

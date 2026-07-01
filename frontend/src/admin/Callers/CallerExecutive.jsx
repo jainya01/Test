@@ -365,7 +365,7 @@ function CallerExecutive() {
                                 colSpan="7"
                                 className="text-center py-3 fw-bold text-muted"
                               >
-                                No data available
+                                No callers available
                               </td>
                             </tr>
                           )}

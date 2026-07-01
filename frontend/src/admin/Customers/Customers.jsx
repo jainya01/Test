@@ -401,7 +401,7 @@ function Customers() {
                                 colSpan="8"
                                 className="text-center py-3 fw-bold text-muted"
                               >
-                                No data available
+                                No customers available
                               </td>
                             </tr>
                           )}

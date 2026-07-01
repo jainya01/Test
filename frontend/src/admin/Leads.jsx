@@ -230,7 +230,7 @@ function Leads() {
                       </div>
                     ))
                   ) : (
-                    <div className="text-center py-4">no data available</div>
+                    <div className="text-center py-4">no leads available</div>
                   )}
                 </div>
               </div>
