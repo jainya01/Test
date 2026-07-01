@@ -111,19 +111,20 @@ function Leads() {
   }, [pendingCustomers, selectedUser?.phone]);
 
   const filteredCallers = useMemo(() => {
-    const filtered = customers.filter((item) =>
+    return customers.filter((item) =>
       item.name?.toLowerCase().includes(search.toLowerCase()),
     );
+  }, [customers, search]);
 
+  useEffect(() => {
     if (selectedUser && search) {
-      const exists = filtered.find((u) => u.id === selectedUser.id);
+      const exists = filteredCallers.find((u) => u.id === selectedUser.id);
+
       if (!exists) {
-        setSelectedUser(filtered[0] || null);
+        setSelectedUser(filteredCallers[0] || null);
       }
     }
-
-    return filtered;
-  }, [customers, search]);
+  }, [filteredCallers, selectedUser, search]);
 
   const [leads, setLeads] = useState({
     customer_id: "",

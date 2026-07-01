@@ -1098,8 +1098,6 @@ router.get(
 
 router.post("/assign-custom-leads", authenticate, assignCustomerLeads);
 
-
-
 router.post(
   "/caller-lead-post",
   authenticate,
@@ -1161,7 +1159,13 @@ router.post(
        current_status = 'Completed'
        WHERE id = ? 
        AND caller_id = ?`,
-      [status || null, notes || null, customer_type || null, customerId, callerId],
+      [
+        status || null,
+        notes || null,
+        customer_type || null,
+        customerId,
+        callerId,
+      ],
     );
 
     await pool.execute(
@@ -1203,6 +1207,7 @@ router.post(
       }
     }
 
+    await redisClient.del("crm1:allcallers:all");
     await redisClient.del("crm1:allcustomers:all");
 
     return res.status(201).json({
@@ -1211,9 +1216,6 @@ router.post(
     });
   }),
 );
-
-
-
 
 router.get(
   "/allcalllogs",
