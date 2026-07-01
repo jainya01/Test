@@ -169,8 +169,8 @@ function Customers() {
                   <input
                     type="search"
                     className="form-control sector-wise"
-                    placeholder="Search by customer name"
-                    aria-label="Search Customers, name, phone"
+                    placeholder="Search by customer name, phone"
+                    aria-label="Search by customers, name, phone"
                     style={{ height: "37px" }}
                     value={search}
                     onChange={(e) => setSearch(e.target.value)}
