@@ -1262,61 +1262,61 @@ router.get(
   }),
 );
 
-// router.post(
-//   "/download-completed-customers",
-//   authenticate,
-//   asyncHandler(async (req, res) => {
-//     const { selectedService, selectedStatus } = req.body;
-//     let query = `
-//       SELECT 
-//         name,
-//         phone,
-//         city,
-//         service,
-//         status,
-//         current_status
-//       FROM customers
-//       WHERE current_status = 'Completed'
-//     `;
+router.post(
+  "/download-completed-customers",
+  authenticate,
+  asyncHandler(async (req, res) => {
+    const { selectedService, selectedStatus } = req.body;
+    let query = `
+      SELECT 
+        name,
+        phone,
+        city,
+        service,
+        status,
+        current_status
+      FROM customers
+      WHERE current_status = 'Completed'
+    `;
 
-//     const values = [];
+    const values = [];
 
-//     if (selectedService) {
-//       query += ` AND service = ?`;
-//       values.push(selectedService);
-//     }
+    if (selectedService) {
+      query += ` AND service = ?`;
+      values.push(selectedService);
+    }
 
-//     if (selectedStatus) {
-//       query += ` AND status = ?`;
-//       values.push(selectedStatus);
-//     }
+    if (selectedStatus) {
+      query += ` AND status = ?`;
+      values.push(selectedStatus);
+    }
 
-//     const [rows] = await pool.execute(query, values);
-//     const workbook = new ExcelJS.Workbook();
-//     const worksheet = workbook.addWorksheet("Customers");
-//     worksheet.columns = [
-//       { header: "Name", key: "name", width: 25 },
-//       { header: "Phone", key: "phone", width: 20 },
-//       { header: "City", key: "city", width: 20 },
-//       { header: "Service", key: "service", width: 25 },
-//       { header: "Status", key: "status", width: 20 },
-//       { header: "Current Status", key: "current_status", width: 25 },
-//     ];
+    const [rows] = await pool.execute(query, values);
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Customers");
+    worksheet.columns = [
+      { header: "Name", key: "name", width: 25 },
+      { header: "Phone", key: "phone", width: 20 },
+      { header: "City", key: "city", width: 20 },
+      { header: "Service", key: "service", width: 25 },
+      { header: "Status", key: "status", width: 20 },
+      { header: "Current Status", key: "current_status", width: 25 },
+    ];
 
-//     worksheet.addRows(rows);
-//     res.setHeader(
-//       "Content-Type",
-//       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-//     );
+    worksheet.addRows(rows);
+    res.setHeader(
+      "Content-Type",
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+    );
 
-//     res.setHeader(
-//       "Content-Disposition",
-//       'attachment; filename="Customers.xlsx"',
-//     );
+    res.setHeader(
+      "Content-Disposition",
+      'attachment; filename="Customers.xlsx"',
+    );
 
-//     await workbook.xlsx.write(res);
-//     res.end();
-//   }),
-// );
+    await workbook.xlsx.write(res);
+    res.end();
+  }),
+);
 
 export default router;
