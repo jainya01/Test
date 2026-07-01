@@ -323,7 +323,6 @@ function CallerExecutive() {
                                           : "custom-active"
                                       }`}
                                     ></div>
-
                                     {data.status || "N/A"}
                                   </div>
                                 </td>

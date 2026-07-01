@@ -117,14 +117,17 @@ function CallerView() {
     .sort((a, b) => new Date(b.created_at) - new Date(a.created_at))[0];
 
   const formattedLastActive = lastActive
-    ? new Date(lastActive.created_at).toLocaleString("en-IN", {
-        day: "2-digit",
-        month: "long",
-        year: "numeric",
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true,
-      })
+    ? new Date(lastActive.created_at)
+        .toLocaleString("en-IN", {
+          day: "2-digit",
+          month: "long",
+          year: "numeric",
+          hour: "numeric",
+          minute: "2-digit",
+          hour12: true,
+        })
+        .replace(" am", "am")
+        .replace(" pm", "pm")
     : "No activity";
 
   return (
@@ -181,7 +184,7 @@ function CallerView() {
           </div>
 
           <div className="row g-2">
-            <div className="col-6 col-sm-6 col-md-4 col-lg">
+            <div className="col-12 col-sm-6 col-lg-3">
               <div className="card custom-card-daily shadow-sm border-0 h-100 rounded-3">
                 <div className="card-body d-flex justify-content-between">
                   <div>
@@ -192,7 +195,7 @@ function CallerView() {
               </div>
             </div>
 
-            <div className="col-6 col-sm-6 col-md-4 col-lg">
+            <div className="col-12 col-sm-6 col-lg-3">
               <div className="card custom-card-week shadow-sm border-0 h-100 rounded-3">
                 <div className="card-body d-flex justify-content-between">
                   <div>
@@ -203,7 +206,7 @@ function CallerView() {
               </div>
             </div>
 
-            <div className="col-6 col-sm-6 col-md-4 col-lg">
+            <div className="col-12 col-sm-6 col-lg-3">
               <div className="card custom-card-monthly shadow-sm border-0 h-100 rounded-3">
                 <div className="card-body d-flex justify-content-between">
                   <div>
@@ -214,7 +217,7 @@ function CallerView() {
               </div>
             </div>
 
-            <div className="col-6 col-sm-6 col-md-6 col-lg">
+            <div className="col-12 col-sm-6 col-lg-3">
               <div className="card custom-card-average shadow-sm border-0 h-100 rounded-3">
                 <div className="card-body d-flex justify-content-between">
                   <div>
@@ -225,7 +228,7 @@ function CallerView() {
               </div>
             </div>
 
-            <div className="col-12 col-sm-6 col-md-6 col-lg col-xl">
+            <div className="col-12 col-sm-6 col-lg-3">
               <div className="card custom-card-lead shadow-sm border-0 h-100 rounded-3">
                 <div className="card-body d-flex justify-content-between">
                   <div>
@@ -235,10 +238,8 @@ function CallerView() {
                 </div>
               </div>
             </div>
-          </div>
 
-          <div className="row g-2 mt-2">
-            <div className="col-6 col-sm-6 col-md-4 col-lg">
+            <div className="col-12 col-sm-6 col-lg-3">
               <div className="card custom-card-pending shadow-sm border-0 h-100 rounded-3">
                 <div className="card-body d-flex justify-content-between">
                   <div>
@@ -249,7 +250,7 @@ function CallerView() {
               </div>
             </div>
 
-            <div className="col-6 col-sm-6 col-md-4 col-lg">
+            <div className="col-12 col-sm-6 col-lg-3">
               <div className="card custom-card-follow shadow-sm border-0 h-100 rounded-3">
                 <div className="card-body d-flex justify-content-between">
                   <div>
@@ -260,7 +261,7 @@ function CallerView() {
               </div>
             </div>
 
-            <div className="col-6 col-sm-6 col-md-4 col-lg">
+            <div className="col-12 col-sm-6 col-lg-3">
               <div className="card custom-card-dura shadow-sm border-0 h-100 rounded-3">
                 <div className="card-body d-flex justify-content-between">
                   <div>
@@ -271,7 +272,7 @@ function CallerView() {
               </div>
             </div>
 
-            <div className="col-6 col-sm-6 col-md-4 col-lg">
+            <div className="col-12 col-sm-6 col-lg-3">
               <div className="card custom-card-last shadow-sm border-0 h-100 rounded-3">
                 <div className="card-body d-flex justify-content-between">
                   <div>
