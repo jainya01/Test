@@ -116,7 +116,7 @@ function CustomersCreate() {
                     type="search"
                     className="form-control sector-wise"
                     placeholder="Search by customer name, phone"
-                    aria-label="Search by customer name"
+                    aria-label="Search by customer name, phone"
                     style={{ height: "37px" }}
                   />
                 </div>
