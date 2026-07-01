@@ -169,7 +169,7 @@ function Customers() {
                   <input
                     type="search"
                     className="form-control sector-wise"
-                    placeholder="Search by customer name"
+                    placeholder="Search by customer name, phone"
                     aria-label="Search Customers, name, phone"
                     style={{ height: "37px" }}
                     value={search}
