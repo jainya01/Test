@@ -16,57 +16,27 @@ function CustomersEdit() {
   const [customer, setCustomer] = useState({
     name: "",
     phone: "",
-    city: "",
+    alternate_phone: "",
+    customer_type: "",
+    customer_status: "",
     service: "",
+    address: "",
     notes: "",
   });
 
-  const { name, phone, city, service, notes } = customer;
+  const {
+    name,
+    phone,
+    alternate_phone,
+    customer_type,
+    customer_status,
+    service,
+    address,
+    notes,
+  } = customer;
 
   const [errors, setErrors] = useState({});
   const [services, setServices] = useState([]);
-
-  useEffect(() => {
-    const allData = async () => {
-      try {
-        const [serviceRes, someRes] = await Promise.allSettled([
-          axios.get(`${API_URL}/allservicesdata`, {
-            headers: authHeader(),
-          }),
-
-          axios.get(`${API_URL}/somecustomers/${id}`, {
-            headers: authHeader(),
-          }),
-        ]);
-
-        if (serviceRes.status === "fulfilled") {
-          setServices(serviceRes.value.data.result || []);
-        }
-
-        if (someRes.status === "fulfilled") {
-          const data = someRes.value.data.result[0];
-          setCustomer({
-            name: data.name || "",
-            phone: data.phone || "",
-            city: data.city || "",
-            service: data.service || "",
-            notes: data.notes || "",
-          });
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    allData();
-  }, [API_URL, id]);
-
-  const onInputChange = (e) => {
-    setCustomer({
-      ...customer,
-      [e.target.name]: e.target.value,
-    });
-  };
 
   const validateForm = () => {
     let newErrors = {};
@@ -79,8 +49,12 @@ function CustomersEdit() {
       newErrors.phone = "Phone is required";
     }
 
-    if (!city.trim()) {
-      newErrors.city = "City is required";
+    if (!customer_type.trim()) {
+      newErrors.customer_type = "Customer Type is required";
+    }
+
+    if (!customer_status.trim()) {
+      newErrors.customer_status = "Customer Status is required";
     }
 
     if (!service.trim()) {
@@ -88,7 +62,6 @@ function CustomersEdit() {
     }
 
     setErrors(newErrors);
-
     return Object.keys(newErrors).length === 0;
   };
 
@@ -114,6 +87,51 @@ function CustomersEdit() {
       toast.error("Failed to update customer");
     }
   };
+
+  const onInputChange = (e) => {
+    setCustomer({
+      ...customer,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  useEffect(() => {
+    const allData = async () => {
+      try {
+        const [serviceRes, someRes] = await Promise.allSettled([
+          axios.get(`${API_URL}/allservicesdata`, {
+            headers: authHeader(),
+          }),
+
+          axios.get(`${API_URL}/somecustomers/${id}`, {
+            headers: authHeader(),
+          }),
+        ]);
+
+        if (serviceRes.status === "fulfilled") {
+          setServices(serviceRes.value.data.result || []);
+        }
+
+        if (someRes.status === "fulfilled") {
+          const data = someRes.value.data.result[0];
+          setCustomer({
+            name: data.name || "",
+            phone: data.phone || "",
+            alternate_phone: data.alternate_phone || "",
+            customer_type: data.customer_type || "",
+            customer_status: data.customer_status || "",
+            service: data.service || "",
+            address: data.address || "",
+            notes: data.notes || "",
+          });
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    allData();
+  }, [API_URL, id]);
 
   return (
     <>
@@ -202,7 +220,7 @@ function CustomersEdit() {
                           </label>
 
                           <input
-                            type="text"
+                            type="tel"
                             id="phone"
                             className="form-control sector-wise mb-1"
                             placeholder="Enter Phone No"
@@ -220,27 +238,54 @@ function CustomersEdit() {
                         </div>
 
                         <div className="col-md-6 mb-3">
-                          <label className="form-label" htmlFor="city">
-                            City{" "}
+                          <label className="form-label" htmlFor="phone">
+                            Alternate Phone{" "}
+                          </label>
+                          <input
+                            type="tel"
+                            id="alternate_phone"
+                            className="form-control sector-wise mb-1"
+                            placeholder="Alternate Phone Number"
+                            name="alternate_phone"
+                            value={alternate_phone}
+                            onChange={onInputChange}
+                          />
+                        </div>
+
+                        <div className="col-md-6 mb-3">
+                          <label className="form-label" htmlFor="phone">
+                            Customer Type{" "}
                             <span className="text-danger fw-bold ms-1">*</span>
                           </label>
-
-                          <input
-                            type="text"
-                            id="city"
-                            className="form-control sector-wise mb-1"
-                            placeholder="Enter City"
-                            name="city"
-                            value={city}
+                          <select
+                            className="form-select sector-wise"
+                            name="customer_type"
+                            value={customer_type}
                             onChange={onInputChange}
                             required
-                          />
+                          >
+                            <option value="">Select type</option>
+                            <option value="B2B">B2B</option>
+                            <option value="B2C">B2C</option>
+                          </select>
+                        </div>
 
-                          {errors.city && (
-                            <small className="text-danger mt-1">
-                              {errors.city}
-                            </small>
-                          )}
+                        <div className="col-md-6 mb-3">
+                          <label className="form-label" htmlFor="phone">
+                            Customer Status{" "}
+                            <span className="text-danger fw-bold ms-1">*</span>
+                          </label>
+                          <select
+                            className="form-select sector-wise"
+                            name="customer_status"
+                            value={customer_status}
+                            onChange={onInputChange}
+                            required
+                          >
+                            <option value="">Select customer status</option>
+                            <option value="New">New</option>
+                            <option value="Existing">Existing</option>
+                          </select>
                         </div>
 
                         <div className="col-md-6 mb-3">
@@ -281,7 +326,22 @@ function CustomersEdit() {
                           )}
                         </div>
 
-                        <div className="col-12 mb-3">
+                        <div className="col-md-6 mb-3">
+                          <label className="form-label" htmlFor="notes">
+                            Address
+                          </label>
+                          <textarea
+                            id="notes"
+                            className="form-control py-2 sector-wise"
+                            placeholder="Enter address"
+                            name="address"
+                            value={address}
+                            onChange={onInputChange}
+                            style={{ height: "50px" }}
+                          />
+                        </div>
+
+                        <div className="col-md-6 mb-3">
                           <label className="form-label" htmlFor="notes">
                             Notes (optional)
                           </label>

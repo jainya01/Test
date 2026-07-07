@@ -21,6 +21,9 @@ function Leads() {
   const [customers, setCustomers] = useState([]);
   const [caller, setCaller] = useState([]);
   const [services, setServices] = useState([]);
+  const [india, setIndia] = useState([]);
+  const [selectedDistrict, setSelectedDistrict] = useState("");
+  const [stateName, setStateName] = useState("");
   const [showPassword] = useState(false);
 
   const maskPhoneNumber = (phone) => {
@@ -37,7 +40,7 @@ function Leads() {
           role: localStorage.getItem("role"),
         };
 
-        const [statusRes, serviceRes, customerRes, callerRes] =
+        const [statusRes, serviceRes, customerRes, callerRes, indiaRes] =
           await Promise.allSettled([
             axios.get(`${API_URL}/allstatusdata`, {
               headers: authHeader(),
@@ -52,6 +55,10 @@ function Leads() {
             }),
 
             axios.get(`${API_URL}/allcallers`, {
+              headers: authHeader(),
+            }),
+
+            axios.get(`${API_URL}/allindiadata`, {
               headers: authHeader(),
             }),
           ]);
@@ -75,6 +82,10 @@ function Leads() {
 
         if (callerRes.status === "fulfilled") {
           setCaller(callerRes.value.data.data || "");
+        }
+
+        if (indiaRes.status === "fulfilled") {
+          setIndia(indiaRes.value.data.result || "");
         }
       } catch (error) {
         console.error(error);
@@ -135,19 +146,11 @@ function Leads() {
     status: "",
     service: "",
     sub_category: "Standard",
-    package_name: "Premium",
     notes: "",
   });
 
-  const {
-    call_status,
-    customer_type,
-    status,
-    service,
-    sub_category,
-    package_name,
-    notes,
-  } = leads;
+  const { call_status, customer_type, status, service, sub_category, notes } =
+    leads;
 
   useEffect(() => {
     if (selectedUser) {
@@ -199,7 +202,6 @@ function Leads() {
           status: "",
           service: "",
           sub_category: "Standard",
-          package_name: "Premium",
           notes: "",
         });
       }, 0);
@@ -464,9 +466,23 @@ function Leads() {
 
                   <div className="card border-0 shadow-sm rounded-4">
                     <div className="card-body">
-                      <h4 className="update-title">Update Service</h4>
+                      <h4 className="update-title">
+                        Calling Executive — Form Details
+                      </h4>
 
                       <div className="row">
+                        <div className="col-12 col-sm-12 col-md-12 mb-3">
+                          <label className="form-label custom-label">
+                            Name
+                            <span className="text-danger fw-bold ms-2">*</span>
+                          </label>
+                          <input
+                            type="text"
+                            className="form-control custom-input"
+                            placeholder="Customer name"
+                          />
+                        </div>
+
                         <div className="col-12 col-sm-6 col-md-6 mb-3">
                           <label className="form-label custom-label">
                             Customer Type{" "}
@@ -490,12 +506,33 @@ function Leads() {
 
                         <div className="col-12 col-sm-6 col-md-6 mb-3">
                           <label className="form-label custom-label">
-                            Service Status{" "}
+                            Customer Status{" "}
                             <span className="text-danger fw-bold">*</span>
                           </label>
 
                           <select
-                            aria-label="Service Status"
+                            aria-label="Customer Status"
+                            id="customer_type"
+                            className="form-select custom-input"
+                            name="customer_type"
+                            value={customer_type}
+                            onChange={onInputChange}
+                            required
+                          >
+                            <option value="">Select Type</option>
+                            <option value="New">New</option>
+                            <option value="Existing">Existing</option>
+                          </select>
+                        </div>
+
+                        <div className="col-12 col-sm-6 col-md-6 mb-3">
+                          <label className="form-label custom-label">
+                            Calling Status{" "}
+                            <span className="text-danger fw-bold">*</span>
+                          </label>
+
+                          <select
+                            aria-label="Calling Status"
                             id="status"
                             className="form-select custom-input"
                             name="status"
@@ -568,31 +605,60 @@ function Leads() {
                             onChange={onInputChange}
                             required
                           >
+                            <option value="">All</option>
                             <option value="Standard">Standard</option>
                             <option value="VIP">VIP</option>
                           </select>
                         </div>
 
-                        <div className="col-12 col-sm-6 col-md-6 mb-3">
+                        <div className="col-12 col-sm-6 mb-3">
                           <label className="form-label custom-label">
-                            Package{" "}
+                            District{" "}
                             <span className="text-danger fw-bold">*</span>
                           </label>
-                          <select
-                            aria-label="Package Name"
-                            id="package_name"
-                            className="form-select custom-input"
-                            name="package_name"
-                            value={package_name}
-                            onChange={onInputChange}
+
+                          <input
+                            type="text"
+                            list="districtList"
+                            className="form-control custom-input"
+                            placeholder="Search district"
+                            value={selectedDistrict}
+                            onChange={(e) => {
+                              const value = e.target.value;
+                              const district = india.find(
+                                (item) =>
+                                  item.district_name.toLowerCase() ===
+                                  value.toLowerCase(),
+                              );
+
+                              setSelectedDistrict(value);
+                              setStateName(district?.state_name || "");
+                            }}
                             required
-                          >
-                            <option value="Premium">Premium</option>
-                            <option value="Doctor-Engineer">
-                              Doctor-Engineer
-                            </option>
-                            <option value="Economy">Economy</option>
-                          </select>
+                          />
+
+                          <datalist id="districtList">
+                            {india.map((item) => (
+                              <option
+                                key={item.district_id}
+                                value={item.district_name}
+                              />
+                            ))}
+                          </datalist>
+                        </div>
+
+                        <div className="col-12 col-sm-6 mb-3">
+                          <label className="form-label custom-label">
+                            State <span className="text-danger fw-bold">*</span>
+                          </label>
+
+                          <input
+                            type="text"
+                            className="form-control custom-input"
+                            value={stateName}
+                            readOnly
+                            placeholder="Auto selected state"
+                          />
                         </div>
 
                         <div className="col-6 mb-3">

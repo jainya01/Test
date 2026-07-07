@@ -289,7 +289,6 @@ router.get(
         customers.id,
         customers.name,
         customers.phone,
-        customers.city,
         customers.service,
         customers.status,
         customers.customer_type,
@@ -335,7 +334,7 @@ router.get(
       return res.status(200).json(JSON.parse(cache));
     }
 
-    const SQL = "SELECT name, phone, city, service, status FROM  customers";
+    const SQL = "SELECT name, phone, service, status FROM  customers";
     const [result] = await pool.execute(SQL);
 
     if (result.length <= 0) {
@@ -975,14 +974,29 @@ router.post(
   "/customerspost",
   authenticate,
   asyncHandler(async (req, res) => {
-    const { name, phone, city, service, notes } = req.body;
+    const {
+      name,
+      phone,
+      alternate_phone,
+      customer_type,
+      customer_status,
+      status,
+      service,
+      address,
+      notes,
+    } = req.body;
+
     const SQL =
-      "INSERT INTO customers(name, phone, city, service, notes) VALUES (?, ?, ?, ?, ?)";
+      "INSERT INTO customers(name, phone, alternate_phone, customer_type, customer_status, status, service, address, notes) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
     const [result] = await pool.execute(SQL, [
       name,
       phone,
-      city,
+      alternate_phone,
+      customer_type,
+      customer_status,
+      status,
       service,
+      address,
       notes,
     ]);
 
@@ -1032,16 +1046,28 @@ router.put(
   authenticate,
   asyncHandler(async (req, res) => {
     const { id } = req.params;
-    const { name, phone, city, service, notes } = req.body;
+    const {
+      name,
+      phone,
+      alternate_phone,
+      customer_type,
+      customer_status,
+      service,
+      address,
+      notes,
+    } = req.body;
 
     const SQL =
-      "UPDATE customers SET name = ?, phone = ?, city = ?, service = ?, notes = ? WHERE id = ?";
+      "UPDATE customers SET name = ?, phone = ?, alternate_phone = ?, customer_type = ?, customer_status = ?, service = ?, address = ?, notes = ? WHERE id = ?";
 
     const [result] = await pool.execute(SQL, [
       name,
       phone,
-      city,
+      alternate_phone,
+      customer_type,
+      customer_status,
       service,
+      address,
       notes,
       id,
     ]);
@@ -1076,7 +1102,7 @@ router.get(
     }
 
     const SQL =
-      "SELECT id, name, phone, city, service, status, notes FROM customers WHERE id = ?";
+      "SELECT id, name, phone, alternate_phone, customer_type, customer_status, service, address, notes FROM customers WHERE id = ?";
     const [result] = await pool.execute(SQL, [id]);
 
     if (result.length <= 0) {
@@ -1111,7 +1137,6 @@ router.post(
       status,
       service,
       sub_category,
-      package_name,
       notes,
     } = req.body;
 
@@ -1135,9 +1160,8 @@ router.post(
         status,
         service,
         sub_category,
-        package_name,
         notes
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         customerId,
         callerId,
@@ -1146,7 +1170,6 @@ router.post(
         status || null,
         service || null,
         sub_category || null,
-        package_name || null,
         notes || null,
       ],
     );
@@ -1271,7 +1294,6 @@ router.post(
       SELECT 
         name,
         phone,
-        city,
         service,
         status,
         current_status
@@ -1297,7 +1319,6 @@ router.post(
     worksheet.columns = [
       { header: "Name", key: "name", width: 25 },
       { header: "Phone", key: "phone", width: 20 },
-      { header: "City", key: "city", width: 20 },
       { header: "Service", key: "service", width: 25 },
       { header: "Status", key: "status", width: 20 },
       { header: "Current Status", key: "current_status", width: 25 },
@@ -1316,6 +1337,40 @@ router.post(
 
     await workbook.xlsx.write(res);
     res.end();
+  }),
+);
+
+// states and district
+
+router.get(
+  "/allindiadata",
+  authenticate,
+  asyncHandler(async (req, res) => {
+    const cacheKey = `crm1:allindiadata:all`;
+    const cache = await redisClient.get(cacheKey);
+    if (cache) {
+      return res.status(200).json(JSON.parse(cache));
+    }
+
+    const SQL =
+      "SELECT s.id as state_id, s.name, d.id as district_id, d.name FROM states as s INNER JOIN districts AS d ON d.state_id = s.id";
+    const [result] = await pool.execute(SQL);
+
+    const response = {
+      success: true,
+      message: "data fetched successfully",
+      count: result.length,
+      result,
+    };
+
+    if (result.length === 0) {
+      const error = new Error("data loaded failed");
+      error.statusCode = 404;
+      throw error;
+    }
+
+    await redisClient.set(cacheKey, JSON.stringify(response));
+    return res.status(200).json(response);
   }),
 );
 

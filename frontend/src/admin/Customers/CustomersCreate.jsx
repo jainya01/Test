@@ -14,35 +14,30 @@ function CustomersCreate() {
   const [customer, setCustomer] = useState({
     name: "",
     phone: "",
-    city: "",
+    alternate_phone: "",
+    customer_type: "",
+    customer_status: "",
+    status: "",
     service: "",
+    address: "",
     notes: "",
   });
 
-  const { name, phone, city, service, notes } = customer;
+  const {
+    name,
+    phone,
+    alternate_phone,
+    customer_type,
+    customer_status,
+    status,
+    service,
+    address,
+    notes,
+  } = customer;
 
   const [errors, setErrors] = useState({});
   const [services, setServices] = useState([]);
-
-  useEffect(() => {
-    const allData = async () => {
-      try {
-        const [serviceRes] = await Promise.allSettled([
-          axios.get(`${API_URL}/allservicesdata`, {
-            headers: authHeader(),
-          }),
-        ]);
-
-        if (serviceRes.status === "fulfilled") {
-          setServices(serviceRes.value.data.result || []);
-        }
-      } catch (error) {
-        console.error(error);
-      }
-    };
-
-    allData();
-  }, [API_URL]);
+  const [status1, setStatus1] = useState([]);
 
   const validateForm = () => {
     let newErrors = {};
@@ -55,8 +50,16 @@ function CustomersCreate() {
       newErrors.phone = "Phone is required";
     }
 
-    if (!city.trim()) {
-      newErrors.city = "City is required";
+    if (!customer_type.trim()) {
+      newErrors.customer_type = "Customer Type is required";
+    }
+
+    if (!customer_status.trim()) {
+      newErrors.customer_status = "Customer Status is required";
+    }
+
+    if (!status.trim()) {
+      newErrors.status = "Status is required";
     }
 
     if (!service.trim()) {
@@ -64,22 +67,12 @@ function CustomersCreate() {
     }
 
     setErrors(newErrors);
-
     return Object.keys(newErrors).length === 0;
-  };
-
-  const onInputChange = (e) => {
-    setCustomer({
-      ...customer,
-      [e.target.name]: e.target.value,
-    });
   };
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();
-
     const isValid = validateForm();
-
     if (!isValid) return;
 
     try {
@@ -97,6 +90,41 @@ function CustomersCreate() {
       toast.error("Failed to add customer");
     }
   };
+
+  const onInputChange = (e) => {
+    setCustomer({
+      ...customer,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+  useEffect(() => {
+    const allData = async () => {
+      try {
+        const [serviceRes, statusRes] = await Promise.allSettled([
+          axios.get(`${API_URL}/allservicesdata`, {
+            headers: authHeader(),
+          }),
+
+          axios.get(`${API_URL}/allstatusdata`, {
+            headers: authHeader(),
+          }),
+        ]);
+
+        if (serviceRes.status === "fulfilled") {
+          setServices(serviceRes.value.data.result || []);
+        }
+
+        if (statusRes.status === "fulfilled") {
+          setStatus1(statusRes.value.data.result || []);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    allData();
+  }, [API_URL]);
 
   return (
     <>
@@ -182,7 +210,7 @@ function CustomersCreate() {
                       </label>
 
                       <input
-                        type="text"
+                        type="tel"
                         id="phone"
                         className="form-control sector-wise mb-1"
                         placeholder="Enter Phone No"
@@ -200,28 +228,103 @@ function CustomersCreate() {
                     </div>
 
                     <div className="col-md-6 mb-3">
-                      <label className="form-label" htmlFor="city">
-                        City <span className="text-danger fw-bold ms-1">*</span>
+                      <label className="form-label" htmlFor="phone">
+                        Alternate Phone{" "}
                       </label>
                       <input
-                        type="text"
-                        id="city"
+                        type="tel"
+                        id="alternate_phone"
                         className="form-control sector-wise mb-1"
-                        placeholder="Enter City"
-                        name="city"
-                        value={city}
+                        placeholder="Alternate Phone Number"
+                        name="alternate_phone"
+                        value={alternate_phone}
+                        onChange={onInputChange}
+                      />
+                    </div>
+
+                    <div className="col-md-6 mb-3">
+                      <label className="form-label" htmlFor="phone">
+                        Customer Type{" "}
+                        <span className="text-danger fw-bold ms-1">*</span>
+                      </label>
+                      <select
+                        className="form-select sector-wise"
+                        name="customer_type"
+                        value={customer_type}
                         onChange={onInputChange}
                         required
-                      />
+                      >
+                        <option value="">Select type</option>
+                        <option value="B2B">B2B</option>
+                        <option value="B2C">B2C</option>
+                      </select>
 
-                      {errors.city && (
+                      {errors.customer_type && (
                         <small className="text-danger mt-1">
-                          {errors.city}
+                          {errors.customer_type}
                         </small>
                       )}
                     </div>
 
                     <div className="col-md-6 mb-3">
+                      <label className="form-label" htmlFor="phone">
+                        Customer Status{" "}
+                        <span className="text-danger fw-bold ms-1">*</span>
+                      </label>
+                      <select
+                        className="form-select sector-wise"
+                        name="customer_status"
+                        value={customer_status}
+                        onChange={onInputChange}
+                        required
+                      >
+                        <option value="">Select customer status</option>
+                        <option value="New">New</option>
+                        <option value="Existing">Existing</option>
+                      </select>
+
+                      {errors.customer_status && (
+                        <small className="text-danger mt-1">
+                          {errors.customer_status}
+                        </small>
+                      )}
+                    </div>
+
+                    <div className="col-md-6 mb-3">
+                      <label className="form-label" htmlFor="service">
+                        Status{" "}
+                        <span className="text-danger fw-bold ms-1">*</span>
+                      </label>
+                      <select
+                        id="service"
+                        className="form-select sector-wise mb-1"
+                        name="status"
+                        value={status}
+                        onChange={onInputChange}
+                        required
+                      >
+                        <option value="">Select status</option>
+                        {Array.isArray(status1) ? (
+                          status1
+                            .filter((item) => item.status === "Active")
+                            .map((item) => (
+                              <option key={item.id} value={item.status_name}>
+                                {item.status_name}
+                              </option>
+                            ))
+                        ) : (
+                          <option disabled>No status found</option>
+                        )}
+                      </select>
+
+                      {errors.service && (
+                        <small className="text-danger mt-1">
+                          {errors.service}
+                        </small>
+                      )}
+                    </div>
+
+                    <div className="col-md-6 mb-2">
                       <label className="form-label" htmlFor="service">
                         Service{" "}
                         <span className="text-danger fw-bold ms-1">*</span>
@@ -235,7 +338,7 @@ function CustomersCreate() {
                         onChange={onInputChange}
                         required
                       >
-                        <option value="">Select Service</option>
+                        <option value="">Select service</option>
                         {Array.isArray(services) ? (
                           services
                             .filter((item) => item.status === "Active")
@@ -254,6 +357,21 @@ function CustomersCreate() {
                           {errors.service}
                         </small>
                       )}
+                    </div>
+
+                    <div className="col-md-6 mb-2">
+                      <label className="form-label" htmlFor="notes">
+                        Address
+                      </label>
+                      <textarea
+                        id="notes"
+                        className="form-control py-2 sector-wise"
+                        placeholder="Enter address"
+                        name="address"
+                        value={address}
+                        onChange={onInputChange}
+                        style={{ height: "50px" }}
+                      />
                     </div>
 
                     <div className="col-12 mb-3">

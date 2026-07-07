@@ -449,7 +449,7 @@ function Settings() {
                     <div className="text-truncate me-3">
                       <span className="fw-medium accounts-email">
                         <span className="custom-name-change me-2">
-                          {index === 0 ? "Admin" : "Sub-admin"}
+                          {`Admin:${index + 1}`}
                         </span>
                         {data.email}
                       </span>
