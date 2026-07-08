@@ -173,7 +173,7 @@ function Customers() {
                     aria-label="Search by customer name, phone"
                     style={{ height: "37px" }}
                     value={search}
-                    onChange={(e) => setSearch(e.target.value.trim)}
+                    onChange={(e) => setSearch(e.target.value.trim())}
                   />
                 </div>
               </div>
