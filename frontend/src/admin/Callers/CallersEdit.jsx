@@ -270,7 +270,7 @@ function CallersEdit() {
                     <div className="stepper d-flex justify-content-evenly py-1 rounded mb-3">
                       <button
                         type="button"
-                        className={`step-btn ${activeTab === "basic" ? "active" : ""}`}
+                        className={`btn step-btn ${activeTab === "basic" ? "active" : ""}`}
                         onClick={() => setActiveTab("basic")}
                       >
                         Basic Info
@@ -278,7 +278,7 @@ function CallersEdit() {
 
                       <button
                         type="button"
-                        className={`step-btn ${activeTab === "identity" ? "active" : ""}`}
+                        className={`btn step-btn ${activeTab === "identity" ? "active" : ""}`}
                         onClick={() => setActiveTab("identity")}
                       >
                         Identity
@@ -286,7 +286,7 @@ function CallersEdit() {
 
                       <button
                         type="button"
-                        className={`step-btn ${activeTab === "documents" ? "active" : ""}`}
+                        className={`btn step-btn ${activeTab === "documents" ? "active" : ""}`}
                         onClick={() => setActiveTab("documents")}
                       >
                         Documents
@@ -724,8 +724,7 @@ function CallersEdit() {
                           </small>
                         </div>
 
-
-<div className="col-md-6 mb-4">
+                        <div className="col-md-6 mb-4">
                           <label className="form-label">
                             Bank Passbook <span className="text-danger">*</span>
                           </label>
@@ -754,9 +753,6 @@ function CallersEdit() {
                             formats: PDF, JPG, JPEG, PNG.
                           </small>
                         </div>
-
-
-
 
                         <h6 className="fw-bold mb-3">Identity Proofs</h6>
 

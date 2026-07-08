@@ -152,7 +152,7 @@ function CallerExecutive() {
                     aria-label="Search caller name, email"
                     style={{ height: "37px" }}
                     value={search}
-                    onChange={(e) => setSearch(e.target.value)}
+                    onChange={(e) => setSearch(e.target.value.trim())}
                   />
                 </div>
               </div>

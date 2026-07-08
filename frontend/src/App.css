@@ -690,6 +690,10 @@ aside.admin-sidebar.collapsed {
   word-spacing: 2px;
 }
 
+label {
+  font-size: 15px;
+}
+
 .user-added-btn,
 .user-added-btn:active,
 .user-added-btn:focus,
@@ -1286,9 +1290,15 @@ aside.admin-sidebar.collapsed {
   font-size: 14.5px;
 }
 
-label {
-  font-size: 15px;
-}
+
+
+
+
+
+
+
+
+
 
 .stepper {
   display: flex;
@@ -1309,10 +1319,23 @@ label {
 }
 
 .step-btn.active {
-  background: #fff;
-  border-radius: 10px;
+  background: #111827 !important;
+  color: #fff !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 .dotted-border {
   border: 1.8px dotted black;

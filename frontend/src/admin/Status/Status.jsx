@@ -89,7 +89,7 @@ function Services() {
                     aria-label="Search status, name..."
                     style={{ height: "37px" }}
                     value={search}
-                    onChange={(e) => setSearch(e.target.value)}
+                    onChange={(e) => setSearch(e.target.value.trim())}
                   />
                 </div>
               </div>

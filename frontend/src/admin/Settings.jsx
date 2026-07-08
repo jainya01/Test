@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "../App.css";
 import { authHeader } from "../utils/authHeader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -14,6 +14,7 @@ import { ToastContainer, toast } from "react-toastify";
 function Settings() {
   const API_URL = import.meta.env.VITE_API_URL;
 
+  const [search, setSearch] = useState("");
   const [errors, setErrors] = useState({});
 
   const [formData, setFormData] = useState({
@@ -85,6 +86,7 @@ function Settings() {
 
   const [adminEmail, setAdminEmail] = useState([]);
   const [showPassword, setShowPassword] = useState(false);
+  const [showPassword1, setShowPassword1] = useState(false);
 
   useEffect(() => {
     const allData = async () => {
@@ -105,6 +107,12 @@ function Settings() {
 
     allData();
   }, [API_URL]);
+
+  const filteredAdmin = useMemo(() => {
+    return adminEmail.filter((item) =>
+      item.email?.toLowerCase().includes(search.toLowerCase()),
+    );
+  }, [adminEmail, search]);
 
   const deleteData = async (id) => {
     const confirmDelete = window.confirm(
@@ -215,6 +223,8 @@ function Settings() {
                     placeholder="Search by admin email"
                     aria-label="Search by admin email"
                     style={{ height: "37px" }}
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value.trim())}
                   />
                 </div>
               </div>
@@ -305,10 +315,9 @@ function Settings() {
                     >
                       Password <span className="text-danger fw-bold">*</span>
                     </label>
-
                     <input
+                      type={showPassword1 ? "text" : "password"}
                       id="password"
-                      type="password"
                       className="form-control custom-text"
                       placeholder="Create Password"
                       name="password"
@@ -318,11 +327,20 @@ function Settings() {
                       required
                     />
 
-                    {errors.password && (
-                      <span className="text-danger error-font">
-                        {errors.password}
-                      </span>
-                    )}
+                    <FontAwesomeIcon
+                      icon={showPassword1 ? faEyeSlash : faEye}
+                      className="eye-hover"
+                      onClick={() => setShowPassword1(!showPassword1)}
+                      style={{
+                        position: "absolute",
+                        right: "15px",
+                        top: "78.5%",
+                        transform: "translateY(-50%)",
+                        cursor: "pointer",
+                        color: "#6c757d",
+                        fontSize: "14px",
+                      }}
+                    />
                   </div>
 
                   <div className="d-flex gap-2 justify-content-end">
@@ -409,7 +427,7 @@ function Settings() {
                         transform: "translateY(-50%)",
                         cursor: "pointer",
                         color: "#6c757d",
-                        fontSize: "15.5px",
+                        fontSize: "14px",
                       }}
                     />
                   </div>
@@ -442,8 +460,8 @@ function Settings() {
               <h6 className="mb-0 fw-semibold">Admin Accounts</h6>
             </div>
 
-            {Array.isArray(adminEmail) && adminEmail.length > 0 ? (
-              adminEmail.map((data, index) => (
+            {Array.isArray(filteredAdmin) && filteredAdmin.length > 0 ? (
+              filteredAdmin.map((data, index) => (
                 <div key={index} className="card mb-2 border shadow-sm">
                   <div className="card-body py-3 px-3 d-flex justify-content-between align-items-center">
                     <div className="text-truncate me-3">

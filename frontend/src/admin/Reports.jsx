@@ -144,7 +144,7 @@ function Reports() {
                     aria-label="Search by caller name"
                     style={{ height: "37px" }}
                     value={search}
-                    onChange={(e) => setSearch(e.target.value)}
+                    onChange={(e) => setSearch(e.target.value.trim())}
                   />
                 </div>
               </div>
