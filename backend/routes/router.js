@@ -1131,12 +1131,16 @@ router.post(
     const {
       customer_id,
       caller_id,
+      name,
       call_status,
       call_duration,
       customer_type,
+      customer_status,
       status,
       service,
       sub_category,
+      district,
+      state,
       notes,
     } = req.body;
 
@@ -1176,16 +1180,25 @@ router.post(
 
     await pool.execute(
       `UPDATE customers
-       SET status = ?, 
-       notes = ?, 
-       customer_type = ?,
-       current_status = 'Completed'
-       WHERE id = ? 
-       AND caller_id = ?`,
+      SET
+          name = COALESCE(NULLIF(?, ''), name),
+          customer_status = COALESCE(NULLIF(?, ''), customer_status),
+          district = COALESCE(NULLIF(?, ''), district),
+          state = COALESCE(NULLIF(?, ''), state),
+          status = ?,
+          notes = ?,
+          customer_type = ?,
+          current_status = 'Completed'
+      WHERE id = ?
+      AND caller_id = ?`,
       [
-        status || null,
-        notes || null,
-        customer_type || null,
+        name ?? null,
+        customer_status ?? null,
+        district ?? null,
+        state ?? null,
+        status ?? null,
+        notes ?? null,
+        customer_type ?? null,
         customerId,
         callerId,
       ],
@@ -1352,8 +1365,7 @@ router.get(
       return res.status(200).json(JSON.parse(cache));
     }
 
-    const SQL =
-      "SELECT s.id as state_id, s.name, d.id as district_id, d.name FROM states as s INNER JOIN districts AS d ON d.state_id = s.id";
+    const SQL = `SELECT s.id AS state_id, s.name AS state_name, d.id AS district_id, d.name AS district_name FROM states AS s INNER JOIN districts AS d ON d.state_id = s.id ORDER BY s.name, d.name`;
     const [result] = await pool.execute(SQL);
 
     const response = {

@@ -1277,3 +1277,11 @@ aside.admin-sidebar.collapsed {
 .date-days {
   font-size: 14px;
 }
+
+.filtered-districts {
+  width: 100%;
+  max-height: 206px;
+  overflow-y: auto;
+  z-index: 1000;
+  font-size: 14.5px;
+}

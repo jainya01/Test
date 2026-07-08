@@ -24,6 +24,8 @@ function Leads() {
   const [india, setIndia] = useState([]);
   const [selectedDistrict, setSelectedDistrict] = useState("");
   const [stateName, setStateName] = useState("");
+  const [filteredDistricts, setFilteredDistricts] = useState([]);
+  const [showDropdown, setShowDropdown] = useState(false);
   const [showPassword] = useState(false);
 
   const maskPhoneNumber = (phone) => {
@@ -140,17 +142,31 @@ function Leads() {
   const [leads, setLeads] = useState({
     customer_id: "",
     caller_id: "",
+    name: "",
     call_status: "",
     call_duration: "",
     customer_type: "",
+    customer_status: "",
     status: "",
     service: "",
     sub_category: "Standard",
+    district: "",
+    state: "",
     notes: "",
   });
 
-  const { call_status, customer_type, status, service, sub_category, notes } =
-    leads;
+  const {
+    call_status,
+    name,
+    customer_type,
+    customer_status,
+    status,
+    service,
+    sub_category,
+    district,
+    state,
+    notes,
+  } = leads;
 
   useEffect(() => {
     if (selectedUser) {
@@ -175,12 +191,15 @@ function Leads() {
       await axios.post(`${API_URL}/caller-lead-post`, payload, {
         headers: authHeader(),
       });
-
       toast.success("leads posted successfully");
-
       const updatedCustomers = customers.map((item) =>
         item.id === selectedUser.id
-          ? { ...item, status: payload.status }
+          ? {
+              ...item,
+              name: payload.name,
+              status: payload.status,
+              service: payload.service,
+            }
           : item,
       );
 
@@ -192,16 +211,18 @@ function Leads() {
         );
 
         setSelectedUser(nextPendingCustomer || null);
-
         setLeads({
           customer_id: "",
           caller_id: "",
           call_status: "",
           call_duration: "",
           customer_type: "",
+          customer_status: "",
           status: "",
           service: "",
           sub_category: "Standard",
+          district: "",
+          state: "",
           notes: "",
         });
       }, 0);
@@ -231,6 +252,22 @@ function Leads() {
     const matchedCaller = caller.find((item) => Number(item.id) === callerId);
     return matchedCaller?.fullname || "Caller";
   };
+
+  useEffect(() => {
+    if (selectedUser) {
+      setLeads((prev) => ({
+        ...prev,
+        customer_id: selectedUser.id,
+        caller_id: selectedUser.caller_id,
+        name: selectedUser.name || "",
+        district: selectedUser.district || "",
+        state: selectedUser.state || "",
+      }));
+
+      setSelectedDistrict(selectedUser.district || "");
+      setStateName(selectedUser.state || "");
+    }
+  }, [selectedUser]);
 
   return (
     <>
@@ -478,8 +515,12 @@ function Leads() {
                           </label>
                           <input
                             type="text"
+                            name="name"
                             className="form-control custom-input"
                             placeholder="Customer name"
+                            value={leads.name}
+                            onChange={onInputChange}
+                            required
                           />
                         </div>
 
@@ -512,10 +553,10 @@ function Leads() {
 
                           <select
                             aria-label="Customer Status"
-                            id="customer_type"
+                            id="customer_status"
                             className="form-select custom-input"
-                            name="customer_type"
-                            value={customer_type}
+                            name="customer_status"
+                            value={customer_status}
                             onChange={onInputChange}
                             required
                           >
@@ -611,57 +652,108 @@ function Leads() {
                           </select>
                         </div>
 
-                        <div className="col-12 col-sm-6 mb-3">
+                        <div className="col-12 col-sm-6 mb-3 position-relative">
                           <label className="form-label custom-label">
                             District{" "}
                             <span className="text-danger fw-bold">*</span>
                           </label>
-
                           <input
                             type="text"
-                            list="districtList"
                             className="form-control custom-input"
                             placeholder="Search district"
                             value={selectedDistrict}
                             onChange={(e) => {
                               const value = e.target.value;
+                              setSelectedDistrict(value);
+
+                              if (!value.trim()) {
+                                setStateName("");
+                                setLeads((prev) => ({
+                                  ...prev,
+                                  district: "",
+                                  state: "",
+                                }));
+                                setFilteredDistricts([]);
+                                setShowDropdown(false);
+                                return;
+                              }
+
+                              const filtered = india.filter((item) =>
+                                item.district_name
+                                  .toLowerCase()
+                                  .includes(value.toLowerCase()),
+                              );
+
+                              setFilteredDistricts(filtered);
+                              setShowDropdown(filtered.length > 0);
+
                               const district = india.find(
                                 (item) =>
                                   item.district_name.toLowerCase() ===
                                   value.toLowerCase(),
                               );
 
-                              setSelectedDistrict(value);
-                              setStateName(district?.state_name || "");
+                              if (district) {
+                                setStateName(district.state_name);
+                                setLeads((prev) => ({
+                                  ...prev,
+                                  district: district.district_name,
+                                  state: district.state_name,
+                                }));
+                              } else {
+                                setStateName("");
+                                setLeads((prev) => ({
+                                  ...prev,
+                                  district: "",
+                                  state: "",
+                                }));
+                              }
                             }}
-                            required
                           />
 
-                          <datalist id="districtList">
-                            {india.map((item) => (
-                              <option
-                                key={item.district_id}
-                                value={item.district_name}
-                              />
-                            ))}
-                          </datalist>
+                          {showDropdown && filteredDistricts.length > 0 && (
+                            <div
+                              className="position-absolute bg-white border filtered-districts rounded shadow-sm"
+                              style={{}}
+                            >
+                              {filteredDistricts.map((item) => (
+                                <div
+                                  key={item.district_id}
+                                  className="p-2 border-bottom"
+                                  style={{ cursor: "pointer" }}
+                                  onClick={() => {
+                                    setSelectedDistrict(item.district_name);
+                                    setStateName(item.state_name);
+                                    setShowDropdown(false);
+                                    setLeads((prev) => ({
+                                      ...prev,
+                                      district: item.district_name,
+                                      state: item.state_name,
+                                    }));
+                                  }}
+                                >
+                                  {item.district_name}
+                                </div>
+                              ))}
+                            </div>
+                          )}
                         </div>
 
                         <div className="col-12 col-sm-6 mb-3">
                           <label className="form-label custom-label">
                             State <span className="text-danger fw-bold">*</span>
                           </label>
-
                           <input
                             type="text"
+                            placeholder="State name"
                             className="form-control custom-input"
                             value={stateName}
                             readOnly
-                            placeholder="Auto selected state"
+                            disabled
                           />
                         </div>
 
-                        <div className="col-6 mb-3">
+                        <div className="-12 col-sm-6 mb-3">
                           <label className="form-label custom-label">
                             Call notes (optional)
                           </label>
