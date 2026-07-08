@@ -49,9 +49,7 @@ function Settings() {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleAdminEmailSubmit = async (e) => {
-    e.preventDefault();
-
+  const handleAdminEmailSubmit = async () => {
     if (!validateForm()) return;
 
     try {
@@ -158,9 +156,7 @@ function Settings() {
     }
   };
 
-  const handleAdminUpdate = async (e) => {
-    e.preventDefault();
-
+  const handleAdminUpdate = async () => {
     try {
       await axios.put(`${API_URL}/adminupdate/${selectedAdmin}`, updateForm, {
         headers: authHeader(),
@@ -254,7 +250,7 @@ function Settings() {
             <div className="card rounded-2 h-100">
               <div className="px-2 py-2 mt-2">Add New Admin</div>
               <div className="card-body p-2">
-                <form onSubmit={handleAdminEmailSubmit}>
+                <form action={handleAdminEmailSubmit}>
                   <div className="mb-2">
                     <label
                       htmlFor="name-input"
@@ -368,7 +364,7 @@ function Settings() {
             <div className="card rounded-2 h-100">
               <div className="px-2 py-2 mt-2">Change Password</div>
               <div className="card-body p-2">
-                <form onSubmit={handleAdminUpdate}>
+                <form action={handleAdminUpdate}>
                   <div className="mb-2">
                     <select
                       className="form-select custom-text"

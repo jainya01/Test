@@ -24,9 +24,7 @@ const CallerLogin = () => {
 
   const { email, password } = admin;
 
-  const handleCallerLogin = async (e) => {
-    e.preventDefault();
-
+  const handleCallerLogin = async () => {
     setErrorMessage("");
 
     try {
@@ -166,7 +164,7 @@ const CallerLogin = () => {
                 Enter your credentials to continue.
               </p>
 
-              <form onSubmit={handleCallerLogin}>
+              <form action={handleCallerLogin}>
                 <div className="mb-3">
                   <label className="form-label">Email</label>
 

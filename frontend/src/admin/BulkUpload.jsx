@@ -38,9 +38,7 @@ function BulkUpload() {
     fetchCustomers();
   }, [fetchCustomers]);
 
-  const handleBulkSubmit = async (e) => {
-    e.preventDefault();
-
+  const handleBulkSubmit = async () => {
     if (!file) {
       toast.error("Please select a .xlsx or .csv file first");
       return;
@@ -119,7 +117,7 @@ function BulkUpload() {
           </div>
 
           <div className="col-12 col-lg-6 d-flex flex-column h-100">
-            <form onSubmit={handleBulkSubmit}>
+            <form action={handleBulkSubmit}>
               <div className="card rounded-3 h-100 px-3 py-3 border">
                 <span className="mb-2 uploaded-customer">Customers Upload</span>
 

@@ -103,9 +103,7 @@ function CallersEdit() {
     }));
   };
 
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
-
+  const handleFormSubmit = async () => {
     const formData = new FormData();
 
     Object.keys(call).forEach((key) => {
@@ -265,7 +263,7 @@ function CallersEdit() {
               </div>
 
               <div className="card-body">
-                <form onSubmit={handleFormSubmit}>
+                <form action={handleFormSubmit}>
                   <div className="row">
                     <div className="stepper d-flex justify-content-evenly py-1 rounded mb-3">
                       <button

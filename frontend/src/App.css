@@ -1290,16 +1290,6 @@ label {
   font-size: 14.5px;
 }
 
-
-
-
-
-
-
-
-
-
-
 .stepper {
   display: flex;
   background: #edf1f7;
@@ -1323,19 +1313,6 @@ label {
   color: #fff !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 .dotted-border {
   border: 1.8px dotted black;

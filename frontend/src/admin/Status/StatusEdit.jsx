@@ -21,8 +21,7 @@ function ServicesEdit() {
 
   const { status_name, status, notes } = service;
 
-  const handleFormSubmit = async (e) => {
-    e.preventDefault();
+  const handleFormSubmit = async () => {
     try {
       await axios.put(`${API_URL}/statusupdate/${id}`, service, {
         headers: authHeader(),
@@ -119,7 +118,7 @@ function ServicesEdit() {
               </div>
 
               <div className="card-body">
-                <form onSubmit={handleFormSubmit}>
+                <form action={handleFormSubmit}>
                   <div className="row">
                     <div className="col-md-6 mb-3">
                       <label className="form-label" htmlFor="status_name">

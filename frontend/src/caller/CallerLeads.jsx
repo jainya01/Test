@@ -175,9 +175,7 @@ function Leads() {
     }
   }, [selectedUser]);
 
-  const handelFormSubmit = async (e) => {
-    e.preventDefault();
-
+  const handelFormSubmit = async () => {
     const payload = {
       ...leads,
       customer_id: selectedUser?.id,
@@ -402,7 +400,7 @@ function Leads() {
             </div>
 
             <div className="col-12 col-lg-8">
-              <form onSubmit={handelFormSubmit}>
+              <form action={handelFormSubmit}>
                 <div className="details-wrapper">
                   <div className="card card-safe border-0 shadow-sm rounded-4 mb-3">
                     <div className="card-body">
