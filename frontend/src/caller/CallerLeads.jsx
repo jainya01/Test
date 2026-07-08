@@ -157,14 +157,11 @@ function Leads() {
 
   const {
     call_status,
-    name,
     customer_type,
     customer_status,
     status,
     service,
     sub_category,
-    district,
-    state,
     notes,
   } = leads;
 
