@@ -249,7 +249,7 @@ function HomePage() {
                 className="form-select sector-wise"
                 aria-label="Call Status"
               >
-                <option value="" disabled hidden>All Calls</option>
+                <option value="">All Calls</option>
                 <option value="Answered">Answered</option>
                 <option value="Rejected">Rejected</option>
                 <option value="Unanswered">Unanswered</option>
@@ -260,7 +260,7 @@ function HomePage() {
                 className="form-select sector-wise"
                 aria-label="Service Status"
               >
-                <option value="" disabled hidden>All Status</option>
+                <option value="">All Status</option>
                 {Array.isArray(service) ? (
                   service
                     .filter((item) => item.status === "Active")
@@ -279,7 +279,7 @@ function HomePage() {
                 className="form-select sector-wise"
                 aria-label="Caller"
               >
-                <option value="" disabled hidden>All Caller</option>
+                <option value="">All Caller</option>
                 {Array.isArray(caller) ? (
                   caller.map((item) => (
                     <option key={item.id} value={item.fullname}>
