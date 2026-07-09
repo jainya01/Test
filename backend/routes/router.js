@@ -355,21 +355,6 @@ router.get(
   }),
 );
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // callers
 
 router.post(
@@ -799,25 +784,6 @@ router.get(
   }),
 );
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // status
 
 router.get(
@@ -985,17 +951,17 @@ router.post(
   "/servicespost",
   authenticate,
   asyncHandler(async (req, res) => {
-    const { service_name, status, notes } = req.body;
+    const { service_name, sub_category, status, notes } = req.body;
 
-    if (!service_name || !status) {
+    if (!service_name || !sub_category || !status) {
       const error = new Error("All fields are required");
       error.statusCode = 400;
       throw error;
     }
 
     const [result] = await pool.execute(
-      "INSERT INTO services (service_name, status, notes) VALUES (?, ?, ?)",
-      [service_name, status, notes],
+      "INSERT INTO services (service_name, sub_category, status, notes) VALUES (?, ?, ?, ?)",
+      [service_name, sub_category, status, notes],
     );
 
     await redisClient.del("crm1:allservicesdata:all");
@@ -1013,9 +979,9 @@ router.put(
   authenticate,
   asyncHandler(async (req, res) => {
     const { id } = req.params;
-    const { service_name, status, notes } = req.body;
+    const { service_name, sub_category, status, notes } = req.body;
 
-    if (!service_name || !status) {
+    if (!service_name || !sub_category || !status) {
       const error = new Error("All fields are required");
       error.statusCode = 400;
       throw error;
@@ -1023,12 +989,13 @@ router.put(
 
     const query = `
       UPDATE services
-      SET service_name = ?, status = ?, notes = ?
+      SET service_name = ?, sub_category = ?, status = ?, notes = ?
       WHERE id = ?
     `;
 
     const [result] = await pool.execute(query, [
       service_name,
+      sub_category,
       status,
       notes,
       id,
@@ -1087,7 +1054,7 @@ router.get(
     }
 
     const SQL =
-      "SELECT id, service_name, status, notes FROM services ORDER BY id DESC LIMIT 20";
+      "SELECT id, service_name, sub_category, status, notes FROM services ORDER BY id DESC LIMIT 20";
     const [result] = await pool.execute(SQL);
 
     if (result.affectedRows <= 0) {
@@ -1120,7 +1087,7 @@ router.get(
     }
 
     const SQL =
-      "SELECT id, service_name, status, notes FROM services WHERE id = ?";
+      "SELECT id, service_name, sub_category, status, notes FROM services WHERE id = ?";
     const [result] = await pool.execute(SQL, [id]);
 
     if (result.affectedRows <= 0) {

@@ -1330,3 +1330,22 @@ label {
   pointer-events: none;
   z-index: 2;
 }
+
+.subcategory-crm {
+  font-size: 14px;
+  background-color: #eef5ff;
+}
+
+.subcategory-crm1 {
+  cursor: pointer;
+  color: #c01a1a;
+  font-weight: bold;
+  background-color: #eef5ff;
+  font-size: 15px;
+}
+
+@media (max-width: 768px) {
+  .subcategory-crm {
+    font-size: 13px;
+  }
+}

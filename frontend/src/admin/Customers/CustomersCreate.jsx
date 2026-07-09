@@ -302,7 +302,9 @@ function CustomersCreate() {
                         onChange={onInputChange}
                         required
                       >
-                        <option value="">Select status</option>
+                        <option value="" disabled hidden>
+                          Select Status
+                        </option>
                         {Array.isArray(status1) ? (
                           status1
                             .filter((item) => item.status === "Active")

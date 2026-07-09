@@ -420,7 +420,9 @@ function CallersCreate() {
                             onChange={onInputChange}
                             required
                           >
-                            <option value="">Select Status</option>
+                            <option value="" disabled hidden>
+                              Select Status
+                            </option>
                             <option value="Active">Active</option>
                             <option value="Inactive">Inactive</option>
                           </select>

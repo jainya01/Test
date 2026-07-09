@@ -164,7 +164,9 @@ function Services() {
                           {Array.isArray(paginatedData) &&
                           paginatedData.length > 0 ? (
                             paginatedData
-                              .sort((item) => item.updated_at)
+                              .sort((a, b) =>
+                                a.service_name.localeCompare(b.service_name),
+                              )
                               .map((item, index) => (
                                 <tr key={index}>
                                   <td>

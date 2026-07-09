@@ -14,6 +14,7 @@ function ServicesCreate() {
 
   const [service, setService] = useState({
     service_name: "",
+    sub_category: "",
     status: "",
     notes: "",
   });
@@ -29,6 +30,10 @@ function ServicesCreate() {
       newErrors.service_name = "Service name is required";
     }
 
+    if (subCategories.length === 0) {
+      newErrors.sub_category = "SubCategory name is required";
+    }
+
     if (!status) {
       newErrors.status = "Status is required";
     }
@@ -41,8 +46,13 @@ function ServicesCreate() {
     const isValid = validateForm();
     if (!isValid) return;
 
+    const payload = {
+      ...service,
+      sub_category: subCategories.join(","),
+    };
+
     try {
-      await axios.post(`${API_URL}/servicespost`, service, {
+      await axios.post(`${API_URL}/servicespost`, payload, {
         headers: authHeader(),
       });
 
@@ -61,6 +71,43 @@ function ServicesCreate() {
     setService({
       ...service,
       [e.target.name]: e.target.value,
+    });
+  };
+
+  const [subCategory, setSubCategory] = useState("");
+  const [subCategories, setSubCategories] = useState([]);
+
+  const addSubCategory = () => {
+    if (
+      subCategory.trim() !== "" &&
+      !subCategories.includes(subCategory.trim())
+    ) {
+      const updatedSubCategories = [...subCategories, subCategory.trim()];
+
+      setSubCategories(updatedSubCategories);
+
+      setService({
+        ...service,
+        sub_category: updatedSubCategories.join(","),
+      });
+
+      setSubCategory("");
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      addSubCategory();
+    }
+  };
+
+  const removeSubCategory = (index) => {
+    const updatedSubCategories = subCategories.filter((_, i) => i !== index);
+    setSubCategories(updatedSubCategories);
+    setService({
+      ...service,
+      sub_category: updatedSubCategories.join(","),
     });
   };
 
@@ -120,7 +167,7 @@ function ServicesCreate() {
                   <div className="card-body">
                     <form action={handleFormSubmit}>
                       <div className="row">
-                        <div className="col-md-6 mb-3">
+                        <div className="col-md-6 mb-2">
                           <label className="form-label" htmlFor="service_name">
                             Service Name
                             <span className="text-danger fw-bold ms-1">*</span>
@@ -144,6 +191,60 @@ function ServicesCreate() {
                           )}
                         </div>
 
+                        <div className="col-md-6 mb-2">
+                          <label className="form-label" htmlFor="sub_category">
+                            Sub Category
+                            <span className="text-danger fw-bold ms-1">*</span>
+                          </label>
+
+                          <div className="d-flex">
+                            <input
+                              type="text"
+                              id="sub_category"
+                              className="form-control sector-wise mb-1"
+                              placeholder="Enter Sub Category"
+                              value={subCategory}
+                              onChange={(e) => setSubCategory(e.target.value)}
+                              onKeyDown={handleKeyDown}
+                            />
+                          </div>
+                          {errors.sub_category && (
+                            <small className="text-danger mt-1">
+                              {errors.sub_category}
+                            </small>
+                          )}
+
+                          <div className="d-flex flex-row justify-content-between">
+                            <div className="d-flex flex-row flex-wrap align-items-center">
+                              {subCategories.map((item, index) => (
+                                <div
+                                  key={index}
+                                  className="subcategory-crm border me-2 mb-2 px-2 py-1 rounded-pill d-inline-flex align-items-center"
+                                >
+                                  <span>{item}</span>
+                                  <span
+                                    className="ms-2 subcategory-crm1"
+                                    onClick={() => removeSubCategory(index)}
+                                  >
+                                    ×
+                                  </span>
+                                </div>
+                              ))}
+                            </div>
+
+                            <div className="d-flex justify-content-end">
+                              <button
+                                type="button"
+                                className="btn btn-success d-flex align-items-center rounded-5 ms-2"
+                                style={{ height: "30px", fontSize: "14px" }}
+                                onClick={addSubCategory}
+                              >
+                                Add
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+
                         <div className="col-md-6 mb-3">
                           <label className="form-label" htmlFor="status">
                             Status
@@ -158,7 +259,9 @@ function ServicesCreate() {
                             onChange={onInputChange}
                             required
                           >
-                            <option value="">Select Status</option>
+                            <option value="" disabled hidden>
+                              Select Status
+                            </option>
                             <option value="Active">Active</option>
                             <option value="Inactive">Inactive</option>
                           </select>
@@ -170,7 +273,7 @@ function ServicesCreate() {
                           )}
                         </div>
 
-                        <div className="col-12 mb-3">
+                        <div className="col-md-6 mb-3">
                           <label className="form-label" htmlFor="notes">
                             Description (optional)
                           </label>
@@ -182,7 +285,7 @@ function ServicesCreate() {
                             name="notes"
                             value={notes}
                             onChange={onInputChange}
-                            style={{ height: "60px" }}
+                            style={{ height: "50px" }}
                           ></textarea>
                         </div>
                       </div>

@@ -247,7 +247,9 @@ function Customers() {
                             setCurrentPage(1);
                           }}
                         >
-                          <option value="">All Service</option>
+                          <option value="" disabled hidden>
+                            All Service
+                          </option>
                           {Array.isArray(service) ? (
                             service
                               .filter((item) => item.status === "Active")
@@ -272,7 +274,9 @@ function Customers() {
                             setCurrentPage(1);
                           }}
                         >
-                          <option value="">All Status</option>
+                          <option value="" disabled hidden>
+                            All Status
+                          </option>
                           {Array.isArray(status) ? (
                             status
                               .filter((item) => item.status === "Active")

@@ -21,6 +21,7 @@ function Leads() {
   const [customers, setCustomers] = useState([]);
   const [caller, setCaller] = useState([]);
   const [services, setServices] = useState([]);
+  const [subCategoryOptions, setSubCategoryOptions] = useState([]);
   const [india, setIndia] = useState([]);
   const [selectedDistrict, setSelectedDistrict] = useState("");
   const [stateName, setStateName] = useState("");
@@ -124,20 +125,22 @@ function Leads() {
   }, [pendingCustomers, selectedUser?.phone]);
 
   const filteredCallers = useMemo(() => {
-    return customers.filter((item) =>
-      item.name?.toLowerCase().includes(search.toLowerCase()),
+    return customers.filter(
+      (item) =>
+        item.status === null &&
+        item.name?.toLowerCase().includes(search.toLowerCase()),
     );
   }, [customers, search]);
 
   useEffect(() => {
-    if (selectedUser && search) {
-      const exists = filteredCallers.find((u) => u.id === selectedUser.id);
-
-      if (!exists) {
-        setSelectedUser(filteredCallers[0] || null);
-      }
+    if (!search) {
+      return;
     }
-  }, [filteredCallers, selectedUser, search]);
+    const exists = filteredCallers.find((u) => u.id === selectedUser?.id);
+    if (!exists && filteredCallers.length > 0) {
+      setSelectedUser(filteredCallers[0]);
+    }
+  }, [filteredCallers]);
 
   const [leads, setLeads] = useState({
     customer_id: "",
@@ -149,7 +152,7 @@ function Leads() {
     customer_status: "",
     status: "",
     service: "",
-    sub_category: "Standard",
+    sub_category: "",
     district: "",
     state: "",
     notes: "",
@@ -215,7 +218,7 @@ function Leads() {
           customer_status: "",
           status: "",
           service: "",
-          sub_category: "Standard",
+          sub_category: "",
           district: "",
           state: "",
           notes: "",
@@ -229,10 +232,31 @@ function Leads() {
 
   const onInputChange = (e) => {
     const { name, value } = e.target;
+
     setLeads((prev) => ({
       ...prev,
       [name]: value,
     }));
+
+    if (name === "service") {
+      const selectedService = services.find(
+        (item) => item.service_name === value,
+      );
+
+      if (selectedService?.sub_category) {
+        setSubCategoryOptions(
+          selectedService.sub_category.split(",").map((item) => item.trim()),
+        );
+      } else {
+        setSubCategoryOptions([]);
+      }
+
+      setLeads((prev) => ({
+        ...prev,
+        service: value,
+        sub_category: "",
+      }));
+    }
   };
 
   const handleCallStatus = (statusValue) => {
@@ -282,16 +306,13 @@ function Leads() {
                     type="search"
                     className="form-control sector-wise"
                     placeholder="Search by customer name"
-                    aria-label="Search by customer name"
-                    style={{ height: "37px" }}
                     value={search}
                     onChange={(e) => {
                       const v = e.target.value;
                       setSearch(v);
-                      !v &&
-                        setSelectedUser(
-                          pendingCustomers[0] || customers[0] || null,
-                        );
+                      if (!v) {
+                        setSelectedUser(pendingCustomers[0] || null);
+                      }
                     }}
                   />
                 </div>
@@ -534,7 +555,9 @@ function Leads() {
                             onChange={onInputChange}
                             required
                           >
-                            <option value="">Select Type</option>
+                            <option value="" disabled hidden>
+                              Select Type
+                            </option>
                             <option value="B2B">B2B</option>
                             <option value="B2C">B2C</option>
                           </select>
@@ -555,7 +578,9 @@ function Leads() {
                             onChange={onInputChange}
                             required
                           >
-                            <option value="">Select Type</option>
+                            <option value="" disabled hidden>
+                              Select Type
+                            </option>
                             <option value="New">New</option>
                             <option value="Existing">Existing</option>
                           </select>
@@ -576,7 +601,9 @@ function Leads() {
                             onChange={onInputChange}
                             required
                           >
-                            <option value="">All Status</option>
+                            <option value="" disabled hidden>
+                              All Status
+                            </option>
                             {Array.isArray(statuses) ? (
                               statuses
                                 .filter((item) => item.status === "Active")
@@ -609,7 +636,9 @@ function Leads() {
                             onChange={onInputChange}
                             required
                           >
-                            <option value="">All Services</option>
+                            <option value="" disabled hidden>
+                              All Services
+                            </option>
                             {Array.isArray(services) ? (
                               services
                                 .filter((item) => item.status === "Active")
@@ -629,8 +658,7 @@ function Leads() {
 
                         <div className="col-12 col-sm-6 col-md-6 mb-3">
                           <label className="form-label custom-label">
-                            Sub-category{" "}
-                            <span className="text-danger fw-bold">*</span>
+                            Sub Category{" "}
                           </label>
                           <select
                             aria-label="Sub Category"
@@ -639,11 +667,19 @@ function Leads() {
                             name="sub_category"
                             value={sub_category}
                             onChange={onInputChange}
-                            required
                           >
-                            <option value="">All</option>
-                            <option value="Standard">Standard</option>
-                            <option value="VIP">VIP</option>
+                            <option value="">Select Sub Category</option>
+                            {subCategoryOptions.length > 0 ? (
+                              subCategoryOptions.map((item, index) => (
+                                <option key={index} value={item}>
+                                  {item}
+                                </option>
+                              ))
+                            ) : (
+                              <option disabled>
+                                No sub category available
+                              </option>
+                            )}
                           </select>
                         </div>
 
@@ -653,7 +689,7 @@ function Leads() {
                             <span className="text-danger fw-bold">*</span>
                           </label>
                           <input
-                            type="text"
+                            type="search"
                             className="form-control custom-input"
                             placeholder="Search district"
                             value={selectedDistrict}

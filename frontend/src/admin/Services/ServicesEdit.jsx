@@ -12,9 +12,12 @@ function ServicesEdit() {
 
   const { id } = useParams();
   const navigate = useNavigate();
+  const [subCategory, setSubCategory] = useState("");
+  const [subCategories, setSubCategories] = useState([]);
 
   const [service, setService] = useState({
     service_name: "",
+    sub_category: "",
     status: "",
     notes: "",
   });
@@ -27,6 +30,10 @@ function ServicesEdit() {
 
     if (!service_name.trim()) {
       newErrors.service_name = "Service name is required";
+    }
+
+    if (subCategories.length === 0) {
+      newErrors.sub_category = "SubCategory name is required";
     }
 
     if (!status) {
@@ -42,9 +49,13 @@ function ServicesEdit() {
     if (!isValid) return;
 
     try {
-      await axios.put(`${API_URL}/servicesupdate/${id}`, service, {
-        headers: authHeader(),
-      });
+      await axios.put(
+        `${API_URL}/servicesupdate/${id}`,
+        { ...service, sub_category: subCategories.join(",") },
+        {
+          headers: authHeader(),
+        },
+      );
 
       toast.success("Service updated successfully");
       setTimeout(() => {
@@ -70,11 +81,18 @@ function ServicesEdit() {
           headers: authHeader(),
         });
 
+        const data = res.data?.result?.[0];
+
         setService({
-          service_name: res.data?.result?.[0]?.service_name || "",
-          status: res.data?.result?.[0]?.status || "",
-          notes: res.data?.result?.[0]?.notes || "",
+          service_name: data?.service_name || "",
+          sub_category: data?.sub_category || "",
+          status: data?.status || "",
+          notes: data?.notes || "",
         });
+
+        setSubCategories(
+          data?.sub_category ? data.sub_category.split(",") : [],
+        );
       } catch (error) {
         console.error("error", error);
       }
@@ -84,6 +102,40 @@ function ServicesEdit() {
       fetchServices();
     }
   }, [API_URL, id]);
+
+  const addSubCategory = () => {
+    if (
+      subCategory.trim() !== "" &&
+      !subCategories.includes(subCategory.trim())
+    ) {
+      const updatedSubCategories = [...subCategories, subCategory.trim()];
+
+      setSubCategories(updatedSubCategories);
+
+      setService({
+        ...service,
+        sub_category: updatedSubCategories.join(","),
+      });
+
+      setSubCategory("");
+    }
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      addSubCategory();
+    }
+  };
+
+  const removeSubCategory = (index) => {
+    const updatedSubCategories = subCategories.filter((_, i) => i !== index);
+    setSubCategories(updatedSubCategories);
+    setService({
+      ...service,
+      sub_category: updatedSubCategories.join(","),
+    });
+  };
 
   return (
     <>
@@ -139,11 +191,12 @@ function ServicesEdit() {
               <div className="card-body">
                 <form action={handleFormSubmit}>
                   <div className="row">
-                    <div className="col-md-6 mb-3">
+                    <div className="col-md-6 mb-2">
                       <label className="form-label" htmlFor="service_name">
                         Service Name
                         <span className="text-danger fw-bold ms-1">*</span>
                       </label>
+
                       <input
                         type="text"
                         id="service_name"
@@ -154,11 +207,66 @@ function ServicesEdit() {
                         onChange={onInputChange}
                         required
                       />
+
                       {errors.service_name && (
                         <small className="text-danger mt-1">
                           {errors.service_name}
                         </small>
                       )}
+                    </div>
+
+                    <div className="col-md-6 mb-2">
+                      <label className="form-label" htmlFor="sub_category">
+                        Sub Category
+                        <span className="text-danger fw-bold ms-1">*</span>
+                      </label>
+
+                      <div className="d-flex">
+                        <input
+                          type="text"
+                          id="sub_category"
+                          className="form-control sector-wise mb-1"
+                          placeholder="Enter Sub Category"
+                          value={subCategory}
+                          onChange={(e) => setSubCategory(e.target.value)}
+                          onKeyDown={handleKeyDown}
+                        />
+                      </div>
+                      {errors.sub_category && (
+                        <small className="text-danger mt-1">
+                          {errors.sub_category}
+                        </small>
+                      )}
+
+                      <div className="d-flex flex-row justify-content-between">
+                        <div className="d-flex flex-row flex-wrap align-items-center">
+                          {subCategories.map((item, index) => (
+                            <div
+                              key={index}
+                              className="subcategory-crm border me-2 mb-2 px-2 py-1 rounded-pill d-inline-flex align-items-center"
+                            >
+                              <span>{item}</span>
+                              <span
+                                className="ms-2 subcategory-crm1"
+                                onClick={() => removeSubCategory(index)}
+                              >
+                                ×
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+
+                        <div className="d-flex justify-content-end">
+                          <button
+                            type="button"
+                            className="btn btn-success d-flex align-items-center rounded-5 ms-2"
+                            style={{ height: "30px", fontSize: "14px" }}
+                            onClick={addSubCategory}
+                          >
+                            Add
+                          </button>
+                        </div>
+                      </div>
                     </div>
 
                     <div className="col-md-6 mb-3">
@@ -175,7 +283,9 @@ function ServicesEdit() {
                         onChange={onInputChange}
                         required
                       >
-                        <option value="">Select Status</option>
+                        <option value="" disabled hidden>
+                          Select Status
+                        </option>
                         <option value="Active">Active</option>
                         <option value="Inactive">Inactive</option>
                       </select>
@@ -187,7 +297,7 @@ function ServicesEdit() {
                       )}
                     </div>
 
-                    <div className="col-12 mb-3">
+                    <div className="col-md-6 mb-3">
                       <label className="form-label" htmlFor="notes">
                         Description (optional)
                       </label>
@@ -199,7 +309,7 @@ function ServicesEdit() {
                         name="notes"
                         value={notes}
                         onChange={onInputChange}
-                        style={{ height: "60px" }}
+                        style={{ height: "50px" }}
                       ></textarea>
                     </div>
                   </div>

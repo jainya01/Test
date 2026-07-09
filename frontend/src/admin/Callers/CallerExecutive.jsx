@@ -239,126 +239,132 @@ function CallerExecutive() {
                         <tbody>
                           {Array.isArray(paginatedData) &&
                           paginatedData.length > 0 ? (
-                            paginatedData.map((data, idx) => (
-                              <tr key={idx}>
-                                <td>
-                                  <input
-                                    type="checkbox"
-                                    className="form-check-input"
-                                    aria-label={`Select caller ${data.id}`}
-                                    checked={selected.includes(data.id)}
-                                    onChange={(e) =>
-                                      setSelected((prev) =>
-                                        e.target.checked
-                                          ? [...prev, data.id]
-                                          : prev.filter((id) => id !== data.id),
-                                      )
-                                    }
-                                  />
-                                </td>
+                            paginatedData
+                              .sort((a, b) =>
+                                a.fullname.localeCompare(b.fullname),
+                              )
+                              .map((data, idx) => (
+                                <tr key={idx}>
+                                  <td>
+                                    <input
+                                      type="checkbox"
+                                      className="form-check-input"
+                                      aria-label={`Select caller ${data.id}`}
+                                      checked={selected.includes(data.id)}
+                                      onChange={(e) =>
+                                        setSelected((prev) =>
+                                          e.target.checked
+                                            ? [...prev, data.id]
+                                            : prev.filter(
+                                                (id) => id !== data.id,
+                                              ),
+                                        )
+                                      }
+                                    />
+                                  </td>
 
-                                <td>{idx + 1}</td>
+                                  <td>{idx + 1}</td>
 
-                                <td>
-                                  <Link
-                                    to={`/admin/callers/view/${data.id}`}
-                                    className="text-decoration-none text-dark"
-                                  >
-                                    <span className="d-flex flex-row align-items-center fw-bold">
-                                      <div className="avatar me-2 border">
-                                        {data?.fullname
-                                          ? data.fullname
-                                              .split(" ")
-                                              .map((word) => word[0])
-                                              .join("")
-                                              .toUpperCase()
-                                          : ""}
-                                      </div>
-
-                                      <span className="short-name">
-                                        {data?.fullname || "N/A"}
-                                      </span>
-                                    </span>
-                                  </Link>
-                                </td>
-
-                                <td className="convert-percent">
-                                  {convertedLeads(data.id)}%
-                                </td>
-
-                                <td>
-                                  <span
-                                    className={`badge ${
-                                      convertedLeads(data.id) === 100
-                                        ? "bg-success"
-                                        : convertedLeads(data.id) >= 80
-                                          ? "bg-primary"
-                                          : convertedLeads(data.id) >= 50
-                                            ? "bg-warning text-dark"
-                                            : "bg-danger"
-                                    }`}
-                                  >
-                                    {convertedLeads(data.id) === 100
-                                      ? "Excellent"
-                                      : convertedLeads(data.id) >= 80
-                                        ? "Good"
-                                        : convertedLeads(data.id) >= 50
-                                          ? "Avg"
-                                          : "Need Improvement"}
-                                  </span>
-                                </td>
-
-                                <td
-                                  className={
-                                    data.status === "Active"
-                                      ? "convert-no"
-                                      : "convert-call"
-                                  }
-                                >
-                                  <div className="d-flex align-items-center">
-                                    <div
-                                      className={`me-1 ${
-                                        data.status === "Active"
-                                          ? "custom-success"
-                                          : "custom-active"
-                                      }`}
-                                    ></div>
-                                    {data.status || "N/A"}
-                                  </div>
-                                </td>
-
-                                <td className="text-start">
-                                  <div className="d-flex align-items-center gap-2">
+                                  <td>
                                     <Link
                                       to={`/admin/callers/view/${data.id}`}
-                                      title="View"
-                                      aria-label="View caller details"
-                                      className="icons-color2"
+                                      className="text-decoration-none text-dark"
                                     >
-                                      <FontAwesomeIcon icon={faEye} />
-                                    </Link>
+                                      <span className="d-flex flex-row align-items-center fw-bold">
+                                        <div className="avatar me-2 border">
+                                          {data?.fullname
+                                            ? data.fullname
+                                                .split(" ")
+                                                .map((word) => word[0])
+                                                .join("")
+                                                .toUpperCase()
+                                            : ""}
+                                        </div>
 
-                                    <Link
-                                      to={`/admin/callers/edit/${data.id}`}
-                                      title="Edit"
-                                      aria-label="Edit caller"
-                                      className="icons-color"
-                                    >
-                                      <FontAwesomeIcon icon={faEdit} />
+                                        <span className="short-name">
+                                          {data?.fullname || "N/A"}
+                                        </span>
+                                      </span>
                                     </Link>
+                                  </td>
 
+                                  <td className="convert-percent">
+                                    {convertedLeads(data.id)}%
+                                  </td>
+
+                                  <td>
                                     <span
-                                      role="button"
-                                      title="Delete"
-                                      className="icons-color1"
-                                      onClick={() => deleteData(data.id)}
+                                      className={`badge ${
+                                        convertedLeads(data.id) === 100
+                                          ? "bg-success"
+                                          : convertedLeads(data.id) >= 80
+                                            ? "bg-primary"
+                                            : convertedLeads(data.id) >= 50
+                                              ? "bg-warning text-dark"
+                                              : "bg-danger"
+                                      }`}
                                     >
-                                      <FontAwesomeIcon icon={faTrash} />
+                                      {convertedLeads(data.id) === 100
+                                        ? "Excellent"
+                                        : convertedLeads(data.id) >= 80
+                                          ? "Good"
+                                          : convertedLeads(data.id) >= 50
+                                            ? "Avg"
+                                            : "Need Improvement"}
                                     </span>
-                                  </div>
-                                </td>
-                              </tr>
-                            ))
+                                  </td>
+
+                                  <td
+                                    className={
+                                      data.status === "Active"
+                                        ? "convert-no"
+                                        : "convert-call"
+                                    }
+                                  >
+                                    <div className="d-flex align-items-center">
+                                      <div
+                                        className={`me-1 ${
+                                          data.status === "Active"
+                                            ? "custom-success"
+                                            : "custom-active"
+                                        }`}
+                                      ></div>
+                                      {data.status || "N/A"}
+                                    </div>
+                                  </td>
+
+                                  <td className="text-start">
+                                    <div className="d-flex align-items-center gap-2">
+                                      <Link
+                                        to={`/admin/callers/view/${data.id}`}
+                                        title="View"
+                                        aria-label="View caller details"
+                                        className="icons-color2"
+                                      >
+                                        <FontAwesomeIcon icon={faEye} />
+                                      </Link>
+
+                                      <Link
+                                        to={`/admin/callers/edit/${data.id}`}
+                                        title="Edit"
+                                        aria-label="Edit caller"
+                                        className="icons-color"
+                                      >
+                                        <FontAwesomeIcon icon={faEdit} />
+                                      </Link>
+
+                                      <span
+                                        role="button"
+                                        title="Delete"
+                                        className="icons-color1"
+                                        onClick={() => deleteData(data.id)}
+                                      >
+                                        <FontAwesomeIcon icon={faTrash} />
+                                      </span>
+                                    </div>
+                                  </td>
+                                </tr>
+                              ))
                           ) : (
                             <tr>
                               <td
