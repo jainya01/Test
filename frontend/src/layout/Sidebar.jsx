@@ -32,7 +32,6 @@ const ADMIN_LINKS = [
   { path: "/admin/services", label: "Services", icon: faTools },
 
   { path: "/admin/status", label: "Status", icon: faListCheck },
-  // { path: "/admin/leads", label: "My Leads", icon: faPhone },
   { path: "/admin/bulk-upload", label: "Bulk Upload", icon: faUpload },
   { path: "/admin/settings", label: "Settings", icon: faCog },
 ];

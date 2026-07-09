@@ -133,14 +133,12 @@ function Leads() {
   }, [customers, search]);
 
   useEffect(() => {
-    if (!search) {
-      return;
-    }
-    const exists = filteredCallers.find((u) => u.id === selectedUser?.id);
+    if (!search || !selectedUser) return;
+    const exists = filteredCallers.some((u) => u.id === selectedUser.id);
     if (!exists && filteredCallers.length > 0) {
       setSelectedUser(filteredCallers[0]);
     }
-  }, [filteredCallers]);
+  }, [filteredCallers, search, selectedUser]);
 
   const [leads, setLeads] = useState({
     customer_id: "",

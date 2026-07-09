@@ -35,7 +35,6 @@ const ServicesEdit = lazy(() => import("./admin/Services/ServicesEdit"));
 const BulkUpload = lazy(() => import("./admin/BulkUpload"));
 const Settings = lazy(() => import("./admin/Settings"));
 
-// const Leads = lazy(() => import("./admin/Leads"));
 import CallerLeads from "./caller/CallerLeads";
 
 function App() {
@@ -70,7 +69,6 @@ function App() {
               <Route path="status/create" element={<StatusCreate />} />
               <Route path="status/edit/:id" element={<StatusEdit />} />
 
-              {/* <Route path="leads" element={<Leads />} /> */}
               <Route path="bulk-upload" element={<BulkUpload />} />
               <Route path="settings" element={<Settings />} />
             </Route>
