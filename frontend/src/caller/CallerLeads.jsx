@@ -553,7 +553,7 @@ function Leads() {
                             onChange={onInputChange}
                             required
                           >
-                            <option value="" disabled hidden>
+                            <option value="" hidden>
                               Select Type
                             </option>
                             <option value="B2B">B2B</option>
@@ -576,7 +576,7 @@ function Leads() {
                             onChange={onInputChange}
                             required
                           >
-                            <option value="" disabled hidden>
+                            <option value="" hidden>
                               Select Type
                             </option>
                             <option value="New">New</option>
@@ -599,7 +599,7 @@ function Leads() {
                             onChange={onInputChange}
                             required
                           >
-                            <option value="" disabled hidden>
+                            <option value="" hidden>
                               All Status
                             </option>
                             {Array.isArray(statuses) ? (
@@ -634,7 +634,7 @@ function Leads() {
                             onChange={onInputChange}
                             required
                           >
-                            <option value="" disabled hidden>
+                            <option value="" hidden>
                               All Services
                             </option>
                             {Array.isArray(services) ? (

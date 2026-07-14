@@ -283,7 +283,7 @@ function ServicesEdit() {
                         onChange={onInputChange}
                         required
                       >
-                        <option value="" disabled hidden>
+                        <option value="" hidden>
                           Select Status
                         </option>
                         <option value="Active">Active</option>

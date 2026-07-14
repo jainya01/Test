@@ -372,7 +372,7 @@ function Settings() {
                       onChange={handleSelectAdmin}
                       aria-label="Select Admin"
                     >
-                      <option value="" disabled hidden>
+                      <option value="" hidden>
                         Choose a Admin
                       </option>
                       {Array.isArray(adminEmail) && adminEmail.length > 0 ? (

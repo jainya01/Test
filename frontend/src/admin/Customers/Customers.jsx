@@ -247,7 +247,7 @@ function Customers() {
                             setCurrentPage(1);
                           }}
                         >
-                          <option value="" disabled hidden>
+                          <option value="" hidden>
                             All Service
                           </option>
                           {Array.isArray(service) ? (
@@ -274,7 +274,7 @@ function Customers() {
                             setCurrentPage(1);
                           }}
                         >
-                          <option value="" disabled hidden>
+                          <option value="" hidden>
                             All Status
                           </option>
                           {Array.isArray(status) ? (
