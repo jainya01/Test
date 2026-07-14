@@ -39,7 +39,7 @@ import CallerLeads from "./caller/CallerLeads";
 
 function App() {
   return (
-    <BrowserRouter basename="/test">
+    <BrowserRouter>
       <Suspense>
         <Routes>
           <Route path="/" element={<Login />} />
