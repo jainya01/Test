@@ -29,14 +29,16 @@ function Reports() {
 
   const [report, setReport] = useState([]);
   const [caller, setCaller] = useState([]);
+  const [customers, setCustomers] = useState([]);
   const [search, setSearch] = useState("");
 
   useEffect(() => {
     const allData = async () => {
       try {
-        const [reportRes, callerRes] = await Promise.allSettled([
+        const [reportRes, callerRes, customerRes] = await Promise.allSettled([
           axios.get(`${API_URL}/allcalllogs`, { headers: authHeader() }),
           axios.get(`${API_URL}/allcallers`, { headers: authHeader() }),
+          axios.get(`${API_URL}/allcustomers`, { headers: authHeader() }),
         ]);
 
         if (reportRes.status == "fulfilled") {
@@ -45,6 +47,10 @@ function Reports() {
 
         if (callerRes.status == "fulfilled") {
           setCaller(callerRes.value.data.data);
+        }
+
+        if (customerRes.status === "fulfilled") {
+          setCustomers(customerRes.value.data.result);
         }
       } catch (error) {
         console.error("error", error);
@@ -60,7 +66,18 @@ function Reports() {
     { name: "Answered", value: "answered", color: "#10b981" },
     { name: "Rejected", value: "rejected", color: "#ff3b30" },
     { name: "Unanswered", value: "unanswered", color: "#f4a300" },
+    { name: "Follow Ups", value: "follow-ups", color: "#3b82f6" },
   ];
+
+  const totalPendingFollowUps = () => {
+    return customers.filter(
+      (item) =>
+        item.status === "Follow-up Pending" &&
+        item.schedule_date &&
+        item.schedule_time &&
+        item.call_count < 5,
+    ).length;
+  };
 
   const totalByStatus = (status) => {
     return report.filter((item) => item.call_status === status).length;
@@ -80,9 +97,13 @@ function Reports() {
   };
 
   const totalFollowUps = (callerId) => {
-    return report.filter(
+    return customers.filter(
       (item) =>
-        item.caller_id === callerId && item.call_log_status === "Follow-up",
+        item.caller_id === callerId &&
+        item.status === "Follow-up Pending" &&
+        item.schedule_date &&
+        item.schedule_time &&
+        item.call_count < 5,
     ).length;
   };
 
@@ -305,7 +326,10 @@ function Reports() {
                         <Pie
                           data={outcomeData.map((item) => ({
                             ...item,
-                            value: totalByStatus(item.value),
+                            value:
+                              item.value === "follow-ups"
+                                ? totalPendingFollowUps()
+                                : totalByStatus(item.value),
                           }))}
                           dataKey="value"
                           nameKey="name"
@@ -344,7 +368,9 @@ function Reports() {
                         </div>
 
                         <span className="outcome-data2">
-                          {totalByStatus(item.value) || 0}
+                          {item.value === "follow-ups"
+                            ? totalPendingFollowUps()
+                            : totalByStatus(item.value)}
                         </span>
                       </div>
                     ))}
