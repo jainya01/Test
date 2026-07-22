@@ -293,6 +293,11 @@ router.get(
         customers.status,
         customers.customer_type,
         customers.current_status,
+        DATE_FORMAT(customers.schedule_date, '%Y-%m-%d') AS schedule_date,
+        customers.schedule_time,
+        customers.priority,
+        customers.reminder,
+        customers.call_count,
         customers.caller_id,
         customers.created_at,
         customers.updated_at,
@@ -305,7 +310,6 @@ router.get(
     `;
 
     const [result] = await pool.execute(SQL);
-
     if (result.length <= 0) {
       const error = new Error("data not found");
       error.statusCode = 404;
@@ -319,7 +323,8 @@ router.get(
       result,
     };
 
-    await redisClient.set(cacheKey, JSON.stringify(response));
+    await redisClient.setEx(cacheKey, 60, JSON.stringify(response));
+
     return res.status(200).json(response);
   }),
 );
@@ -1380,12 +1385,18 @@ router.post(
       call_duration,
       customer_type,
       customer_status,
+      call_result,
       status,
       service,
       sub_category,
       district,
       state,
       notes,
+      schedule_date,
+      schedule_time,
+      priority,
+      reminder,
+      reschedule_note,
     } = req.body;
 
     if (!customer_id || !caller_id || !call_status) {
@@ -1398,6 +1409,12 @@ router.post(
 
     const customerId = Number(customer_id);
     const callerId = Number(caller_id);
+
+    const scheduleDate = schedule_date?.trim() || null;
+    const scheduleTime = schedule_time?.trim() || null;
+    const priorityValue = priority?.trim() || null;
+    const reminderValue = reminder?.trim() || null;
+    const rescheduleNote = reschedule_note?.trim() || null;
 
     await pool.execute(
       `INSERT INTO call_logs (
@@ -1424,25 +1441,41 @@ router.post(
 
     await pool.execute(
       `UPDATE customers
-      SET
-          name = COALESCE(NULLIF(?, ''), name),
-          customer_status = COALESCE(NULLIF(?, ''), customer_status),
-          district = COALESCE(NULLIF(?, ''), district),
-          state = COALESCE(NULLIF(?, ''), state),
-          status = ?,
-          notes = ?,
-          customer_type = ?,
-          current_status = 'Completed'
+       SET
+      name = COALESCE(NULLIF(?, ''), name),
+      customer_type = COALESCE(NULLIF(?, ''), customer_type),
+      customer_status = COALESCE(NULLIF(?, ''), customer_status),
+      district = COALESCE(NULLIF(?, ''), district),
+      state = COALESCE(NULLIF(?, ''), state),
+      call_result = ?,
+      status = ?,
+      notes = ?,
+      schedule_date = ?,
+      schedule_time = ?,
+      priority = ?,
+      reminder = ?,
+      reschedule_note = ?,
+      call_count = COALESCE(call_count, 0) + 1,
+      current_status = 'Completed'
       WHERE id = ?
       AND caller_id = ?`,
       [
         name ?? null,
+        customer_type ?? null,
         customer_status ?? null,
         district ?? null,
         state ?? null,
-        status ?? null,
-        notes ?? null,
-        customer_type ?? null,
+
+        call_result || null,
+        status || null,
+        notes || null,
+
+        scheduleDate,
+        scheduleTime,
+        priorityValue,
+        reminderValue,
+        rescheduleNote,
+
         customerId,
         callerId,
       ],
@@ -1450,16 +1483,17 @@ router.post(
 
     await pool.execute(
       `UPDATE caller
-        SET status = 'Active'
-        WHERE id = ?
-        AND status = 'Inactive'`,
+       SET status = 'Active'
+       WHERE id = ?
+       AND status = 'Inactive'`,
       [callerId],
     );
 
     const [remainingLeads] = await pool.execute(
       `SELECT COUNT(*) AS total
        FROM customers
-       WHERE caller_id=? AND status IS NULL`,
+       WHERE caller_id = ?
+       AND status IS NULL`,
       [callerId],
     );
 
@@ -1468,10 +1502,10 @@ router.post(
 
       const [newCustomers] = await pool.query(
         `SELECT id
-        FROM customers
-        WHERE caller_id IS NULL
-        AND current_status = 'New'
-        LIMIT ?`,
+         FROM customers
+         WHERE caller_id IS NULL
+         AND current_status = 'New'
+         LIMIT ?`,
         [limitPerCaller],
       );
 
@@ -1480,8 +1514,8 @@ router.post(
       if (ids.length > 0) {
         await pool.query(
           `UPDATE customers
-            SET caller_id = ?, assigned_at = NOW()
-            WHERE id IN (?)`,
+           SET caller_id = ?, assigned_at = NOW()
+           WHERE id IN (?)`,
           [callerId, ids],
         );
       }

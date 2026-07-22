@@ -13,7 +13,7 @@ import {
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 
-function Leads() {
+function CallerLeads() {
   const API_URL = import.meta.env.VITE_API_URL;
 
   const [search, setSearch] = useState("");
@@ -148,23 +148,21 @@ function Leads() {
     call_duration: "",
     customer_type: "",
     customer_status: "",
+    call_result: "",
     status: "",
     service: "",
     sub_category: "",
     district: "",
     state: "",
+    schedule_date: "",
+    schedule_time: "",
+    priority: "",
+    reminder: "",
+    reschedule_note: "",
     notes: "",
   });
 
-  const {
-    call_status,
-    customer_type,
-    customer_status,
-    status,
-    service,
-    sub_category,
-    notes,
-  } = leads;
+  const { call_status, status, sub_category, notes } = leads;
 
   useEffect(() => {
     if (selectedUser) {
@@ -200,7 +198,6 @@ function Leads() {
       );
 
       setCustomers(updatedCustomers);
-
       setTimeout(() => {
         const nextPendingCustomer = updatedCustomers.find(
           (item) => item.status === null,
@@ -214,11 +211,17 @@ function Leads() {
           call_duration: "",
           customer_type: "",
           customer_status: "",
+          call_result: "",
           status: "",
           service: "",
           sub_category: "",
           district: "",
           state: "",
+          schedule_date: "",
+          schedule_time: "",
+          priority: "",
+          reminder: "",
+          reschedule_note: "",
           notes: "",
         });
       }, 0);
@@ -231,10 +234,33 @@ function Leads() {
   const onInputChange = (e) => {
     const { name, value } = e.target;
 
-    setLeads((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setLeads((prev) => {
+      const updated = {
+        ...prev,
+        [name]: value,
+      };
+
+      if (name === "customer_type" && value === "Others") {
+        updated.customer_status = "Others";
+        updated.status = "Others";
+        updated.service = "Others";
+        updated.sub_category = "";
+        setSubCategoryOptions([]);
+      }
+
+      if (name === "customer_type" && value !== "Others") {
+        updated.customer_status = "";
+        updated.status = "";
+        updated.service = "";
+        updated.sub_category = "";
+        setSubCategoryOptions([]);
+      }
+
+      if (name === "service") {
+        updated.sub_category = "";
+      }
+      return updated;
+    });
 
     if (name === "service") {
       const selectedService = services.find(
@@ -248,12 +274,6 @@ function Leads() {
       } else {
         setSubCategoryOptions([]);
       }
-
-      setLeads((prev) => ({
-        ...prev,
-        service: value,
-        sub_category: "",
-      }));
     }
   };
 
@@ -306,7 +326,7 @@ function Leads() {
                     placeholder="Search by customer name"
                     value={search}
                     onChange={(e) => {
-                      const v = e.target.value;
+                      const v = e.target.value.trim();
                       setSearch(v);
                       if (!v) {
                         setSelectedUser(pendingCustomers[0] || null);
@@ -549,7 +569,7 @@ function Leads() {
                             id="customer_type"
                             className="form-select custom-input"
                             name="customer_type"
-                            value={customer_type}
+                            value={leads.customer_type}
                             onChange={onInputChange}
                             required
                           >
@@ -573,7 +593,7 @@ function Leads() {
                             id="customer_status"
                             className="form-select custom-input"
                             name="customer_status"
-                            value={customer_status}
+                            value={leads.customer_status}
                             onChange={onInputChange}
                             required
                           >
@@ -588,7 +608,47 @@ function Leads() {
 
                         <div className="col-12 col-sm-6 col-md-6 mb-3">
                           <label className="form-label custom-label">
-                            Calling Status{" "}
+                            Call Result (this call){" "}
+                            <span className="text-danger fw-bold">*</span>
+                          </label>
+
+                          <select
+                            aria-label="call Result"
+                            id="call_result"
+                            className="form-select custom-input"
+                            name="call_result"
+                            value={leads.call_result}
+                            onChange={onInputChange}
+                            required
+                          >
+                            <option value="" hidden>
+                              Select call result
+                            </option>
+                            <option value="Connected">✅ Connected</option>
+                            <option value="Busy">📞 Busy</option>
+                            <option value="Rejected">❌ Rejected</option>
+                            <option value="Unanswered">🚫 Unanswered</option>
+                            <option value="Call Back Requested">
+                              📲 Call Back Requested
+                            </option>
+                            <option value="Switched Off">
+                              📴 Switched Off
+                            </option>
+                            <option value="Out of Coverage">
+                              📡 Out of Coverage
+                            </option>
+                            <option value="Wrong Number">
+                              🚫 Wrong Number
+                            </option>
+                            <option value="DND/Not Interested">
+                              🚫 DND / Not Interested
+                            </option>
+                          </select>
+                        </div>
+
+                        <div className="col-12 col-sm-6 col-md-6 mb-3">
+                          <label className="form-label custom-label">
+                            Lead Status (pipeline stage){" "}
                             <span className="text-danger fw-bold">*</span>
                           </label>
 
@@ -597,7 +657,7 @@ function Leads() {
                             id="status"
                             className="form-select custom-input"
                             name="status"
-                            value={status}
+                            value={leads.status}
                             onChange={onInputChange}
                             required
                           >
@@ -605,16 +665,19 @@ function Leads() {
                               All Status
                             </option>
                             {Array.isArray(statuses) ? (
-                              statuses
-                                .filter((item) => item.status === "Active")
-                                .map((item) => (
-                                  <option
-                                    key={item.id}
-                                    value={item.status_name}
-                                  >
-                                    {item.status_name}
-                                  </option>
-                                ))
+                              <>
+                                {statuses
+                                  .filter((item) => item.status === "Active")
+                                  .map((item) => (
+                                    <option
+                                      key={item.id}
+                                      value={item.status_name}
+                                    >
+                                      {item.status_name}
+                                    </option>
+                                  ))}
+                                <option value="Others">Others</option>
+                              </>
                             ) : (
                               <option disabled>No services found</option>
                             )}
@@ -632,7 +695,7 @@ function Leads() {
                             id="service"
                             className="form-select custom-input"
                             name="service"
-                            value={service}
+                            value={leads.service}
                             onChange={onInputChange}
                             required
                           >
@@ -693,6 +756,7 @@ function Leads() {
                             District{" "}
                             <span className="text-danger fw-bold">*</span>
                           </label>
+
                           <input
                             type="search"
                             className="form-control custom-input"
@@ -701,14 +765,28 @@ function Leads() {
                             onChange={(e) => {
                               const value = e.target.value;
                               setSelectedDistrict(value);
+                              if (value.trim().toLowerCase() === "others") {
+                                setStateName("Others");
+                                setLeads((prev) => ({
+                                  ...prev,
+                                  district: "Others",
+                                  state: "Others",
+                                }));
+
+                                setFilteredDistricts([]);
+                                setShowDropdown(false);
+                                return;
+                              }
 
                               if (!value.trim()) {
                                 setStateName("");
+
                                 setLeads((prev) => ({
                                   ...prev,
                                   district: "",
                                   state: "",
                                 }));
+
                                 setFilteredDistricts([]);
                                 setShowDropdown(false);
                                 return;
@@ -716,7 +794,7 @@ function Leads() {
 
                               const filtered = india.filter((item) =>
                                 item.district_name
-                                  .toLowerCase()
+                                  ?.toLowerCase()
                                   .includes(value.toLowerCase()),
                               );
 
@@ -725,12 +803,13 @@ function Leads() {
 
                               const district = india.find(
                                 (item) =>
-                                  item.district_name.toLowerCase() ===
+                                  item.district_name?.toLowerCase() ===
                                   value.toLowerCase(),
                               );
 
                               if (district) {
                                 setStateName(district.state_name);
+
                                 setLeads((prev) => ({
                                   ...prev,
                                   district: district.district_name,
@@ -738,6 +817,7 @@ function Leads() {
                                 }));
                               } else {
                                 setStateName("");
+
                                 setLeads((prev) => ({
                                   ...prev,
                                   district: "",
@@ -748,10 +828,7 @@ function Leads() {
                           />
 
                           {showDropdown && filteredDistricts.length > 0 && (
-                            <div
-                              className="position-absolute bg-white border filtered-districts rounded shadow-sm"
-                              style={{}}
-                            >
+                            <div className="position-absolute bg-white border filtered-districts rounded shadow-sm">
                               {filteredDistricts.map((item) => (
                                 <div
                                   key={item.district_id}
@@ -761,6 +838,7 @@ function Leads() {
                                     setSelectedDistrict(item.district_name);
                                     setStateName(item.state_name);
                                     setShowDropdown(false);
+
                                     setLeads((prev) => ({
                                       ...prev,
                                       district: item.district_name,
@@ -771,6 +849,24 @@ function Leads() {
                                   {item.district_name}
                                 </div>
                               ))}
+
+                              <div
+                                className="p-2 border-bottom"
+                                style={{ cursor: "pointer" }}
+                                onClick={() => {
+                                  setSelectedDistrict("Others");
+                                  setStateName("Others");
+                                  setShowDropdown(false);
+
+                                  setLeads((prev) => ({
+                                    ...prev,
+                                    district: "Others",
+                                    state: "Others",
+                                  }));
+                                }}
+                              >
+                                Others
+                              </div>
                             </div>
                           )}
                         </div>
@@ -779,6 +875,7 @@ function Leads() {
                           <label className="form-label custom-label">
                             State <span className="text-danger fw-bold">*</span>
                           </label>
+
                           <input
                             type="text"
                             placeholder="State name"
@@ -789,7 +886,107 @@ function Leads() {
                           />
                         </div>
 
-                        <div className="-12 col-sm-6 mb-3">
+                        {status === "Follow-up Pending" && (
+                          <>
+                            <div className="col-12 col-md-6 mb-2">
+                              <div className="follow-up-card">
+                                <div className="d-flex justify-content-between align-items-center mb-3">
+                                  <h6 className="mb-0 fw-semibold">
+                                    Schedule Follow-up
+                                  </h6>
+
+                                  <small className="text-muted">
+                                    Triggered by Lead Status
+                                  </small>
+                                </div>
+
+                                <div className="row">
+                                  <div className="col-12 col-md-6 mb-3">
+                                    <label className="form-label custom-label">
+                                      Next Follow-up Date{" "}
+                                      <span className="text-danger">*</span>
+                                    </label>
+                                    <input
+                                      type="date"
+                                      className="form-control custom-input"
+                                      name="schedule_date"
+                                      value={leads.schedule_date}
+                                      onChange={onInputChange}
+                                    />
+                                  </div>
+
+                                  <div className="col-12 col-md-6 mb-3">
+                                    <label className="form-label custom-label">
+                                      Next Follow-up Time{" "}
+                                      <span className="text-danger">*</span>
+                                    </label>
+                                    <input
+                                      type="time"
+                                      className="form-control custom-input"
+                                      name="schedule_time"
+                                      value={leads.schedule_time}
+                                      onChange={onInputChange}
+                                    />
+                                  </div>
+
+                                  <div className="col-12 col-md-6 mb-3">
+                                    <label className="form-label custom-label">
+                                      Priority{" "}
+                                      <span className="text-danger">*</span>
+                                    </label>
+                                    <select
+                                      className="form-select custom-input"
+                                      name="priority"
+                                      value={leads.priority}
+                                      onChange={onInputChange}
+                                    >
+                                      <option value="" hidden>
+                                        Select Priority
+                                      </option>
+                                      <option value="Low">Low</option>
+                                      <option value="Medium">Medium</option>
+                                      <option value="High">High</option>
+                                    </select>
+                                  </div>
+
+                                  <div className="col-12 col-md-6 mb-3">
+                                    <label className="form-label custom-label">
+                                      Reminder
+                                    </label>
+                                    <select
+                                      className="form-select custom-input"
+                                      name="reminder"
+                                      value={leads.reminder}
+                                      onChange={onInputChange}
+                                    >
+                                      <option selected>None</option>
+                                      <option>15 min before</option>
+                                      <option>1 hour before</option>
+                                      <option>1 day before</option>
+                                    </select>
+                                  </div>
+
+                                  <div className="col-12">
+                                    <label className="form-label custom-label">
+                                      Follow-up Reason / Notes
+                                    </label>
+                                    <textarea
+                                      rows="3"
+                                      className="form-control custom-input"
+                                      placeholder="Why is a follow-up needed?"
+                                      name="reschedule_note"
+                                      value={leads.reschedule_note}
+                                      onChange={onInputChange}
+                                      style={{ height: "60px" }}
+                                    ></textarea>
+                                  </div>
+                                </div>
+                              </div>
+                            </div>
+                          </>
+                        )}
+
+                        <div className="col-12 mb-3">
                           <label className="form-label custom-label">
                             Call notes (optional)
                           </label>
@@ -829,4 +1026,4 @@ function Leads() {
   );
 }
 
-export default Leads;
+export default CallerLeads;

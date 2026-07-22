@@ -45,7 +45,7 @@ const CALLER_LINKS = [
     icon: faPhone,
   },
   {
-    path: "/caller/follow-ups",
+    path: "/caller/followups",
     label: "Follow Ups",
     icon: faCalendar,
   },

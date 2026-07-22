@@ -78,7 +78,7 @@ function App() {
           <Route element={<UserProtected />}>
             <Route path="/caller" element={<User />}>
               <Route path="leads" element={<CallerLeads />} />
-              <Route path="follow-ups" element={<FollowUps />} />
+              <Route path="followups" element={<FollowUps />} />
             </Route>
           </Route>
 

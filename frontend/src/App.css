@@ -1349,3 +1349,40 @@ label {
     font-size: 13px;
   }
 }
+
+.follow-up-card {
+  border: 1px solid #cfd8ff;
+  border-radius: 12px;
+  background: #f8f9ff;
+  padding: 13px;
+}
+
+.follow-up-card h6 {
+  font-size: 15px;
+  color: #000;
+}
+
+.follow-up-card label {
+  font-size: 12px;
+}
+
+.follow-up-card small {
+  font-size: 13px;
+  color: #6c757d;
+}
+
+.custom-input {
+  border-radius: 12px;
+}
+
+@media (max-width: 767px) {
+  .follow-up-card {
+    padding: 14px;
+  }
+
+  .follow-up-card .d-flex {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 4px;
+  }
+}
