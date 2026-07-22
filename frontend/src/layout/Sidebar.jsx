@@ -15,6 +15,7 @@ import {
   faUpload,
   faListCheck,
   faTools,
+  faCalendar,
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 
@@ -42,6 +43,11 @@ const CALLER_LINKS = [
     label: "My Leads",
     exact: true,
     icon: faPhone,
+  },
+  {
+    path: "/caller/follow-ups",
+    label: "Follow Ups",
+    icon: faCalendar,
   },
 ];
 

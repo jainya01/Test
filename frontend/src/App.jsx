@@ -36,6 +36,7 @@ const BulkUpload = lazy(() => import("./admin/BulkUpload"));
 const Settings = lazy(() => import("./admin/Settings"));
 
 import CallerLeads from "./caller/CallerLeads";
+const FollowUps = lazy(() => import("./caller/FollowUps"));
 
 function App() {
   return (
@@ -77,6 +78,7 @@ function App() {
           <Route element={<UserProtected />}>
             <Route path="/caller" element={<User />}>
               <Route path="leads" element={<CallerLeads />} />
+              <Route path="follow-ups" element={<FollowUps />} />
             </Route>
           </Route>
 

@@ -13,7 +13,7 @@ import {
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 
-function Leads() {
+function FollowUps() {
   const API_URL = import.meta.env.VITE_API_URL;
 
   const [search, setSearch] = useState("");
@@ -829,4 +829,4 @@ function Leads() {
   );
 }
 
-export default Leads;
+export default FollowUps;
