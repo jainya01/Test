@@ -15,6 +15,11 @@ import { ToastContainer, toast } from "react-toastify";
 import { Link } from "react-router-dom";
 import { useUserContext } from "../context/UserContext";
 
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import dayjs from "dayjs";
+
 function CallerLeads() {
   const API_URL = import.meta.env.VITE_API_URL;
 
@@ -924,7 +929,7 @@ function CallerLeads() {
                                     />
                                   </div>
 
-                                  <div className="col-12 col-md-6 mb-3">
+                                  {/* <div className="col-12 col-md-6 mb-3">
                                     <label className="form-label custom-label">
                                       Next Follow-up Time{" "}
                                       <span className="text-danger">*</span>
@@ -936,6 +941,45 @@ function CallerLeads() {
                                       value={leads.schedule_time}
                                       onChange={onInputChange}
                                     />
+                                  </div> */}
+
+                                  <div className="col-12 col-md-6 mb-3">
+                                    <label className="form-label custom-label">
+                                      Next Follow-up Time{" "}
+                                      <span className="text-danger">*</span>
+                                    </label>
+
+                                    <LocalizationProvider
+                                      dateAdapter={AdapterDayjs}
+                                    >
+                                      <TimePicker
+                                        ampm={true}
+                                        value={
+                                          leads.schedule_time
+                                            ? dayjs(
+                                                `2024-01-01 ${leads.schedule_time}`,
+                                              )
+                                            : null
+                                        }
+                                        onChange={(value) =>
+                                          onInputChange({
+                                            target: {
+                                              name: "schedule_time",
+                                              value: value
+                                                ? dayjs(value).format("hh:mm A")
+                                                : "",
+                                            },
+                                          })
+                                        }
+                                        slotProps={{
+                                          textField: {
+                                            className:
+                                              "form-control custom-input",
+                                            size: "small",
+                                          },
+                                        }}
+                                      />
+                                    </LocalizationProvider>
                                   </div>
 
                                   <div className="col-12 col-md-6 mb-3">

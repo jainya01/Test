@@ -101,6 +101,26 @@ function FollowUps() {
     allData();
   }, [API_URL]);
 
+  const convertToDateTime = (date, time) => {
+    if (!date || !time) return null;
+    const [timePart, modifier] = time.split(" ");
+    let [hours, minutes] = timePart.split(":").map(Number);
+
+    if (modifier === "PM" && hours !== 12) {
+      hours += 12;
+    }
+
+    if (modifier === "AM" && hours === 12) {
+      hours = 0;
+    }
+
+    const formattedTime = `${String(hours).padStart(2, "0")}:${String(
+      minutes,
+    ).padStart(2, "0")}:00`;
+
+    return new Date(`${date.split("T")[0]}T${formattedTime}`);
+  };
+
   const pendingCustomers = useMemo(() => {
     const now = new Date();
 
@@ -119,8 +139,9 @@ function FollowUps() {
             return false;
           }
 
-          const scheduleDateTime = new Date(
-            `${item.schedule_date}T${item.schedule_time}`,
+          const scheduleDateTime = convertToDateTime(
+            item.schedule_date,
+            item.schedule_time,
           );
 
           return scheduleDateTime <= now;
@@ -169,11 +190,12 @@ function FollowUps() {
         return false;
       }
 
-      const scheduleDateTime = new Date(
-        `${item.schedule_date}T${item.schedule_time}`,
+      const scheduleDateTime = convertToDateTime(
+        item.schedule_date,
+        item.schedule_time,
       );
 
-      return scheduleDateTime <= now;
+      return scheduleDateTime && scheduleDateTime <= now;
     });
   }, [customers, search]);
 
@@ -257,7 +279,8 @@ function FollowUps() {
           Number(item.call_count || 0) < 5 &&
           item.schedule_date &&
           item.schedule_time &&
-          new Date(`${item.schedule_date}T${item.schedule_time}`) <= new Date(),
+          convertToDateTime(item.schedule_date, item.schedule_time) <=
+            new Date(),
       );
 
       setSelectedUser(nextLead || null);

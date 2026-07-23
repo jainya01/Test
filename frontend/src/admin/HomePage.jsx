@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import "../App.css";
 import { authHeader } from "../utils/authHeader";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -30,23 +30,29 @@ function HomePage() {
   const [service, setService] = useState([]);
   const [report, setReport] = useState([]);
   const [caller, setCaller] = useState([]);
+  const [customers, setCustomers] = useState([]);
 
   useEffect(() => {
     const allData = async () => {
       try {
-        const [serviceRes, reportRes, callerRes] = await Promise.allSettled([
-          axios.get(`${API_URL}/allstatusdata`, {
-            headers: authHeader(),
-          }),
+        const [serviceRes, reportRes, callerRes, customerRes] =
+          await Promise.allSettled([
+            axios.get(`${API_URL}/allstatusdata`, {
+              headers: authHeader(),
+            }),
 
-          axios.get(`${API_URL}/allcalllogs`, {
-            headers: authHeader(),
-          }),
+            axios.get(`${API_URL}/allcalllogs`, {
+              headers: authHeader(),
+            }),
 
-          axios.get(`${API_URL}/allcallers`, {
-            headers: authHeader(),
-          }),
-        ]);
+            axios.get(`${API_URL}/allcallers`, {
+              headers: authHeader(),
+            }),
+
+            axios.get(`${API_URL}/allcustomers`, {
+              headers: authHeader(),
+            }),
+          ]);
 
         if (serviceRes.status === "fulfilled") {
           setService(serviceRes.value.data.result || []);
@@ -58,6 +64,10 @@ function HomePage() {
 
         if (callerRes.status === "fulfilled") {
           setCaller(callerRes.value.data.data || []);
+        }
+
+        if (customerRes.status === "fulfilled") {
+          setCustomers(customerRes.value.data.result || []);
         }
       } catch (error) {
         console.error(error);
@@ -189,6 +199,40 @@ function HomePage() {
       conversions,
     };
   });
+
+  const topLocations = useMemo(() => {
+    const locationMap = {};
+    customers.forEach((item) => {
+      const state = item.state?.trim().toLowerCase();
+      const district = item.district?.trim().toLowerCase();
+
+      if (
+        !state ||
+        !district ||
+        state === "others" ||
+        state === "other" ||
+        district === "others" ||
+        district === "other"
+      ) {
+        return;
+      }
+
+      const key = `${state}-${district}`;
+      if (!locationMap[key]) {
+        locationMap[key] = {
+          state: item.state,
+          district: item.district,
+          total: 0,
+        };
+      }
+
+      locationMap[key].total++;
+    });
+
+    return Object.values(locationMap)
+      .sort((a, b) => b.total - a.total)
+      .slice(0, 5);
+  }, [customers]);
 
   return (
     <>
@@ -478,6 +522,63 @@ function HomePage() {
           </div>
 
           <div className="row g-2 mt-2">
+            <div className="col-12">
+              <div className="card shadow-sm border rounded-3">
+                <div className="card-body">
+                  <div className="mb-3">
+                    <h5 className="fw-bold mb-1 daily-performance">
+                      Top Calling Locations
+                    </h5>
+                    <div className="text-muted overview-lead">
+                      Highest lead volume by state and district
+                    </div>
+                  </div>
+
+                  {topLocations.map((item, index) => {
+                    const maxLeads = topLocations[0]?.total || 1;
+                    const percentage = (item.total / maxLeads) * 100;
+
+                    return (
+                      <div key={index} className="mb-3">
+                        <div className="d-flex justify-content-between align-items-center mb-1">
+                          <div>
+                            <span className="districts-item">
+                              {item.district}
+                            </span>
+                            <small className="text-muted">
+                              {" "}
+                              • {item.state}
+                            </small>
+                          </div>
+
+                          <span className="text-success total-leads">
+                            {item.total} Leads
+                          </span>
+                        </div>
+
+                        <div
+                          className="progress"
+                          style={{
+                            height: "7px",
+                            borderRadius: "20px",
+                          }}
+                        >
+                          <div className="location-progress">
+                            <div
+                              className="location-progress-fill"
+                              style={{ width: `${percentage}%` }}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="row g-2 mt-2">
             <div className="col-12 col-lg-8">
               <div className="card shadow-sm border rounded-3 h-100">
                 <div className="card-body">
@@ -502,7 +603,7 @@ function HomePage() {
                         className="d-flex justify-content-between m-1 border rounded-3 align-items-center py-3 px-2"
                       >
                         <div className="d-flex align-items-center">
-                          <div className="avatar me-3">
+                          <div className="avatar me-2">
                             {callerData?.fullname
                               ?.split(" ")
                               .map((word) => word.charAt(0))

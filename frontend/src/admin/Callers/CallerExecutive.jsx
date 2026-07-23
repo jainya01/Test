@@ -38,6 +38,7 @@ function CallerExecutive() {
         console.error("error", error);
       }
     };
+
     allData();
   }, [API_URL]);
 

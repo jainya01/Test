@@ -67,6 +67,7 @@ function Reports() {
     { name: "Rejected", value: "rejected", color: "#ff3b30" },
     { name: "Unanswered", value: "unanswered", color: "#f4a300" },
     { name: "Follow Ups", value: "follow-ups", color: "#3b82f6" },
+    { name: "Remaining Leads", color: "#5d697e" },
   ];
 
   const totalPendingFollowUps = () => {
@@ -145,6 +146,11 @@ function Reports() {
     .slice(0, 5);
 
   const totalCallOutcome = customers.length;
+
+  const totalRemainingLeads = () => {
+    return customers.filter((item) => item.current_status !== "Completed")
+      .length;
+  };
 
   return (
     <>
@@ -326,13 +332,15 @@ function Reports() {
                     >
                       <PieChart>
                         <Pie
-                          data={outcomeData.map((item) => ({
-                            ...item,
-                            value:
-                              item.value === "follow-ups"
-                                ? totalPendingFollowUps()
-                                : totalByStatus(item.value),
-                          }))}
+                          data={outcomeData
+                            .filter((item) => item.name !== "Remaining Leads")
+                            .map((item) => ({
+                              ...item,
+                              value:
+                                item.value === "follow-ups"
+                                  ? totalPendingFollowUps()
+                                  : totalByStatus(item.value),
+                            }))}
                           dataKey="value"
                           nameKey="name"
                           cx="50%"
@@ -370,9 +378,11 @@ function Reports() {
                         </div>
 
                         <span className="outcome-data2">
-                          {item.value === "follow-ups"
-                            ? `${totalPendingFollowUps()}/${totalCallOutcome}`
-                            : `${totalByStatus(item.value)}/${totalCallOutcome}`}
+                          {item.name === "Remaining Leads"
+                            ? `${totalRemainingLeads()}`
+                            : item.value === "follow-ups"
+                              ? `${totalPendingFollowUps()}/${totalCallOutcome}`
+                              : `${totalByStatus(item.value)}/${totalCallOutcome}`}
                         </span>
                       </div>
                     ))}

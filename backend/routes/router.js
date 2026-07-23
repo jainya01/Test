@@ -300,6 +300,8 @@ router.get(
         customers.reminder,
         customers.call_count,
         customers.caller_id,
+        customers.state,
+        customers.district,
         customers.created_at,
         customers.updated_at,
         caller.fullname,
