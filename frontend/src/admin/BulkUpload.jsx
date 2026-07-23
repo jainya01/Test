@@ -182,9 +182,9 @@ function BulkUpload() {
                 <div className="fw-semibold mb-1">Required columns</div>
 
                 <small className="text-secondary-safe fw-medium">
-                  name, phone, city, source (Hajj / Umrah / Ticket / Medical),
-                  source. Phone numbers are checked for duplicates across your
-                  entire database.
+                  name, phone, source (Hajj / Umrah / Ticket / Medical), source.
+                  Phone numbers are checked for duplicates across your entire
+                  file.
                 </small>
               </div>
             </div>

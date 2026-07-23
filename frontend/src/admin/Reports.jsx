@@ -144,6 +144,8 @@ function Reports() {
     .sort((a, b) => b.calls - a.calls)
     .slice(0, 5);
 
+  const totalCallOutcome = customers.length;
+
   return (
     <>
       <title>Reports & Analytics | Signal CRM</title>
@@ -369,8 +371,8 @@ function Reports() {
 
                         <span className="outcome-data2">
                           {item.value === "follow-ups"
-                            ? totalPendingFollowUps()
-                            : totalByStatus(item.value)}
+                            ? `${totalPendingFollowUps()}/${totalCallOutcome}`
+                            : `${totalByStatus(item.value)}/${totalCallOutcome}`}
                         </span>
                       </div>
                     ))}

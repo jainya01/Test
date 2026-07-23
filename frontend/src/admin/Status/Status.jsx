@@ -48,10 +48,11 @@ function Services() {
   };
 
   const filteredStatus = useMemo(() => {
-    const keyword = search.toLowerCase();
-
-    return status.filter((item) =>
-      item.status_name?.toLowerCase().includes(keyword),
+    const keyword = search.toLowerCase().trim();
+    return status.filter(
+      (item) =>
+        item.status_name?.toLowerCase() === keyword ||
+        item.status_name?.toLowerCase().startsWith(keyword),
     );
   }, [status, search]);
 

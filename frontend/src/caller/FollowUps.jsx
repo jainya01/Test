@@ -12,10 +12,13 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
+import { useUserContext } from "../context/UserContext";
+import { Link } from "react-router-dom";
 
 function FollowUps() {
   const API_URL = import.meta.env.VITE_API_URL;
 
+  const { followupCount } = useUserContext();
   const [search, setSearch] = useState("");
   const [statuses, setStatuses] = useState([]);
   const [customers, setCustomers] = useState([]);
@@ -362,10 +365,10 @@ function FollowUps() {
 
   return (
     <>
-      <title>Caller Dashboard | Signal CRM</title>
+      <title>Follow Ups | Signal CRM</title>
       <meta
         name="description"
-        content="Manage your daily calling tasks in Signal CRM caller dashboard. View queued leads, update status, track calls, notes, services, and performance."
+        content="Track scheduled follow-ups in Signal CRM. View due reminders, manage pending callbacks, update customer status, and never miss a follow-up."
       />
 
       <main className="content-wrapper">
@@ -392,10 +395,16 @@ function FollowUps() {
             </div>
 
             <div className="col-2 col-md-1 d-flex justify-content-end align-items-center">
-              <button className="btn border-0 position-relative">
+              <Link
+                className="btn border-0 position-relative"
+                to={followupCount > 0 ? "/caller/followups" : "#"}
+                onClick={(e) => followupCount <= 0 && e.preventDefault()}
+              >
                 <FontAwesomeIcon icon={faBell} />
-                <span className="notification-corner bg-danger">0</span>
-              </button>
+                <span className="notification-corner bg-danger">
+                  {followupCount}
+                </span>
+              </Link>
 
               <span className="text-nowrap ms-2 date-days">
                 {new Date()
@@ -415,8 +424,8 @@ function FollowUps() {
             <div>
               <h5 className="fw-bold overview-dashboard">My Leads</h5>
               <p className="text-muted mb-md-0 overview-lead fw-bold">
-                Welcome {getCallerName()} -- {pendingCustomers.length}
-                pending leads today
+                Welcome {getCallerName()} -- {pendingCustomers.length} pending
+                leads today
               </p>
             </div>
           </div>

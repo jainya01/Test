@@ -10,6 +10,7 @@ import bcrypt from "bcrypt";
 import pool from "../config/db.js";
 import authenticate from "../middleware/auth.js";
 import asyncHandler from "../config/asyncHandler.js";
+import autoAssignLeads from "../services/autoAssignLeads.js";
 import assignCustomerLeads from "../controllers/customerController.js";
 import redisClient from "../config/redisClient.js";
 
@@ -355,7 +356,7 @@ router.get(
       result,
     };
 
-    await redisClient.set(cacheKey, JSON.stringify(response));
+    await redisClient.setEx(cacheKey, 300, JSON.stringify(response));
     return res.status(200).json(response);
   }),
 );
@@ -425,13 +426,9 @@ router.post(
 
     const resume = req.files?.resume?.[0]?.filename || null;
     const bank_passbook = req.files?.bank_passbook?.[0]?.filename || null;
-
     const aadhaar_card = req.files?.aadhaar_card?.[0]?.filename || null;
-
     const pan_card = req.files?.pan_card?.[0]?.filename || null;
-
     const passport = req.files?.passport?.[0]?.filename || null;
-
     const passport_size_photo =
       req.files?.passport_size_photo?.[0]?.filename || null;
 
@@ -1136,30 +1133,31 @@ router.post(
 
       const filePath = path.join(uploadsDir, req.file.filename);
       const ext = path.extname(req.file.originalname).toLowerCase();
+
       let values = [];
 
       if (ext === ".xlsx") {
         const workbook = new ExcelJS.Workbook();
         await workbook.xlsx.readFile(filePath);
+
         workbook.worksheets[0].eachRow(
           { includeEmpty: false },
           (row, rowNumber) => {
             if (rowNumber === 1) return;
             const name = row.getCell(2).value;
             const phone = row.getCell(3).value;
+            const source = row.getCell(4).value;
             if (!name || !phone) return;
             values.push([
               String(name).trim(),
               String(phone).replace(/\D/g, "").trim(),
-              row.getCell(4).value ? String(row.getCell(4).value).trim() : null,
-              row.getCell(5).value ? String(row.getCell(5).value).trim() : null,
+              source ? String(source).trim() : null,
             ]);
           },
         );
       } else if (ext === ".csv") {
         const rows = await new Promise((resolve, reject) => {
           const data = [];
-
           fs.createReadStream(filePath)
             .pipe(csvParser())
             .on("data", (row) => data.push(row))
@@ -1170,16 +1168,13 @@ router.post(
         rows.forEach((row) => {
           const name = row.Name || row.name;
           const phone = row.Phone || row.phone;
-          const city = row.City || row.city;
-          const service = row.Source || row.service;
-
+          const source = row.Source || row.source || row.SOURCE || null;
           if (!name || !phone) return;
 
           values.push([
             String(name).trim(),
             String(phone).replace(/\D/g, "").trim(),
-            city ? String(city).trim() : null,
-            service ? String(service).trim() : null,
+            source ? String(source).trim() : null,
           ]);
         });
       } else {
@@ -1194,10 +1189,11 @@ router.post(
         });
       }
 
-      await pool.query(
-        `INSERT INTO customers (name, phone, city, service) VALUES ?`,
-        [values],
-      );
+      await pool.query(`INSERT INTO customers (name, phone, source) VALUES ?`, [
+        values,
+      ]);
+
+      await autoAssignLeads();
 
       await redisClient.del("crm1:allcustomers:all");
       await redisClient.del("crm1:bulkcustomers:all");
@@ -1210,7 +1206,6 @@ router.post(
       });
     } catch (err) {
       console.error("UPLOAD ERROR:", err);
-
       return res.status(500).json({
         error: "Upload failed",
         details: err.message,
@@ -1409,7 +1404,6 @@ router.post(
 
     const customerId = Number(customer_id);
     const callerId = Number(caller_id);
-
     const scheduleDate = schedule_date?.trim() || null;
     const scheduleTime = schedule_time?.trim() || null;
     const priorityValue = priority?.trim() || null;
@@ -1489,38 +1483,7 @@ router.post(
       [callerId],
     );
 
-    const [remainingLeads] = await pool.execute(
-      `SELECT COUNT(*) AS total
-       FROM customers
-       WHERE caller_id = ?
-       AND status IS NULL`,
-      [callerId],
-    );
-
-    if (remainingLeads[0].total <= 0) {
-      const limitPerCaller = 100;
-
-      const [newCustomers] = await pool.query(
-        `SELECT id
-         FROM customers
-         WHERE caller_id IS NULL
-         AND current_status = 'New'
-         LIMIT ?`,
-        [limitPerCaller],
-      );
-
-      const ids = newCustomers.map((c) => c.id);
-
-      if (ids.length > 0) {
-        await pool.query(
-          `UPDATE customers
-           SET caller_id = ?, assigned_at = NOW()
-           WHERE id IN (?)`,
-          [callerId, ids],
-        );
-      }
-    }
-
+    await autoAssignLeads([callerId]);
     await redisClient.del("crm1:allcallers:all");
     await redisClient.del("crm1:allcustomers:all");
 

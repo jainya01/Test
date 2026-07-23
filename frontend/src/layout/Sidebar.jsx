@@ -18,6 +18,7 @@ import {
   faCalendar,
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
+import { useUserContext } from "../context/UserContext";
 
 const ADMIN_LINKS = [
   {
@@ -55,6 +56,8 @@ export default function Sidebar() {
   const API_URL = import.meta.env.VITE_API_URL;
 
   const navigate = useNavigate();
+  const { followupCount } = useUserContext();
+  const [, setBlinkFollow] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const toggleSidebar = () => setIsOpen((s) => !s);
   const closeSidebar = () => setIsOpen(false);
@@ -139,6 +142,10 @@ export default function Sidebar() {
     setCollapsed((prev) => !prev);
   };
 
+  useEffect(() => {
+    setBlinkFollow(followupCount > 0);
+  }, [followupCount]);
+
   return (
     <>
       <nav className="navbar navbar-light bg-light d-md-none mobile-navbar-toggle">
@@ -222,6 +229,10 @@ export default function Sidebar() {
               >
                 <FontAwesomeIcon icon={link.icon} />
                 <span className="ms-2 label-span">{link.label}</span>
+
+                {link.path === "/caller/followups" && followupCount > 0 && (
+                  <span className="blink-box"></span>
+                )}
               </NavLink>
             ))}
           </div>
@@ -301,6 +312,10 @@ export default function Sidebar() {
               >
                 <FontAwesomeIcon icon={link.icon} />
                 <span className="ms-2 label-span">{link.label}</span>
+
+                {link.path === "/caller/followups" && followupCount > 0 && (
+                  <span className="blink-box"></span>
+                )}
               </NavLink>
             ))}
           </div>

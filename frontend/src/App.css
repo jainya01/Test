@@ -1386,3 +1386,29 @@ label {
     gap: 4px;
   }
 }
+
+.blink-box {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  width: 8px;
+  height: 8px;
+  background-color: #ef4343;
+  border-radius: 50%;
+  animation: blink 1.3s infinite;
+}
+
+@keyframes blink {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.2;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}

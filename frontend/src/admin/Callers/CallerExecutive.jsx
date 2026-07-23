@@ -83,7 +83,6 @@ function CallerExecutive() {
 
   const allocateNumbers = async (e) => {
     e.preventDefault();
-
     try {
       await axios.post(
         `${API_URL}/assign-custom-leads`,

@@ -12,10 +12,13 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
+import { Link } from "react-router-dom";
+import { useUserContext } from "../context/UserContext";
 
 function CallerLeads() {
   const API_URL = import.meta.env.VITE_API_URL;
 
+  const { followupCount } = useUserContext();
   const [search, setSearch] = useState("");
   const [statuses, setStatuses] = useState([]);
   const [customers, setCustomers] = useState([]);
@@ -338,10 +341,16 @@ function CallerLeads() {
             </div>
 
             <div className="col-2 col-md-1 d-flex justify-content-end align-items-center">
-              <button className="btn border-0 position-relative">
+              <Link
+                className="btn border-0 position-relative"
+                to={followupCount > 0 ? "/caller/followups" : "#"}
+                onClick={(e) => followupCount <= 0 && e.preventDefault()}
+              >
                 <FontAwesomeIcon icon={faBell} />
-                <span className="notification-corner bg-danger">0</span>
-              </button>
+                <span className="notification-corner bg-danger">
+                  {followupCount}
+                </span>
+              </Link>
 
               <span className="text-nowrap ms-2 date-days">
                 {new Date()
